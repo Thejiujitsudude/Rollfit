@@ -1,0 +1,2426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Roll Strong</title>
+<style>
+:root{
+  --bg:#161412;--sf:#1d1b19;--sf2:#222020;--sf3:#2a2826;
+  --red:#c0392b;--reds:rgba(192,57,43,.13);--redb:rgba(192,57,43,.45);
+  --gold:#d4a23a;--green:#27ae60;
+  --txt:#f2eee9;--mu:#9b938b;--mu2:#6f6862;
+  --ln:rgba(255,255,255,.07);--ln2:rgba(255,255,255,.11);
+  --r:14px;--rs:10px;
+  --xs:.71rem;--sm:.84rem;--md:.95rem;
+  --g2:.5rem;--g3:.75rem;--g4:1rem;--g5:1.5rem;--g6:2rem;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0;}
+html,body{min-height:100%;}
+body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+input,select{font-family:inherit;font-size:inherit;color:var(--txt);}
+h1{font-weight:900;letter-spacing:-.02em;}
+
+#app{max-width:640px;margin:0 auto;min-height:100vh;}
+.scr{display:none;padding:0 var(--g4) 110px;}
+.scr.on{display:block;}
+
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:var(--r);padding:var(--g4);margin-bottom:var(--g3);}
+.clbl{font-size:var(--xs);text-transform:uppercase;letter-spacing:.09em;color:var(--mu2);font-weight:700;margin-bottom:var(--g3);}
+
+.btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:50px;border-radius:var(--rs);font-weight:700;font-size:var(--md);border:none;cursor:pointer;}
+.btn:active{opacity:.82;}
+.btn-p{background:var(--red);color:#fff;}
+.btn-s{background:var(--sf3);color:var(--txt);border:1px solid var(--ln2);}
+.btn-g{background:transparent;color:var(--mu);border:1px solid var(--ln);}
+.btn-sm{min-height:36px;font-size:var(--sm);width:auto;padding:0 var(--g4);}
+.btn-pill{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:999px;min-height:38px;font-size:var(--sm);width:auto;padding:0 var(--g4);}
+
+.chip-row{display:flex;flex-wrap:wrap;gap:var(--g2);}
+.chip{height:40px;padding:0 var(--g4);border-radius:999px;background:var(--sf2);border:1px solid var(--ln2);color:var(--mu);font-weight:700;font-size:var(--sm);display:inline-flex;align-items:center;cursor:pointer;}
+.chip.sel{background:var(--red);color:#fff;border-color:var(--red);}
+.trk{background:var(--sf);border:1px solid var(--ln2);border-radius:var(--r);padding:var(--g4);margin-bottom:var(--g2);cursor:pointer;}
+.trk.sel{border-color:var(--red);background:var(--reds);}
+.trk-n{font-weight:900;font-size:var(--md);margin-bottom:3px;}
+.trk.sel .trk-n{color:#e88a7d;}
+.trk-d{font-size:var(--xs);color:var(--mu);line-height:1.5;}
+
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:var(--g2);margin-bottom:var(--g3);}
+.st{background:var(--sf2);border:1px solid var(--ln);border-radius:var(--rs);padding:var(--g3) var(--g4);}
+.st .v{font-size:1.5rem;font-weight:900;}
+.st .l{font-size:var(--xs);color:var(--mu);text-transform:uppercase;font-weight:700;margin-top:3px;}
+
+.bar-t{height:8px;background:var(--sf3);border-radius:999px;overflow:hidden;margin:4px 0;}
+.bar-f{height:100%;background:var(--red);border-radius:999px;transition:width .4s;}
+
+.bdg{display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:var(--xs);font-weight:700;}
+.bdg-r{background:var(--reds);color:#e88a7d;}
+.bdg-o{background:rgba(212,162,58,.16);color:#e2bf73;}
+
+.banner{background:var(--red);border-radius:var(--r);padding:var(--g4) var(--g5);margin-bottom:var(--g3);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:var(--g3);}
+.banner.rest{background:var(--sf);border:1px solid var(--ln);color:var(--txt);}
+
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(22,20,18,.97);backdrop-filter:blur(16px);border-top:1px solid var(--ln2);display:flex;max-width:640px;margin:0 auto;padding:var(--g2) var(--g2) calc(var(--g2) + env(safe-area-inset-bottom,0px));}
+.nb{flex:1;min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--mu2);font-size:10px;font-weight:700;border-radius:12px;cursor:pointer;background:none;border:none;}
+.nb .i{font-size:1.3rem;line-height:1;}
+.nb.on{color:var(--red);}
+
+.ov{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.7);display:none;align-items:flex-end;justify-content:center;}
+.ov.open{display:flex;}
+.sh{background:var(--bg);border-radius:22px 22px 0 0;max-height:88vh;overflow-y:auto;width:100%;max-width:640px;padding:var(--g3) var(--g4) calc(var(--g6) + env(safe-area-inset-bottom,0px));}
+.hnd{width:36px;height:4px;background:var(--sf3);border-radius:999px;margin:0 auto var(--g4);}
+
+.ex-b{background:var(--sf);border:1px solid var(--ln);border-radius:var(--r);padding:var(--g4);margin-bottom:var(--g3);}
+.sr{display:grid;grid-template-columns:28px 1fr 1fr 40px;gap:var(--g2);align-items:center;margin-bottom:var(--g2);}
+.si{background:var(--sf2);border:1px solid var(--ln2);border-radius:8px;padding:9px var(--g2);color:var(--txt);text-align:center;width:100%;outline:none;}
+.si:focus{border-color:var(--red);}
+.sc{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:var(--sf3);border:1px solid var(--ln2);cursor:pointer;font-size:.95rem;}
+.sc.done{background:rgba(39,174,96,.14);border-color:rgba(39,174,96,.4);color:#5fd592;}
+
+.prf{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--ln);font-size:var(--md);}
+.prf:last-child{border-bottom:none;}
+
+.rest-ov{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:80;display:none;align-items:center;justify-content:center;flex-direction:column;gap:var(--g4);}
+.rest-ov.open{display:flex;}
+
+.ob{position:fixed;inset:0;background:var(--bg);z-index:100;display:none;overflow-y:auto;}
+.ob.open{display:block;}
+.obs{display:none;padding:var(--g6) var(--g5);min-height:100vh;flex-direction:column;}
+.obs.on{display:flex;}
+
+.prfl{background:var(--reds);border:1px solid var(--redb);border-radius:var(--rs);padding:var(--g3) var(--g4);font-size:var(--sm);color:#e2bf73;display:none;margin-bottom:var(--g3);}
+.prfl.on{display:flex;align-items:center;gap:var(--g2);}
+
+.wdc{background:var(--sf);border:1px solid var(--ln);border-radius:var(--rs);padding:var(--g4);margin-bottom:var(--g3);}
+.wdc.td{border-color:var(--redb);}
+.pl{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--ln);font-size:var(--sm);}
+.pl:last-child{border-bottom:none;}
+</style>
+</head>
+<body>
+
+<!-- ONBOARDING -->
+<div class="ob" id="ob">
+  <div class="obs on" id="obs0">
+    <div style="padding-top:8vh;margin-bottom:auto;">
+      <div style="font-size:2.2rem;font-weight:900;margin-bottom:var(--g2);">Roll <span style="color:var(--red);">Strong</span></div>
+      <div style="color:var(--mu);font-size:var(--md);margin-bottom:var(--g4);">Strength training built for grapplers. Periodized programs, belt rank progression, and PR tracking — all in one place.</div>
+      <div style="background:var(--reds);border:1px solid var(--redb);border-radius:var(--rs);padding:var(--g3) var(--g4);font-size:var(--sm);color:var(--mu);">Everyone starts at <strong style="color:var(--txt);">White Belt</strong>. Your rank is earned through consistent training.</div>
+    </div>
+    <button class="btn btn-p" onclick="obGo(1)">Get Started →</button>
+    <div style="height:var(--g4);"></div>
+  </div>
+
+  <div class="obs" id="obs1">
+    <div style="font-size:1.2rem;font-weight:900;margin-bottom:var(--g4);">What's your name?</div>
+    <input id="ob-nm" class="si" type="text" placeholder="Your name" style="border-radius:var(--rs);padding:14px var(--g4);width:100%;margin-bottom:var(--g4);text-align:left;">
+    <div style="margin-top:auto;"><button class="btn btn-p" onclick="obGo(2)">Continue →</button></div>
+  </div>
+
+  <div class="obs" id="obs2">
+    <div style="font-size:1.2rem;font-weight:900;margin-bottom:var(--g3);">How many days/week can you lift?</div>
+    <div style="color:var(--mu);font-size:var(--sm);margin-bottom:var(--g4);">This runs alongside your mat time, not instead of it.</div>
+    <div class="chip-row" id="ob-days" style="margin-bottom:var(--g5);">
+      <div class="chip" data-v="2" onclick="obSelDay(this)">2 days</div>
+      <div class="chip sel" data-v="3" onclick="obSelDay(this)">3 days</div>
+      <div class="chip" data-v="4" onclick="obSelDay(this)">4 days</div>
+      <div class="chip" data-v="5" onclick="obSelDay(this)">5 days</div>
+    </div>
+    <div style="margin-top:auto;"><button class="btn btn-p" onclick="obGo(3)">Continue →</button></div>
+  </div>
+
+  <div class="obs" id="obs3">
+    <div style="font-size:1.2rem;font-weight:900;margin-bottom:var(--g3);">Which days do you train BJJ?</div>
+    <div style="color:var(--mu);font-size:var(--sm);margin-bottom:var(--g4);">The app uses this to flag scheduling conflicts with your heavy lift days.</div>
+    <div class="chip-row" id="ob-bjj" style="margin-bottom:var(--g3);">
+      <div class="chip" data-d="Mon" onclick="obToggleBJJ(this)">Mon</div>
+      <div class="chip" data-d="Tue" onclick="obToggleBJJ(this)">Tue</div>
+      <div class="chip" data-d="Wed" onclick="obToggleBJJ(this)">Wed</div>
+      <div class="chip" data-d="Thu" onclick="obToggleBJJ(this)">Thu</div>
+      <div class="chip" data-d="Fri" onclick="obToggleBJJ(this)">Fri</div>
+      <div class="chip" data-d="Sat" onclick="obToggleBJJ(this)">Sat</div>
+      <div class="chip" data-d="Sun" onclick="obToggleBJJ(this)">Sun</div>
+    </div>
+    <div style="font-size:var(--xs);color:var(--mu2);margin-bottom:var(--g5);">Select all that apply. You can change this later.</div>
+    <div style="margin-top:auto;"><button class="btn btn-p" onclick="obGo(4)">Continue →</button></div>
+  </div>
+
+  <div class="obs" id="obs4">
+    <div style="font-size:1.2rem;font-weight:900;margin-bottom:var(--g3);">What's your focus right now?</div>
+    <div style="color:var(--mu);font-size:var(--sm);margin-bottom:var(--g4);">This sets how hard the program pushes. Change it anytime.</div>
+    <div id="ob-track" style="margin-bottom:var(--g5);">
+      <div class="trk" data-t="offseason" onclick="obSelTrack(this)">
+        <div class="trk-n">Off-Season Strength</div>
+        <div class="trk-d">Full volume, heaviest loads. Build maximum strength when mat time is lighter.</div>
+      </div>
+      <div class="trk sel" data-t="inseason" onclick="obSelTrack(this)">
+        <div class="trk-n">In-Season</div>
+        <div class="trk-d">Reduced volume to protect mat performance. Stay strong without stealing from rolls.</div>
+      </div>
+      <div class="trk" data-t="comp" onclick="obSelTrack(this)">
+        <div class="trk-n">Comp Prep</div>
+        <div class="trk-d">Higher intensity, lower volume, more explosive work. Peak for a tournament.</div>
+      </div>
+      <div class="trk" data-t="minimal" onclick="obSelTrack(this)">
+        <div class="trk-n">Minimal Equipment</div>
+        <div class="trk-d">Dumbbells, bands, bodyweight only. Home gym or travel friendly.</div>
+      </div>
+    </div>
+    <div style="margin-top:auto;"><button class="btn btn-p" onclick="obDone()">Build My Program →</button></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+<!-- HOME -->
+<section class="scr on" id="scr-home">
+  <div style="padding:var(--g5) 0 var(--g3);">
+    <div style="color:var(--red);font-size:var(--sm);font-weight:700;margin-bottom:2px;" id="h-week-lbl">ROLL STRONG</div>
+    <h1 style="font-size:1.5rem;" id="h-greet">Welcome back</h1>
+    <div onclick="openOv('ov-track')" style="display:inline-flex;align-items:center;gap:5px;margin-top:6px;padding:4px 11px;background:var(--sf2);border:1px solid var(--ln2);border-radius:999px;cursor:pointer;">
+      <span style="font-size:var(--xs);color:var(--mu);">Focus:</span>
+      <span style="font-size:var(--xs);font-weight:700;" id="h-track-lbl">In-Season</span>
+      <span style="font-size:var(--xs);color:var(--red);">change</span>
+    </div>
+  </div>
+
+  <!-- Today banner -->
+  <div class="banner" id="h-banner">
+    <div>
+      <div style="font-size:1.05rem;font-weight:900;margin-bottom:3px;" id="h-bn-h">Today is a lift day</div>
+      <div style="font-size:var(--sm);opacity:.88;" id="h-bn-s">Time to put in work.</div>
+    </div>
+    <button class="btn-pill" id="h-bn-btn" onclick="goScr('today')">Start →</button>
+  </div>
+
+  <!-- Belt card -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:var(--g2);">
+      <div>
+        <div style="font-size:1rem;font-weight:900;" id="h-belt-name">White Belt</div>
+        <div style="color:var(--red);font-size:var(--sm);font-weight:700;margin-top:2px;" id="h-belt-stripe">0 stripes</div>
+      </div>
+      <button class="btn-g btn-sm" onclick="openOv('ov-roadmap')">roadmap</button>
+    </div>
+    <canvas id="belt-canvas" style="display:block;width:100%;height:26px;border-radius:5px;margin:var(--g3) 0;"></canvas>
+    <div style="display:flex;justify-content:space-between;font-size:var(--xs);color:var(--mu);margin-bottom:3px;">
+      <span id="h-xp-next-lbl">Next stripe</span>
+      <span id="h-xp-lbl" style="font-weight:700;">0 / 500 XP</span>
+    </div>
+    <div class="bar-t"><div class="bar-f" id="h-xp-bar" style="width:0%"></div></div>
+  </div>
+
+  <!-- BJJ Session log -->
+  <div style="display:flex;gap:var(--g2);margin-bottom:var(--g3);">
+    <button class="btn btn-s" onclick="logBJJ()" style="flex:1;min-height:44px;font-size:var(--sm);">🥋 Log BJJ Session</button>
+    <div id="h-bjj-today" style="display:none;background:rgba(39,174,96,.1);border:1px solid rgba(39,174,96,.3);border-radius:var(--rs);padding:0 var(--g3);align-items:center;font-size:var(--xs);color:#5fd592;font-weight:700;flex-shrink:0;min-height:44px;">Logged ✓</div>
+  </div>
+
+  <!-- Stats -->
+  <div class="sg">
+    <div class="st"><div class="v" id="h-txp">0</div><div class="l">Total XP</div></div>
+    <div class="st"><div class="v" id="h-sess">0</div><div class="l">Sessions</div></div>
+    <div class="st"><div class="v" id="h-sets">0</div><div class="l">Sets Logged</div></div>
+    <div class="st"><div class="v" id="h-prs">0</div><div class="l">PRs Set</div></div>
+  </div>
+
+  <!-- ORMs -->
+  <div class="clbl" style="margin-top:var(--g4);">ONE-REP MAXES</div>
+  <div class="card">
+    <div style="text-align:right;margin-bottom:var(--g2);">
+      <span style="color:var(--red);font-size:var(--xs);font-weight:700;cursor:pointer;" onclick="openOv('ov-orm')">edit</span>
+    </div>
+    <div id="h-orm-list"></div>
+  </div>
+
+  <!-- Recent -->
+  <div class="clbl" style="margin-top:var(--g4);">RECENT SESSIONS</div>
+  <div class="card" id="h-recent"></div>
+</section>
+
+<!-- TODAY -->
+<section class="scr" id="scr-today">
+  <div style="padding:var(--g5) 0 var(--g2);">
+    <div style="color:var(--red);font-size:var(--sm);font-weight:700;" id="td-tag">TODAY</div>
+    <h1 style="font-size:1.3rem;margin-top:2px;" id="td-title">Day 1</h1>
+    <div style="color:var(--mu);font-size:var(--sm);margin-top:2px;" id="td-sub"></div>
+  </div>
+
+  <!-- READINESS CHECK (shows on lift days before workout) -->
+  <div class="card" id="td-readiness" style="display:none;">
+    <div class="clbl">READINESS CHECK</div>
+    <div style="font-size:var(--sm);color:var(--mu);margin-bottom:var(--g3);">How's your body today? This adjusts your loads.</div>
+    <div style="display:flex;gap:var(--g2);margin-bottom:var(--g3);">
+      <button class="chip" data-rd="1" onclick="setReadiness(1,this)" style="flex:1;justify-content:center;">😩 Beat up</button>
+      <button class="chip" data-rd="2" onclick="setReadiness(2,this)" style="flex:1;justify-content:center;">😐 Normal</button>
+      <button class="chip" data-rd="3" onclick="setReadiness(3,this)" style="flex:1;justify-content:center;">🔥 Primed</button>
+    </div>
+    <div id="td-readiness-out" style="display:none;border-radius:var(--rs);padding:var(--g3) var(--g4);font-size:var(--sm);line-height:1.6;"></div>
+  </div>
+
+  <button class="btn btn-p" id="td-start-btn" onclick="startWorkout()" style="margin-bottom:var(--g2);">Start Workout</button>
+  <button class="btn btn-s" onclick="startCustom()" style="margin-bottom:var(--g2);">Custom Workout</button>
+  <button class="btn btn-s" onclick="openBuild()" style="margin-bottom:var(--g4);">📋 Build From My Exercises</button>
+
+  <div class="card">
+    <div class="clbl">TODAY'S EXERCISES</div>
+    <div id="td-preview"></div>
+  </div>
+
+  <div class="card">
+    <div class="clbl">LAST TIME</div>
+    <div id="td-perf"></div>
+  </div>
+</section>
+
+<!-- PROGRAM -->
+<section class="scr" id="scr-program">
+  <div style="padding:var(--g5) 0 var(--g2);">
+    <div style="color:var(--red);font-size:var(--sm);font-weight:700;" id="prog-week-lbl">WEEK 1 OF 9</div>
+    <h1 style="font-size:1.4rem;margin-top:2px;">Your Program</h1>
+  </div>
+  <div id="prog-days"></div>
+</section>
+
+<!-- PROGRESS -->
+<section class="scr" id="scr-progress">
+  <div style="padding:var(--g5) 0 var(--g3);">
+    <div style="color:var(--red);font-size:var(--sm);font-weight:700;">PROGRESS</div>
+    <h1 style="font-size:1.4rem;margin-top:2px;">Your Stats</h1>
+  </div>
+
+  <div class="sg">
+    <div class="st"><div class="v" id="pr-sess">0</div><div class="l">Sessions</div></div>
+    <div class="st"><div class="v" id="pr-sets">0</div><div class="l">Sets</div></div>
+    <div class="st"><div class="v" id="pr-reps">0</div><div class="l">Total Reps</div></div>
+    <div class="st"><div class="v" id="pr-vol">0</div><div class="l">Tons Lifted</div></div>
+  </div>
+
+  <div class="clbl" style="margin-top:var(--g4);">PERSONAL RECORDS</div>
+  <div class="card" id="pr-list"></div>
+
+  <div class="clbl" style="margin-top:var(--g4);">ALL SESSIONS</div>
+  <div class="card" id="pr-history"></div>
+</section>
+
+<!-- WORKOUT SCREEN (no nav) -->
+<section class="scr" id="scr-wo">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--g5) 0 var(--g3);">
+    <div>
+      <div style="font-size:1.1rem;font-weight:900;" id="wo-title">Workout</div>
+      <div style="font-size:1.1rem;font-weight:900;color:var(--red);font-variant-numeric:tabular-nums;" id="wo-timer">0:00</div>
+    </div>
+    <div style="display:flex;gap:var(--g2);">
+      <button class="btn btn-sm btn-g" onclick="cancelWO()" style="color:#e88a7d;border-color:var(--redb);">Cancel</button>
+      <button class="btn btn-sm" onclick="finishWO()" style="background:rgba(39,174,96,.13);color:#5fd592;border:1px solid rgba(39,174,96,.35);">Finish ✓</button>
+    </div>
+  </div>
+  <div class="prfl" id="pr-fl">🏆 <span id="pr-fl-tx"></span></div>
+  <div id="wo-blocks"></div>
+  <button class="btn btn-s" onclick="openOv('ov-addex')" style="margin-bottom:var(--g4);">+ Add Exercise</button>
+</section>
+
+<nav class="nav" id="main-nav">
+  <button class="nb on" id="nb-home" onclick="goScr('home')"><span class="i">🏠</span><span>Home</span></button>
+  <button class="nb" id="nb-today" onclick="goScr('today')"><span class="i">🔥</span><span>Today</span></button>
+  <button class="nb" id="nb-program" onclick="goScr('program')"><span class="i">📋</span><span>Program</span></button>
+  <button class="nb" id="nb-progress" onclick="goScr('progress')"><span class="i">📈</span><span>Progress</span></button>
+</nav>
+</div>
+
+<!-- FATIGUE SLIDER OVERLAY -->
+<div class="ov" id="ov-fatigue">
+  <div class="sh">
+    <div class="hnd"></div>
+    <div style="font-size:1.1rem;font-weight:900;margin-bottom:4px;">How did you feel?</div>
+    <div style="font-size:var(--sm);color:var(--mu);margin-bottom:var(--g5);">Helps the app track fatigue from BJJ stacking on top of lifting.</div>
+
+    <div style="margin-bottom:var(--g5);">
+      <div style="display:flex;justify-content:space-between;font-size:var(--xs);color:var(--mu);margin-bottom:var(--g3);">
+        <span>💀 Gassed</span><span>⚡ Fresh</span>
+      </div>
+      <input type="range" id="fatigue-slider" min="1" max="5" value="3"
+        style="width:100%;accent-color:var(--red);height:6px;cursor:pointer;">
+      <div style="display:flex;justify-content:space-between;font-size:var(--xs);color:var(--mu2);margin-top:var(--g2);">
+        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+      </div>
+      <div style="text-align:center;margin-top:var(--g3);">
+        <span id="fatigue-label" style="font-size:1.1rem;font-weight:900;color:var(--red);">3 — Okay</span>
+      </div>
+    </div>
+
+    <div style="background:var(--sf2);border-radius:var(--rs);padding:var(--g3) var(--g4);margin-bottom:var(--g5);font-size:var(--xs);color:var(--mu);line-height:1.6;">
+      <strong style="color:var(--txt);">1</strong> — Empty tank. Hard BJJ session before this or just worn out.<br>
+      <strong style="color:var(--txt);">3</strong> — Normal. Worked hard but feel fine.<br>
+      <strong style="color:var(--txt);">5</strong> — Fresh. Could have done more.
+    </div>
+
+    <button class="btn btn-p" onclick="saveFatigue()">Save &amp; Finish</button>
+  </div>
+</div>
+
+<!-- BLOCK COMPLETE OVERLAY -->
+<div class="ov" id="ov-block-done">
+  <div class="sh">
+    <div class="hnd"></div>
+    <div style="font-size:1.2rem;font-weight:900;margin-bottom:4px;">🏆 Block Complete!</div>
+    <div style="font-size:var(--sm);color:var(--mu);margin-bottom:var(--g5);">9 weeks done. Here are your suggested new 1RMs based on your best logged sets.</div>
+    <div class="clbl">SUGGESTED 1RMs</div>
+    <div id="block-orm-list" style="margin-bottom:var(--g4);"></div>
+    <div style="background:var(--sf2);border-radius:var(--rs);padding:var(--g3) var(--g4);margin-bottom:var(--g5);font-size:var(--xs);color:var(--mu);line-height:1.6;">
+      Estimated using the <strong style="color:var(--txt);">Epley formula</strong> from your best logged sets. If you hit a true max single in Week 9, use that instead.
+    </div>
+    <button class="btn btn-p" onclick="acceptBlock()" style="margin-bottom:var(--g2);">Accept & Start Block 2 →</button>
+    <button class="btn btn-g" onclick="closeOv('ov-block-done')">Review First</button>
+  </div>
+</div>
+<div class="rest-ov" id="rest-ov">
+  <div style="color:var(--mu);font-size:var(--xs);font-weight:700;letter-spacing:.1em;">REST</div>
+  <div style="position:relative;width:130px;height:130px;">
+    <svg width="130" height="130" style="transform:rotate(-90deg);">
+      <circle cx="65" cy="65" r="57" fill="none" stroke="#2a2826" stroke-width="6" stroke-dasharray="358"/>
+      <circle id="rest-arc" cx="65" cy="65" r="57" fill="none" stroke="#c0392b" stroke-width="6" stroke-dasharray="358" stroke-dashoffset="0"/>
+    </svg>
+    <div id="rest-cnt" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.4rem;font-weight:900;font-variant-numeric:tabular-nums;">90</div>
+  </div>
+  <button class="btn btn-g btn-sm" onclick="stopRest()" style="min-width:110px;">Skip →</button>
+</div>
+
+<!-- ORM OVERLAY -->
+<div class="ov" id="ov-orm">
+  <div class="sh">
+    <div class="hnd"></div>
+    <div style="font-size:1.1rem;font-weight:900;margin-bottom:4px;">One-Rep Maxes</div>
+    <div style="font-size:var(--sm);color:var(--mu);margin-bottom:var(--g4);">Used to auto-calculate warmup and working set weights.</div>
+    <div id="orm-inputs"></div>
+    <button class="btn btn-p" onclick="saveORMs()" style="margin-top:var(--g4);">Save</button>
+    <button class="btn btn-g" onclick="closeOv('ov-orm')" style="margin-top:var(--g2);">Cancel</button>
+  </div>
+</div>
+
+<!-- ADD EXERCISE -->
+<div class="ov" id="ov-addex">
+  <div class="sh">
+    <div class="hnd"></div>
+    <div style="font-size:1.1rem;font-weight:900;margin-bottom:var(--g4);">Add Exercise</div>
+    <div id="ex-lib"></div>
+    <div style="border-top:1px solid var(--ln);padding-top:var(--g4);margin-top:var(--g3);">
+      <div class="clbl">CUSTOM</div>
+      <input class="si" id="cx-nm" type="text" placeholder="Exercise name" style="border-radius:var(--rs);padding:12px var(--g4);width:100%;text-align:left;margin-bottom:var(--g3);">
+      <div style="display:flex;gap:var(--g2);margin-bottom:var(--g3);">
+        <div style="flex:1;"><div style="font-size:var(--xs);color:var(--mu);margin-bottom:4px;">Sets</div><input class="si" id="cx-s" type="number" value="3" style="border-radius:8px;padding:10px;width:100%;"></div>
+        <div style="flex:1;"><div style="font-size:var(--xs);color:var(--mu);margin-bottom:4px;">Reps</div><input class="si" id="cx-r" type="number" value="8" style="border-radius:8px;padding:10px;width:100%;"></div>
+      </div>
+      <button class="btn btn-p" onclick="addCxEx()">Add</button>
+    </div>
+    <button class="btn btn-g" onclick="closeOv('ov-addex')" style="margin-top:var(--g2);">Cancel</button>
+  </div>
+</div>
+
+<!-- SUBSTITUTE EXERCISE OVERLAY -->
+<div class="ov" id="ov-swap">
+  <div class="sh">
+    <div class="hnd"></div>
+    <div style="font-size:1.1rem;font-weight:900;margin-bottom:4px;">Swap Exercise</div>
+    <div style="font-size:var(--sm);color:var(--mu);margin-bottom:var(--g4);">Replacing <strong style="color:var(--txt);" id="swap-original"></strong> — no equipment, injury, or gym doesn't have it? Pick a substitute.</div>
+    <div id="swap-body"></div>
+    <button class="btn btn-g" onclick="closeOv('ov-swap')" style="margin-top:var(--g4);">Cancel</button>
+  </div>
+</div>
+
+<!-- GOAL TRACK OVERLAY -->
+<div class="ov" id="ov-track">
+  <div class="sh">
+    <div class="hnd"></div>
+    <div style="font-size:1.1rem;font-weight:900;margin-bottom:4px;">Training Focus</div>
+    <div style="font-size:var(--sm);color:var(--mu);margin-bottom:var(--g4);">Changes volume and intensity. Your program structure and progress stay the same.</div>
+    <div id="track-list"></div>
+    <button class="btn btn-g" onclick="closeOv('ov-track')" style="margin-top:var(--g4);">Close</button>
+  </div>
+</div>
+
+<!-- BUILD FROM MY EXERCISES OVERLAY -->
+<div class="ov" id="ov-build">
+  <div class="sh">
+    <div class="hnd"></div>
+    <div style="font-size:1.1rem;font-weight:900;margin-bottom:4px;">Build From My Exercises</div>
+    <div style="font-size:var(--sm);color:var(--mu);margin-bottom:var(--g4);">Paste or type your exercises — one per line. Roll Strong matches each to a grappler-optimized movement and builds your session.</div>
+    <textarea id="build-input" placeholder="Barbell Squat&#10;Bench Press&#10;Lat Pulldown&#10;Bicep Curls&#10;Plank" style="width:100%;min-height:140px;background:var(--sf2);border:1px solid var(--ln2);border-radius:var(--rs);padding:var(--g3) var(--g4);color:var(--txt);font-family:inherit;font-size:var(--sm);outline:none;resize:vertical;margin-bottom:var(--g3);"></textarea>
+    <button class="btn btn-p" onclick="processBuildInput()">Match My Exercises →</button>
+    <div id="build-results" style="margin-top:var(--g4);"></div>
+    <button class="btn btn-g" onclick="closeOv('ov-build')" style="margin-top:var(--g2);">Cancel</button>
+  </div>
+</div>
+
+
+<!-- FATIGUE SLIDER OVERLAY -->
+<div class="ov" id="ov-fatigue">
+  <div class="sh">
+    <div class="hnd"></div>
+    <div style="font-size:1.1rem;font-weight:900;margin-bottom:4px;">How did you feel?</div>
+    <div style="font-size:var(--sm);color:var(--mu);margin-bottom:var(--g5);">Rate your energy and recovery today. This helps the app detect fatigue buildup from stacked BJJ + lifting.</div>
+    <div style="text-align:center;margin-bottom:var(--g4);">
+      <div style="font-size:3rem;margin-bottom:var(--g2);" id="fatigue-emoji">😐</div>
+      <div style="font-size:1.1rem;font-weight:900;" id="fatigue-label">Okay</div>
+    </div>
+    <input type="range" id="fatigue-slider" min="1" max="5" value="3"
+      oninput="updateFatigueUI(this.value)"
+      style="width:100%;margin-bottom:var(--g4);accent-color:var(--red);">
+    <div style="display:flex;justify-content:space-between;font-size:var(--xs);color:var(--mu);margin-bottom:var(--g5);">
+      <span>Destroyed</span><span>Okay</span><span>Excellent</span>
+    </div>
+    <button class="btn btn-p" onclick="saveFatigue()">Save &amp; Done</button>
+    <button class="btn btn-g" onclick="closeOv('ov-fatigue')" style="margin-top:var(--g2);">Skip</button>
+  </div>
+</div>
+
+<!-- ROADMAP -->
+<div class="ov" id="ov-roadmap">
+  <div class="sh">
+    <div class="hnd"></div>
+    <div style="font-size:1.1rem;font-weight:900;margin-bottom:var(--g4);">Belt Roadmap</div>
+    <div id="roadmap-body"></div>
+    <button class="btn btn-g" onclick="closeOv('ov-roadmap')" style="margin-top:var(--g4);">Close</button>
+  </div>
+</div>
+
+<script>
+// ── BELT DATA ──────────────────────────────────────────────────
+const BELTS=[
+  {name:'White', color:'#dedad4',stripes:4,xpp:500, type:'std'},
+  {name:'Blue',  color:'#1a56db',stripes:4,xpp:800, type:'std'},
+  {name:'Purple',color:'#6d28d9',stripes:4,xpp:1100,type:'std'},
+  {name:'Brown', color:'#7c3a0a',stripes:4,xpp:1400,type:'std'},
+  {name:'Black', color:'#0f0f0f',stripes:10,xpp:1800,type:'blk'},
+];
+
+// ── EXERCISES ──────────────────────────────────────────────────
+// Organized by movement pattern. Session order:
+// Warmup → Hinge → Squat → Pull → Push → Core → Carry/Grip → Face Pull (last)
+const EX_LIB=[
+  // WARMUP / PLYOMETRIC — explosive, always opens session
+  {n:'Box Jump',              c:'Warmup',         note:'Explosive leg power. Full reset between reps. 3-5 reps only.'},
+  {n:'Broad Jump',            c:'Warmup',         note:'Horizontal explosion — closing distance on takedown shots. Full reset each rep.'},
+  {n:'Depth Jump',            c:'Warmup',         note:'Reactive plyometric. Lower joint stress than box jump, similar power carryover.'},
+  {n:'Kettlebell Swing',      c:'Warmup',         note:'Ballistic hip extension. Power not cardio — reset each rep.'},
+  {n:'Single-Arm KB Swing',   c:'Warmup',         note:'KB swing + grip + anti-rotation. Closer to scramble demands than two-hand.'},
+  {n:'Medicine Ball Rotational Slam',c:'Warmup',  note:'THE grappler power gap-filler. Explosive rotational force for sweeps, throws, scrambles.'},
+  {n:'Medicine Ball Slam',    c:'Warmup',         note:'Vertical explosive power — top-to-bottom slam from guard passes. Full-body.'},
+
+  // HINGE — posterior chain, takedowns, bridging, sprawls
+  {n:'Trap Bar Deadlift',     c:'Hinge',          note:'King of grappling lifts. Neutral grip, spine-friendly, full posterior chain.'},
+  {n:'Sumo Deadlift',         c:'Hinge',          note:'Wider stance, more quad/hip. Good trap bar substitute when unavailable.'},
+  {n:'Conventional Deadlift', c:'Hinge',          note:'Straight-bar pull. More lower-back demand than trap bar — brace hard.'},
+  {n:'Dumbbell RDL',          c:'Hinge',          note:'Hamstring/glute hinge with dumbbells. No barbell needed — travel/home friendly.'},
+  {n:'Romanian Deadlift',     c:'Hinge',          note:'Hamstring + glute endurance. Slow eccentric. Essential for sprawl defense.'},
+  {n:'Barbell Hip Thrust',    c:'Hinge',          note:'Explosive hip drive for guard escapes and bridge-outs from bottom.'},
+  {n:'Single-Leg Glute Bridge',c:'Hinge',         note:'Unilateral glute/hamstring. Bodyweight bridge power — no equipment needed.'},
+  {n:'Single-Leg RDL',        c:'Hinge',          note:'Unilateral hinge stability. Trains scramble positions one side at a time.'},
+  {n:'Nordic Curl',           c:'Hinge',          note:'Eccentric hamstring durability. Protects against heel hooks and leg locks.'},
+
+  // SQUAT — leg drive, level changes, scrambles
+  {n:'Zercher Squat',         c:'Squat',          note:'Bar in elbow crooks = clinch position. Core + upper back engaged throughout.'},
+  {n:'Front Squat',           c:'Squat',          note:'Anterior-loaded, core-engaged, less lower-back shear. Strong Zercher substitute.'},
+  {n:'Back Squat',            c:'Squat',          note:'Classic bilateral squat. Heaviest loadable leg strength option.'},
+  {n:'Zercher Lunge',         c:'Squat',          note:'Zercher position + lunge = unilateral clinch strength. Trains each leg independently.'},
+  {n:'Bulgarian Split Squat', c:'Squat',          note:'Best unilateral leg exercise for grapplers. Controlled descent, drive through front heel.'},
+  {n:'Reverse Lunge',         c:'Squat',          note:'Knee-friendly unilateral squat. Good Bulgarian split squat substitute.'},
+  {n:'Step-Up',               c:'Squat',          note:'Single-leg explosiveness and balance. Drive through the top foot.'},
+  {n:'Cossack Squat',         c:'Squat',          note:'Lateral hip mobility + strength. Base changes and leg entanglement defense.'},
+  {n:'Weighted Lunge',        c:'Squat',          note:'Leg strength + gait pattern. Builds explosiveness for blast doubles and shots.'},
+  {n:'Goblet Squat',          c:'Squat',          note:'Accessible squat pattern with core stability. Good alternative to Zercher.'},
+
+  // VERTICAL PULL — lats, biceps, grip
+  {n:'Pull-Ups',              c:'Vertical Pull',  note:'#1 upper body exercise for grapplers. Add weight when easy. Full hang each rep.'},
+  {n:'Chin-Ups',              c:'Vertical Pull',  note:'Supinated grip hits biceps harder — direct submission finishing strength.'},
+  {n:'Towel Pull-Ups',        c:'Vertical Pull',  note:'Simulates gi/no-gi grip under load. Grip fails before muscles — great burnout.'},
+  {n:'Rope Climb',            c:'Vertical Pull',  note:'Grip + pulling endurance. Gold-standard grappling conditioner if available.'},
+  {n:'Assisted Pull-Ups',     c:'Vertical Pull',  note:'Banded/machine assist. Regression to build toward full pull-ups.'},
+  {n:'Lat Pulldown',          c:'Vertical Pull',  note:'Lat volume builder. Guard retention strength from knees.'},
+  {n:'Straight Arm Pulldown', c:'Vertical Pull',  note:'Isolates lats fully. Builds heavy hands for snapping opponents down.'},
+
+  // HORIZONTAL PULL — back thickness, clinch, top pressure
+  {n:'Barbell Row',           c:'Horizontal Pull',note:'Compound back builder. Pulling opponents into takedown positions.'},
+  {n:'Pendlay Row',           c:'Horizontal Pull',note:'Explosive row from the floor each rep. Powerful pulling strength.'},
+  {n:'T-Bar Row',             c:'Horizontal Pull',note:'Heavy supported row. Back thickness with neutral grip options.'},
+  {n:'One-Arm DB Row',        c:'Horizontal Pull',note:'Unilateral pull — arm drag and underhook strength. Corrects side imbalances.'},
+  {n:'Chest-Supported Row',   c:'Horizontal Pull',note:'Row volume without lower-back fatigue. Great for high-frequency weeks.'},
+  {n:'Cable Row',             c:'Horizontal Pull',note:'Horizontal pull endurance. Sustained top pressure and clinch work.'},
+  {n:'Resistance Band Row',   c:'Horizontal Pull',note:'Home/travel row option. Squeeze and control the return.'},
+  {n:'Face Pull',             c:'Horizontal Pull',note:'Rear delt + rotator cuff. Every session. ALWAYS LAST. Non-negotiable prehab.'},
+
+  // PUSH — frames, escapes, pummeling, creating distance
+  {n:'Overhead Press',        c:'Push',           note:'Strict press. Pummeling and underhook battles. Squeeze glutes, press slightly back.'},
+  {n:'Push Press',            c:'Push',           note:'Explosive overhead press with leg drive. Power carryover for framing.'},
+  {n:'Z Press',               c:'Push',           note:'Seated on floor OHP. Isolates core + shoulder. Mimics BJJ seated posture perfectly.'},
+  {n:'Dips',                  c:'Push',           note:'Tricep + chest for guard frames and pushing off the mat. Add weight when easy.'},
+  {n:'Dumbbell Bench Press',  c:'Push',           note:'Upper body pressing base with natural arm path. Shoulder-friendly ROM.'},
+  {n:'Barbell Bench Press',   c:'Push',           note:'Heaviest loadable horizontal press. Frames and guard-passing pressure.'},
+  {n:'Push-Ups',              c:'Push',           note:'Bodyweight press with core engagement. Loadable with a vest. No equipment barrier.'},
+  {n:'Floor Press',           c:'Push',           note:'Ground-based push — mimics pressing an opponent off from bottom mount.'},
+  {n:'Landmine Press',        c:'Push',           note:'Rotational pressing that mimics pummeling. Half-kneeling for core demand.'},
+  {n:'Single-Arm Landmine Press',c:'Push',        note:'Anti-rotation pressing. Mirrors framing against a single-side attack.'},
+
+  // CORE — anti-rotation, hip flexion (rotational/hanging only)
+  {n:'Pallof Press',          c:'Core',           note:'Anti-rotation, hits obliques. Hold 1s at extension. Both sides. Resists being swept.'},
+  {n:'Half-Kneeling Band Chop',c:'Core',          note:'Rotational-transfer core. Anti-rotation with a rotational element for sweeps/throws.'},
+  {n:'Cable Anti-Rotation Hold',c:'Core',         note:'Progression beyond Pallof. Hold + lateral shuffle for scramble stability.'},
+  {n:'Hanging Leg Raise',     c:'Core',           note:'Hip flexor + lower abs. Guard retention and triangle setup strength.'},
+  {n:'Hanging Knee Raise',    c:'Core',           note:'Regression of hanging leg raise. Build hip-flexor strength and grip endurance.'},
+  {n:'Ab Wheel Rollout',      c:'Core',           note:'Anti-extension core in a different plane. Brace hard, nose toward floor.'},
+
+  // CARRY & GRIP — functional strength under sustained tension
+  {n:'Farmer Carry',          c:'Carry & Grip',   note:'Crush grip + core bracing under load. Walk ~40m. After everything else.'},
+  {n:'Plate Farmer Carry',    c:'Carry & Grip',   note:'Plates instead of handles = harder pinch grip. Direct grip-fighting carry.'},
+  {n:'Zercher Carry',         c:'Carry & Grip',   note:'Clinch position carry. Builds bear hug and body lock strength under load.'},
+  {n:'Suitcase Carry',        c:'Carry & Grip',   note:'One-sided carry. Core fights lateral collapse entire walk. Both sides.'},
+  {n:'Overhead Carry',        c:'Carry & Grip',   note:'Shoulder stability + anti-lateral flexion. Harder tier than suitcase carry.'},
+  {n:'Sled Push',             c:'Carry & Grip',   note:'Leg drive + upper body endurance. No eccentric = less soreness. Mat-friendly.'},
+  {n:'Prowler Drag',          c:'Carry & Grip',   note:'Sled drag variation. Leg drive conditioning, joint-friendly.'},
+  {n:'Hill Sprints',          c:'Carry & Grip',   note:'Explosive conditioning. Sled substitute — mat chase and scramble engine.'},
+];
+
+// ── PLATE CALCULATOR ─────────────────────────────────────────────
+// Barbell-loaded exercises: total weight = 45lb bar + plates on each side.
+// Standard gym plate set (lb): 45, 35, 25, 10, 5, 2.5
+var BARBELL_EXERCISES=[
+  'Trap Bar Deadlift','Zercher Squat','Zercher Lunge','Romanian Deadlift',
+  'Barbell Hip Thrust','Barbell Row','Overhead Press','Weighted Lunge',
+  'Sumo Deadlift','Conventional Deadlift','Front Squat','Back Squat',
+  'Push Press','Barbell Bench Press','Pendlay Row','T-Bar Row'
+];
+var BAR_WEIGHT=45;
+var PLATE_SIZES=[45,35,25,10,5,2.5];
+
+function isBarbellEx(name){
+  return BARBELL_EXERCISES.indexOf(name)!==-1;
+}
+
+// Returns {perSide:[...], total, remainder, barOnly} or null if invalid
+function calcPlates(totalWeight){
+  var w=parseFloat(totalWeight)||0;
+  if(w<=0)return null;
+  var perSideNeeded=(w-BAR_WEIGHT)/2;
+  if(perSideNeeded<=0){
+    return {perSide:[],total:BAR_WEIGHT,remainder:0,barOnly:true};
+  }
+  var plates=[];
+  var remaining=perSideNeeded;
+  PLATE_SIZES.forEach(function(size){
+    while(remaining>=size-0.01){
+      plates.push(size);
+      remaining-=size;
+    }
+  });
+  var achievedPerSide=plates.reduce(function(a,b){return a+b;},0);
+  var achievedTotal=BAR_WEIGHT+achievedPerSide*2;
+  return {
+    perSide:plates,
+    total:achievedTotal,
+    remainder:Math.round(remaining*10)/10,
+    barOnly:false
+  };
+}
+
+// Human-readable plate breakdown, e.g. "45 + 25 + 5 per side"
+function plateBreakdownStr(totalWeight){
+  var r=calcPlates(totalWeight);
+  if(!r)return '';
+  if(r.barOnly||!r.perSide.length)return 'Bar only (45 lb)';
+  var str=r.perSide.join(' + ')+' per side';
+  if(r.remainder>0.1){
+    str+=' <span style="color:var(--mu2);">(+'+r.remainder+' lb not rackable)</span>';
+  }
+  return str;
+}
+
+// ── EXERCISE SUBSTITUTES ──────────────────────────────────────
+// Each exercise maps to equivalents that train the same movement pattern.
+// Sourced from grappling S&C research — swapping preserves program intent.
+var SUBSTITUTES={
+  // HINGE
+  'Trap Bar Deadlift':['Sumo Deadlift','Dumbbell RDL','Conventional Deadlift'],
+  'Sumo Deadlift':['Trap Bar Deadlift','Conventional Deadlift','Dumbbell RDL'],
+  'Conventional Deadlift':['Trap Bar Deadlift','Sumo Deadlift'],
+  'Dumbbell RDL':['Romanian Deadlift','Single-Leg RDL'],
+  'Romanian Deadlift':['Single-Leg Glute Bridge','Dumbbell RDL','Barbell Hip Thrust'],
+  'Barbell Hip Thrust':['Single-Leg Glute Bridge','Romanian Deadlift'],
+  'Single-Leg Glute Bridge':['Barbell Hip Thrust','Romanian Deadlift'],
+  'Single-Leg RDL':['Romanian Deadlift','Single-Leg Glute Bridge'],
+  'Nordic Curl':['Romanian Deadlift','Single-Leg RDL'],
+  // SQUAT
+  'Zercher Squat':['Goblet Squat','Front Squat','Back Squat'],
+  'Front Squat':['Zercher Squat','Back Squat','Goblet Squat'],
+  'Back Squat':['Zercher Squat','Front Squat'],
+  'Zercher Lunge':['Bulgarian Split Squat','Reverse Lunge','Weighted Lunge'],
+  'Bulgarian Split Squat':['Reverse Lunge','Step-Up','Weighted Lunge'],
+  'Reverse Lunge':['Bulgarian Split Squat','Step-Up','Weighted Lunge'],
+  'Step-Up':['Bulgarian Split Squat','Reverse Lunge'],
+  'Cossack Squat':['Goblet Squat','Reverse Lunge'],
+  'Weighted Lunge':['Bulgarian Split Squat','Reverse Lunge','Step-Up'],
+  'Goblet Squat':['Zercher Squat','Front Squat'],
+  // VERTICAL PULL
+  'Pull-Ups':['Chin-Ups','Assisted Pull-Ups','Lat Pulldown'],
+  'Chin-Ups':['Pull-Ups','Assisted Pull-Ups','Lat Pulldown'],
+  'Towel Pull-Ups':['Pull-Ups','Chin-Ups','Rope Climb'],
+  'Rope Climb':['Towel Pull-Ups','Pull-Ups'],
+  'Assisted Pull-Ups':['Lat Pulldown','Pull-Ups','Chin-Ups'],
+  'Lat Pulldown':['Pull-Ups','Chin-Ups','Assisted Pull-Ups'],
+  'Straight Arm Pulldown':['Lat Pulldown','Cable Row'],
+  // HORIZONTAL PULL
+  'Barbell Row':['Pendlay Row','T-Bar Row','One-Arm DB Row'],
+  'Pendlay Row':['Barbell Row','T-Bar Row'],
+  'T-Bar Row':['Barbell Row','Pendlay Row'],
+  'One-Arm DB Row':['Chest-Supported Row','Barbell Row','Cable Row'],
+  'Chest-Supported Row':['Cable Row','One-Arm DB Row'],
+  'Cable Row':['Chest-Supported Row','Resistance Band Row','Barbell Row'],
+  'Resistance Band Row':['Cable Row','Chest-Supported Row'],
+  'Face Pull':['Band Pull-Aparts','Rear Delt Fly'],
+  // PUSH
+  'Overhead Press':['Push Press','Z Press','Landmine Press'],
+  'Push Press':['Overhead Press','Z Press'],
+  'Z Press':['Overhead Press','Landmine Press'],
+  'Dips':['Push-Ups','Dumbbell Bench Press','Floor Press'],
+  'Dumbbell Bench Press':['Push-Ups','Barbell Bench Press','Floor Press','Landmine Press'],
+  'Barbell Bench Press':['Dumbbell Bench Press','Floor Press'],
+  'Push-Ups':['Dumbbell Bench Press','Floor Press','Dips'],
+  'Floor Press':['Dumbbell Bench Press','Push-Ups'],
+  'Landmine Press':['Single-Arm Landmine Press','Overhead Press','Dumbbell Bench Press'],
+  'Single-Arm Landmine Press':['Landmine Press','Overhead Press'],
+  // CORE
+  'Hanging Leg Raise':['Hanging Knee Raise','Ab Wheel Rollout'],
+  'Hanging Knee Raise':['Hanging Leg Raise','Ab Wheel Rollout'],
+  'Ab Wheel Rollout':['Hanging Leg Raise','Hanging Knee Raise'],
+  'Pallof Press':['Half-Kneeling Band Chop','Cable Anti-Rotation Hold'],
+  'Half-Kneeling Band Chop':['Pallof Press','Cable Anti-Rotation Hold'],
+  'Cable Anti-Rotation Hold':['Pallof Press','Half-Kneeling Band Chop'],
+  // CARRY & GRIP
+  'Farmer Carry':['Plate Farmer Carry','Suitcase Carry','Overhead Carry'],
+  'Plate Farmer Carry':['Farmer Carry','Suitcase Carry'],
+  'Zercher Carry':['Farmer Carry','Overhead Carry'],
+  'Suitcase Carry':['Farmer Carry','Overhead Carry'],
+  'Overhead Carry':['Farmer Carry','Suitcase Carry'],
+  'Sled Push':['Hill Sprints','Prowler Drag'],
+  'Prowler Drag':['Sled Push','Hill Sprints'],
+  'Hill Sprints':['Sled Push','Prowler Drag'],
+  // WARMUP / POWER
+  'Box Jump':['Broad Jump','Depth Jump'],
+  'Broad Jump':['Box Jump','Depth Jump'],
+  'Depth Jump':['Box Jump','Broad Jump'],
+  'Kettlebell Swing':['Single-Arm KB Swing','Medicine Ball Slam'],
+  'Single-Arm KB Swing':['Kettlebell Swing','Medicine Ball Slam'],
+  'Medicine Ball Rotational Slam':['Medicine Ball Slam','Landmine Rotation'],
+  'Medicine Ball Slam':['Medicine Ball Rotational Slam','Kettlebell Swing'],
+};
+
+// ── EXERCISE MATCHER (Build From My Exercises) ─────────────────
+// Takes any typed exercise name and maps it to the closest grappler-
+// appropriate exercise already in our library. Keyword-based — no AI needed.
+// Each rule: keywords that (if found in the input) map to a library exercise.
+var MATCH_RULES=[
+  // Hinge
+  {kw:['trap bar','hex bar'],ex:'Trap Bar Deadlift'},
+  {kw:['sumo'],ex:'Sumo Deadlift'},
+  {kw:['romanian','rdl','stiff leg','stiff-leg'],ex:'Romanian Deadlift'},
+  {kw:['deadlift'],ex:'Trap Bar Deadlift'},
+  {kw:['hip thrust','glute bridge','bridge'],ex:'Barbell Hip Thrust'},
+  {kw:['good morning'],ex:'Romanian Deadlift'},
+  {kw:['nordic','ham curl','hamstring curl','leg curl'],ex:'Nordic Curl'},
+  {kw:['kettlebell swing','kb swing','swing'],ex:'Kettlebell Swing'},
+  {kw:['clean','power clean','hang clean'],ex:'Kettlebell Swing'},
+  // Squat
+  {kw:['zercher'],ex:'Zercher Squat'},
+  {kw:['front squat'],ex:'Front Squat'},
+  {kw:['back squat','barbell squat'],ex:'Back Squat'},
+  {kw:['goblet'],ex:'Goblet Squat'},
+  {kw:['bulgarian','split squat','rear foot'],ex:'Bulgarian Split Squat'},
+  {kw:['cossack'],ex:'Cossack Squat'},
+  {kw:['reverse lunge','walking lunge','lunge'],ex:'Weighted Lunge'},
+  {kw:['step up','step-up'],ex:'Step-Up'},
+  {kw:['leg press','hack squat','squat'],ex:'Goblet Squat'},
+  {kw:['box jump','jump'],ex:'Box Jump'},
+  {kw:['pistol'],ex:'Bulgarian Split Squat'},
+  // Vertical pull
+  {kw:['towel pull','gi pull'],ex:'Towel Pull-Ups'},
+  {kw:['chin up','chin-up','chinup'],ex:'Chin-Ups'},
+  {kw:['pull up','pull-up','pullup'],ex:'Pull-Ups'},
+  {kw:['rope climb'],ex:'Rope Climb'},
+  {kw:['lat pulldown','pulldown','pull down'],ex:'Lat Pulldown'},
+  {kw:['straight arm'],ex:'Straight Arm Pulldown'},
+  // Horizontal pull
+  {kw:['pendlay'],ex:'Pendlay Row'},
+  {kw:['t-bar','t bar'],ex:'T-Bar Row'},
+  {kw:['chest supported','chest-supported','seal row'],ex:'Chest-Supported Row'},
+  {kw:['one arm','one-arm','single arm','single-arm','db row','dumbbell row'],ex:'One-Arm DB Row'},
+  {kw:['cable row','seated row'],ex:'Cable Row'},
+  {kw:['band row'],ex:'Resistance Band Row'},
+  {kw:['barbell row','bent over row','bent-over row','row'],ex:'Barbell Row'},
+  {kw:['face pull'],ex:'Face Pull'},
+  {kw:['rear delt','reverse fly'],ex:'Face Pull'},
+  // Push
+  {kw:['push press'],ex:'Push Press'},
+  {kw:['z press','z-press'],ex:'Z Press'},
+  {kw:['overhead press','shoulder press','ohp','military press','strict press'],ex:'Overhead Press'},
+  {kw:['landmine press'],ex:'Landmine Press'},
+  {kw:['landmine'],ex:'Landmine Press'},
+  {kw:['floor press'],ex:'Floor Press'},
+  {kw:['dumbbell bench','db bench','incline db'],ex:'Dumbbell Bench Press'},
+  {kw:['bench press','barbell bench','bench','incline'],ex:'Dumbbell Bench Press'},
+  {kw:['dip'],ex:'Dips'},
+  {kw:['push up','push-up','pushup'],ex:'Push-Ups'},
+  {kw:['shoulder','press'],ex:'Overhead Press'},
+  // Core
+  {kw:['hanging leg','toes to bar','toes-to-bar','leg raise','knee raise'],ex:'Hanging Leg Raise'},
+  {kw:['pallof'],ex:'Pallof Press'},
+  {kw:['ab wheel','rollout'],ex:'Ab Wheel Rollout'},
+  {kw:['cable chop','band chop','wood chop','woodchop','chop'],ex:'Half-Kneeling Band Chop'},
+  {kw:['anti-rotation','antirotation','anti rotation'],ex:'Pallof Press'},
+  {kw:['russian twist','oblique','rotation','landmine rotation'],ex:'Half-Kneeling Band Chop'},
+  {kw:['plank','dead bug','sit up','sit-up','crunch','ab'],ex:'Hanging Leg Raise'},
+  // Carry & grip
+  {kw:['farmer'],ex:'Farmer Carry'},
+  {kw:['suitcase'],ex:'Suitcase Carry'},
+  {kw:['overhead carry','waiter'],ex:'Overhead Carry'},
+  {kw:['zercher carry'],ex:'Zercher Carry'},
+  {kw:['sled','prowler'],ex:'Sled Push'},
+  {kw:['sprint','hill'],ex:'Hill Sprints'},
+  {kw:['carry','walk'],ex:'Farmer Carry'},
+  // Power / warmup
+  {kw:['medicine ball slam','med ball slam','ball slam','slam'],ex:'Medicine Ball Slam'},
+  {kw:['rotational throw','med ball throw','rotational slam'],ex:'Medicine Ball Rotational Slam'},
+  {kw:['broad jump'],ex:'Broad Jump'},
+  {kw:['depth jump'],ex:'Depth Jump'},
+];
+
+// Match a raw exercise name to a grappler-appropriate library exercise.
+// Returns {matched:'Exercise Name', exact:true/false} or null if no match.
+function matchExercise(raw){
+  if(!raw)return null;
+  var s=raw.toLowerCase().trim();
+  if(!s)return null;
+  // First: exact library match (case-insensitive)
+  var exact=EX_LIB.find(function(e){return e.n.toLowerCase()===s;});
+  if(exact)return {matched:exact.n,exact:true};
+  // Then: keyword rules (first match wins — rules ordered specific→general)
+  for(var i=0;i<MATCH_RULES.length;i++){
+    var rule=MATCH_RULES[i];
+    for(var j=0;j<rule.kw.length;j++){
+      if(s.indexOf(rule.kw[j])!==-1){
+        return {matched:rule.ex,exact:false,original:raw.trim()};
+      }
+    }
+  }
+  return null; // no grappler equivalent found
+}
+
+// Default set/rep scheme for a matched exercise based on its category
+function defaultScheme(exName){
+  var e=EX_LIB.find(function(x){return x.n===exName;});
+  var cat=e?e.c:'';
+  if(cat==='Warmup')return {s:3,r:5,rest:60};
+  if(cat==='Carry & Grip')return {s:3,r:1,rest:60};
+  if(cat==='Core')return {s:3,r:10,rest:60};
+  if(cat.indexOf('Pull')!==-1)return {s:3,r:8,rest:90};
+  if(cat==='Push')return {s:3,r:8,rest:90};
+  if(cat==='Hinge'||cat==='Squat')return {s:3,r:6,rest:90};
+  return {s:3,r:8,rest:90};
+}
+
+function openSwap(ei){
+  var ex=AWO.ex[ei];
+  if(!ex)return;
+  var subs=SUBSTITUTES[ex.n];
+  var body=document.getElementById('swap-body');
+  document.getElementById('swap-original').textContent=ex.n;
+  if(!subs||!subs.length){
+    body.innerHTML='<div style="color:var(--mu);font-size:var(--sm);padding:var(--g4) 0;text-align:center;">No substitutes set up for this exercise yet.<br><br>You can still pick any exercise from the full library below.</div>';
+  } else {
+    body.innerHTML='<div class="clbl">SUGGESTED EQUIVALENTS</div>'+
+      subs.map(function(s){
+        return '<div onclick="doSwap('+ei+',\''+s.replace(/'/g,"\\'")+'\')" style="padding:11px var(--g3);background:var(--sf);border:1px solid var(--ln);border-radius:var(--rs);margin-bottom:var(--g2);cursor:pointer;font-weight:600;font-size:var(--sm);display:flex;justify-content:space-between;align-items:center;">'+
+          '<span>'+s+'</span><span style="color:var(--gold);font-size:var(--xs);">Use this →</span>'+
+        '</div>';
+      }).join('');
+  }
+  // Also show full library as fallback
+  var cats={};
+  EX_LIB.forEach(function(e){if(!cats[e.c])cats[e.c]=[];cats[e.c].push(e);});
+  var libHTML='<div class="clbl" style="margin-top:var(--g4);">OR PICK FROM FULL LIBRARY</div>'+
+    Object.keys(cats).map(function(cat){
+      return '<div style="margin-bottom:var(--g3);"><div style="font-size:var(--xs);color:var(--mu2);font-weight:700;text-transform:uppercase;margin-bottom:var(--g2);">'+cat+'</div>'+
+        cats[cat].map(function(e){
+          return '<div onclick="doSwap('+ei+',\''+e.n.replace(/'/g,"\\'")+'\')" style="padding:9px var(--g3);background:var(--sf2);border:1px solid var(--ln);border-radius:var(--rs);margin-bottom:6px;cursor:pointer;font-weight:500;font-size:var(--sm);">'+e.n+'</div>';
+        }).join('')+'</div>';
+    }).join('');
+  body.innerHTML+=libHTML;
+  document.getElementById('ov-swap').classList.add('open');
+}
+
+function doSwap(ei,newName){
+  var ex=AWO.ex[ei];
+  if(!ex)return;
+  var oldName=ex.n;
+  ex.n=newName;
+  // Reset weight fields since the new exercise likely has a different load —
+  // keep reps/structure but clear weights so athlete enters fresh numbers
+  ex.sets.forEach(function(s){
+    if(s.type!=='dynwu')s.w='';
+  });
+  ex.note='SUBSTITUTED for '+oldName+'. Adjust weight as needed for this movement.';
+  closeOv('ov-swap');
+  renderWO();
+}
+
+// ── PROGRAM — Rosati/Science-Based Grappler S&C ──────────────
+// Based on: Rosati Strength Systems + combat sports S&C research
+//
+// SESSION STRUCTURE (6 parts, 45-60 min max):
+//   1. DYNAMIC WARMUP    — mobility + plyometric (Box Jump or KB Swing)
+//   2. COMPOUND POWER    — explosive lift (KB Swing, Push Press, Clean)
+//   3. COMPOUND STRENGTH — heavy multi-joint (Trap Bar DL, Zercher Sq, Rows)
+//                          Work up to ONE heavy top set, then move on
+//   4. ISOLATION/ACCESS  — single-joint or accessory (Face Pull, RDL, etc.)
+//   5. CARRIES/GRIP      — loaded carries last before cooldown
+//   6. FACE PULL         — always the final exercise, every session (prehab)
+//
+// PROGRAMMING PHILOSOPHY:
+//   - Work up to 1 heavy top set per main lift — do NOT grind multiple max sets
+//   - Leave 1-2 reps in reserve (RIR) always — never go to failure
+//   - Full body sessions — movement patterns not muscle groups
+//   - 2-3x/week, 45-60 min — more than this steals from mat performance
+//   - Lower volume, higher frequency — hit patterns often without soreness
+//   - Week 6 = deload (reduce intensity ~20%, keep movement quality)
+//   - Week 9 = test week — true max on primary lifts, then reset block
+//
+// PRIMARY LIFTS get %1RM warmup pyramid + top set (+ optional backoff)
+// EVERYTHING ELSE uses RIR guidance — never prescribed exact %
+
+function wk(){ return Math.min(9,Math.floor((S.dayIdx||0)/7)+1); }
+
+// Accessory volume tables [sets,reps,rpe,rest]
+const AV={
+  w1:{sw:[4,10,7,75],pu:[4,5,7,150],cr:[3,10,7,90],cu:[3,5,7,150],bss:[3,6,7,150],
+      ohp:[3,8,7,120],dip:[3,8,7,90],pp:[3,10,7,60],aw:[3,8,7,60],
+      fp:[3,20,9,45],fc:[2,1,7,60],hlr:[3,10,7,75],sp:[3,1,7,60]},
+  w2:{sw:[4,12,7,75],pu:[4,6,8,150],cr:[3,10,8,90],cu:[3,6,8,150],bss:[3,7,8,150],
+      ohp:[3,8,8,120],dip:[3,8,8,90],pp:[3,10,8,60],aw:[3,10,8,60],
+      fp:[3,20,9,45],fc:[2,1,7,60],hlr:[3,12,8,75],sp:[3,1,8,60]},
+  w3:{sw:[4,12,8,75],pu:[4,6,8,150],cr:[4,10,8,90],cu:[4,6,8,150],bss:[3,7,8,150],
+      ohp:[4,8,8,120],dip:[3,8,8,90],pp:[3,12,8,60],aw:[3,10,8,60],
+      fp:[3,20,9,45],fc:[3,1,8,60],hlr:[3,12,8,75],sp:[3,1,8,60]},
+  w4:{sw:[4,12,8,75],pu:[4,6,9,150],cr:[4,10,9,90],cu:[4,6,9,150],bss:[3,8,8,150],
+      ohp:[4,8,9,120],dip:[3,10,8,90],pp:[3,12,9,60],aw:[3,10,9,60],
+      fp:[4,20,9,45],fc:[3,1,8,60],hlr:[3,12,9,75],sp:[3,1,9,60]},
+  w5:{sw:[5,12,8,75],pu:[4,7,9,150],cr:[4,12,9,90],cu:[4,7,9,150],bss:[3,8,9,150],
+      ohp:[4,8,9,120],dip:[3,10,9,90],pp:[3,12,9,60],aw:[4,10,9,60],
+      fp:[4,20,9,45],fc:[3,1,9,60],hlr:[3,12,9,75],sp:[4,1,9,60]},
+  w6:{sw:[3,10,5,75],pu:[3,4,5,150],cr:[2,8,5,90],cu:[3,4,5,150],bss:[2,6,5,150],
+      ohp:[3,6,5,120],dip:[2,6,5,90],pp:[2,8,5,60],aw:[2,8,5,60],
+      fp:[2,15,7,45],fc:[2,1,5,60],hlr:[2,8,5,75],sp:[2,1,5,60]},
+  w7:{sw:[4,12,7,75],pu:[4,6,7,150],cr:[3,10,7,90],cu:[4,6,7,150],bss:[3,7,7,150],
+      ohp:[3,8,7,120],dip:[3,8,7,90],pp:[3,10,7,60],aw:[3,10,7,60],
+      fp:[3,20,9,45],fc:[3,1,8,60],hlr:[3,12,7,75],sp:[3,1,7,60]},
+  w8:{sw:[4,12,8,75],pu:[4,7,8,150],cr:[4,10,8,90],cu:[4,7,8,150],bss:[3,8,8,150],
+      ohp:[4,8,8,120],dip:[3,10,8,90],pp:[3,12,8,60],aw:[3,10,8,60],
+      fp:[3,20,9,45],fc:[3,1,8,60],hlr:[3,12,8,75],sp:[3,1,8,60]},
+};
+function ax(k){ const v=AV['w'+Math.min(8,wk())][k]; return{s:v[0],r:v[1],rpe:v[2],rest:v[3]}; }
+
+// Primary lift prescriptions by week
+const TBD={w1:{wu:4,s:1,r:5,pct:75,rest:270,bo:{s:2,r:6,pct:65}},w2:{wu:4,s:1,r:4,pct:80,rest:270,bo:{s:2,r:6,pct:70}},w3:{wu:4,s:1,r:4,pct:82,rest:300,bo:{s:2,r:5,pct:72}},w4:{wu:4,s:1,r:3,pct:85,rest:300,bo:{s:2,r:5,pct:75}},w5:{wu:4,s:1,r:3,pct:87,rest:330,bo:{s:2,r:4,pct:77}},w6:{wu:3,s:2,r:5,pct:70,rest:240,bo:null},w7:{wu:4,s:1,r:5,pct:78,rest:270,bo:{s:2,r:6,pct:68}},w8:{wu:4,s:1,r:4,pct:83,rest:300,bo:{s:2,r:5,pct:73}}};
+const ZSQ={w1:{wu:3,s:1,r:5,pct:70,rest:270,bo:{s:2,r:7,pct:60}},w2:{wu:3,s:1,r:4,pct:75,rest:270,bo:{s:2,r:6,pct:65}},w3:{wu:3,s:1,r:4,pct:78,rest:300,bo:{s:2,r:5,pct:68}},w4:{wu:3,s:1,r:3,pct:82,rest:300,bo:{s:2,r:5,pct:72}},w5:{wu:3,s:1,r:3,pct:85,rest:330,bo:{s:2,r:4,pct:75}},w6:{wu:2,s:2,r:6,pct:68,rest:240,bo:null},w7:{wu:3,s:1,r:5,pct:73,rest:270,bo:{s:2,r:6,pct:63}},w8:{wu:3,s:1,r:4,pct:78,rest:300,bo:{s:2,r:5,pct:68}}};
+const DBB={w1:{wu:2,s:3,r:12,pct:60,rest:120,bo:null},w2:{wu:2,s:3,r:10,pct:65,rest:150,bo:null},w3:{wu:2,s:1,r:8,pct:70,rest:180,bo:{s:2,r:9,pct:62}},w4:{wu:2,s:1,r:6,pct:75,rest:180,bo:{s:2,r:8,pct:65}},w5:{wu:2,s:1,r:5,pct:78,rest:210,bo:{s:2,r:7,pct:68}},w6:{wu:1,s:2,r:12,pct:58,rest:90,bo:null},w7:{wu:2,s:3,r:12,pct:62,rest:120,bo:null},w8:{wu:2,s:1,r:8,pct:72,rest:180,bo:{s:2,r:9,pct:63}}};
+
+function prim(src,name,wu_override){
+  var w=Math.min(8,wk()),t=src['w'+w];
+  var e={n:name,wu:wu_override||t.wu,s:t.s,r:t.r,pct:t.pct,rest:t.rest,note:'Warmup pyramid auto-loaded. Top set at '+t.pct+'% of your 1RM.'};
+  if(t.bo)e.backoff=t.bo;
+  return e;
+}
+
+// ── SESSION BUILDER ────────────────────────────────────────────
+// 6-part structure per session (Rosati / science-based combat sports):
+// 1. DYNAMIC WARMUP — mobility drills matched to today's primary lift
+// 2. POWER          — one explosive compound movement
+// 3. STRENGTH       — work up to 1 heavy top set, then move on
+// 4. ACCESSORY      — 2-3 targeted movements, 0-2 RIR
+// 5. CARRY/GRIP     — loaded carry, grip endurance
+// 6. PREHAB         — Face Pull, ALWAYS last, every session
+//
+// Dynamic warmups are NOT tracked exercises — no sets/reps to log.
+// They open the joints used by that day's primary lift.
+
+function wuHinge(){ // Before Trap Bar Deadlift — hips, hamstrings, glutes, core
+  return [
+    {n:'Leg Swings (Front-Back & Side-Side)',wu:0,s:1,r:'12-15 each leg',rir:0,rest:0,isWarmup:true,
+     note:'DYNAMIC WARMUP — opens hips and hamstrings before pulling. Controlled, not ballistic.'},
+    {n:'Hip Hinge Patterning (empty bar)',wu:0,s:2,r:'8',rir:0,rest:0,isWarmup:true,
+     note:'DYNAMIC WARMUP — grooves neutral spine and hip movement before loading up.'},
+    {n:'Glute Bridges',wu:0,s:1,r:'12-15',rir:0,rest:0,isWarmup:true,
+     note:'DYNAMIC WARMUP — switches on glutes before you pull heavy.'},
+    {n:'Bird Dog',wu:0,s:1,r:'8-12 each side',rir:0,rest:0,isWarmup:true,
+     note:'DYNAMIC WARMUP — locks in core stability so your back doesn\'t do the work.'},
+  ];
+}
+function wuSquat(){ // Before Zercher Squat / Zercher Lunge — hips, ankles, upper back
+  return [
+    {n:'Deep Goblet Squat Hold',wu:0,s:1,r:'8-10 w/ knee pry',rir:0,rest:0,isWarmup:true,
+     note:'DYNAMIC WARMUP — opens hips and ankles, grooves squat depth and position.'},
+    {n:'Walking Lunges',wu:0,s:1,r:'8-10 each leg',rir:0,rest:0,isWarmup:true,
+     note:'DYNAMIC WARMUP — warms quads/glutes and rehearses the descent pattern.'},
+    {n:'Hip Airplanes / Hip Circles',wu:0,s:1,r:'8-12 each side',rir:0,rest:0,isWarmup:true,
+     note:'DYNAMIC WARMUP — hip mobility and balance under load before squatting.'},
+    {n:'Band Pull-Aparts',wu:0,s:1,r:'12-15',rir:0,rest:0,isWarmup:true,
+     note:'DYNAMIC WARMUP — preps upper back to hold the Zercher load tight to your torso.'},
+  ];
+}
+function wuPush(){ // Before DB Bench Press / Overhead Press — shoulders, scapula, chest
+  return [
+    {n:'Arm Circles',wu:0,s:1,r:'10 each direction',rir:0,rest:0,isWarmup:true,
+     note:'DYNAMIC WARMUP — warms the rotator cuff and shoulder joint.'},
+    {n:'Band Pull-Aparts',wu:0,s:1,r:'12-15',rir:0,rest:0,isWarmup:true,
+     note:'DYNAMIC WARMUP — activates upper back and rear delts before pressing.'},
+    {n:'Scapular Push-Ups',wu:0,s:1,r:'10-12',rir:0,rest:0,isWarmup:true,
+     note:'DYNAMIC WARMUP — teaches shoulder blades to move and stabilize properly.'},
+    {n:'Light Push-Ups',wu:0,s:1,r:'10-12 controlled',rir:0,rest:0,isWarmup:true,
+     note:'DYNAMIC WARMUP — light chest pump, controlled tempo, dials in shoulder position.'},
+  ];
+}
+function wuGeneral(){ // Accessory-only / lunge / carry days — general mobility
+  return [
+    {n:'Leg Swings (Front-Back & Side-Side)',wu:0,s:1,r:'10-12 each leg',rir:0,rest:0,isWarmup:true,
+     note:'DYNAMIC WARMUP — general hip opener before loaded work.'},
+    {n:'Arm Circles',wu:0,s:1,r:'10 each direction',rir:0,rest:0,isWarmup:true,
+     note:'DYNAMIC WARMUP — general shoulder warmup.'},
+    {n:'Bird Dog',wu:0,s:1,r:'8-12 each side',rir:0,rest:0,isWarmup:true,
+     note:'DYNAMIC WARMUP — core stability before everything else.'},
+  ];
+}
+
+function fp(){ // Prehab finisher — always last
+  return {n:'Face Pull',wu:0,s:3,r:15,rir:1,rest:45,note:'PREHAB — rear delt + rotator cuff. Every session. Always last. Non-negotiable.'};
+}
+function fc(sets){ // Grip finisher
+  return {n:'Farmer Carry',wu:0,s:sets||3,r:1,rir:1,rest:45,note:'GRIP FINISHER — walk ~40m per set. Grip goes after everything. Never before.'};
+}
+
+function getProgDaysRaw(){
+  var d=S.daysPerWeek||3;
+  var w=wk();
+  var isDeload=w===6;
+  var rir=isDeload?3:1;
+
+  // ── WEEK 9: TEST WEEK ─────────────────────────────────────────
+  if(w===9) return[
+    {name:'Test 1 · Trap Bar Max',rest:false,lbl:'TEST',ex:[
+      ...wuHinge(),
+      {n:'Trap Bar Deadlift',wu:5,s:1,r:1,pct:97,rest:360,
+       note:'STRENGTH TEST — pyramid: 50%×3, 65%×2, 75%×1, 85%×1, 92%×1, then max attempt. Log your best single — this becomes your new 1RM.'},
+      {n:'Pull-Ups',wu:1,s:2,r:5,rir:2,rest:90,note:'ACCESSORY — light volume only. Save energy for the test.'},
+      fc(2),fp(),
+    ]},
+    {name:'Rest / Roll',rest:true,lbl:'REST',ex:[]},
+    {name:'Test 2 · Zercher Max',rest:false,lbl:'TEST',ex:[
+      ...wuSquat(),
+      {n:'Zercher Squat',wu:4,s:1,r:1,pct:97,rest:360,
+       note:'STRENGTH TEST — pyramid up to max. Bar in elbow crooks. Log your best single — new 1RM for next block.'},
+      {n:'Overhead Press',wu:2,s:2,r:6,rir:2,rest:90,note:'ACCESSORY — maintenance volume only.'},
+      fc(2),fp(),
+    ]},
+    {name:'Rest / Roll',rest:true,lbl:'REST',ex:[]},
+    {name:'Test 3 · DB Bench Max',rest:false,lbl:'TEST',ex:[
+      ...wuPush(),
+      {n:'Dumbbell Bench Press',wu:3,s:1,r:1,pct:95,rest:300,
+       note:'STRENGTH TEST — work up to true max per hand. Controlled descent, full press. Log your best.'},
+      {n:'Chin-Ups',wu:1,s:2,r:5,rir:2,rest:90,note:'ACCESSORY — light pull volume.'},
+      fc(2),fp(),
+    ]},
+    {name:'Rest',rest:true,lbl:'REST',ex:[]},
+    {name:'Rest',rest:true,lbl:'REST',ex:[]},
+  ];
+
+  // Primary lift helper — work up to 1 heavy top set, then move on (Rosati method)
+  function P(src,name,wuOverride){
+    var t=src['w'+Math.min(8,w)];
+    var trk=curTrack();
+    // Goal track intensity adjustment (Comp Prep +3%, In-Season -3%)
+    var pct=Math.max(50,Math.min(95,t.pct+(isDeload?0:trk.pctAdj)));
+    var exName=applyTrackSwap(name);
+    return {
+      n:exName,
+      wu:wuOverride||t.wu,
+      s:t.s, r:t.r, pct:pct, rest:t.rest,
+      backoff: (t.bo&&!isDeload)?t.bo:null,
+      note:(isDeload?'⬇️ DELOAD — ':'')+'STRENGTH — pyramid warmup sets, then 1 top set at '+pct+'% × '+t.r+' reps. Leave '+(isDeload?'3':'1-2')+' RIR. Work up, hit it, move on.'
+    };
+  }
+
+  // ── 2-DAY ─────────────────────────────────────────────────────
+  if(d===2) return[
+    {name:'Day 1 · Full Body A',rest:false,lbl:'S&C',ex:[
+      // 1. DYNAMIC WARMUP
+      ...wuHinge(),
+      // 2+3. POWER / STRENGTH — primary hinge
+      P(TBD,'Trap Bar Deadlift'),
+      // 4. ACCESSORY — pull + push + core
+      {n:'Pull-Ups',       wu:1,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — vertical pull. Full hang. Add weight when reps feel easy.'},
+      {n:'Overhead Press', wu:1,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — strict vertical push. Pummeling strength.'},
+      {n:'Hanging Leg Raise',wu:0,s:3,r:8,rir:rir,rest:60,note:'ACCESSORY — hip flexor + lower abs. Guard retention and triangle setup.'},
+      // 5+6. CARRY + PREHAB
+      fc(2),fp(),
+    ]},
+    {name:'Rest / Roll',rest:true,lbl:'REST',ex:[]},
+    {name:'Day 2 · Full Body B',rest:false,lbl:'S&C',ex:[
+      ...wuSquat(),
+      P(ZSQ,'Zercher Squat'),
+      {n:'Kettlebell Swing',wu:0,s:3,r:12,rir:rir,rest:60,note:'HINGE — 2nd hinge exposure. Explosive hip extension for takedowns and bridging.'},
+      {n:'Bulgarian Split Squat',wu:0,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — per leg. Best unilateral for grapplers.'},
+      {n:'Chin-Ups',       wu:0,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — supinated grip. Submission pulling strength.'},
+      {n:'Pallof Press',   wu:0,s:2,r:10,rir:rir,rest:60, note:'ACCESSORY — anti-rotation. Both sides.'},
+      fc(2),fp(),
+    ]},
+    {name:'Rest / Roll',rest:true,lbl:'REST',ex:[]},
+    {name:'Rest',rest:true,lbl:'REST',ex:[]},
+    {name:'Rest',rest:true,lbl:'REST',ex:[]},
+    {name:'Rest',rest:true,lbl:'REST',ex:[]},
+  ];
+
+  // ── 3-DAY ─────────────────────────────────────────────────────
+  if(d===3) return[
+    {name:'Day 1 · Hinge + Pull',rest:false,lbl:'S&C',ex:[
+      ...wuHinge(),
+      P(TBD,'Trap Bar Deadlift'),
+      {n:'Pull-Ups',       wu:1,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — vertical pull. Add weight when reps feel smooth.'},
+      {n:'Cable Row',      wu:0,s:3,r:8,rir:rir,rest:90,note:'ACCESSORY — horizontal pull. Drive elbows back, squeeze lats.'},
+      {n:'Hanging Leg Raise',wu:0,s:3,r:8,rir:rir,rest:60,note:'ACCESSORY — hip flexor + lower abs. Guard retention and triangle setup.'},
+      fc(2),fp(),
+    ]},
+    {name:'Day 2 · Squat + Push',rest:false,lbl:'S&C',ex:[
+      ...wuSquat(),
+      P(ZSQ,'Zercher Squat'),
+      {n:'Bulgarian Split Squat',wu:0,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — per leg. Controlled descent, drive through front heel.'},
+      {n:'Overhead Press', wu:1,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — strict press. Pummeling and underhook strength.'},
+      {n:'Dips',           wu:1,s:3,r:8,rir:rir,rest:90,note:'ACCESSORY — guard frames. Add weight when bodyweight feels easy.'},
+      {n:'Pallof Press',   wu:0,s:2,r:10,rir:rir,rest:60,note:'ACCESSORY — anti-rotation. Both sides.'},
+      fc(2),fp(),
+    ]},
+    {name:'Rest / Roll',rest:true,lbl:'REST',ex:[]},
+    {name:'Day 3 · Lunge + Pull',rest:false,lbl:'S&C',ex:[
+      ...wuSquat(),
+      {n:'Zercher Lunge',  wu:0,s:3,r:6,rir:rir,rest:90,note:'POWER — per leg. Anterior load = carrying opponent weight. Unilateral clinch strength.'},
+      {n:'Romanian Deadlift',wu:1,s:3,r:8,rir:rir,rest:90,note:'HINGE — 2nd hinge exposure. Hamstring + glute for bridging and sprawl defense. Slow eccentric.'},
+      {n:'Chin-Ups',       wu:1,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — supinated grip. Submission pulling power.'},
+      {n:'One-Arm DB Row', wu:0,s:3,r:8,rir:rir,rest:90,note:'ACCESSORY — unilateral pull. Arm drag and underhook strength.'},
+      {n:'Hanging Leg Raise',wu:0,s:3,r:10,rir:rir,rest:60,note:'ACCESSORY — guard retention + triangle setup strength.'},
+      {n:'Pallof Press',   wu:0,s:2,r:10,rir:rir,rest:60,note:'ACCESSORY — anti-rotation, hits obliques. Both sides.'},
+      fc(2),fp(),
+    ]},
+    {name:'Rest / Roll',rest:true,lbl:'REST',ex:[]},
+    {name:'Active Recovery',rest:true,lbl:'REST',ex:[]},
+    {name:'Active Recovery',rest:true,lbl:'REST',ex:[]},
+  ];
+
+  // ── 4-DAY ─────────────────────────────────────────────────────
+  if(d===4) return[
+    {name:'Day 1 · Hinge + Pull',rest:false,lbl:'S&C',ex:[
+      ...wuHinge(),
+      P(TBD,'Trap Bar Deadlift'),
+      {n:'Pull-Ups',       wu:1,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — vertical pull. Full hang.'},
+      {n:'Cable Row',      wu:0,s:3,r:8,rir:rir,rest:90,note:'ACCESSORY — horizontal pull. Back thickness for top pressure.'},
+      {n:'Hanging Leg Raise',wu:0,s:3,r:8,rir:rir,rest:60,note:'ACCESSORY — hip flexor + lower abs. Guard retention and triangle setup.'},
+      fc(2),fp(),
+    ]},
+    {name:'Day 2 · Squat + Push',rest:false,lbl:'S&C',ex:[
+      ...wuSquat(),
+      P(ZSQ,'Zercher Squat'),
+      {n:'Bulgarian Split Squat',wu:0,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — per leg. Best unilateral for mat scrambles.'},
+      {n:'Overhead Press', wu:1,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — strict press. Pummeling strength.'},
+      {n:'Dips',           wu:1,s:3,r:8,rir:rir,rest:90,note:'ACCESSORY — guard frames.'},
+      {n:'Pallof Press',   wu:0,s:2,r:10,rir:rir,rest:60,note:'ACCESSORY — anti-rotation. Both sides.'},
+      fc(2),fp(),
+    ]},
+    {name:'Rest / Roll',rest:true,lbl:'REST',ex:[]},
+    {name:'Day 3 · Pull + Press',rest:false,lbl:'S&C',ex:[
+      ...wuPush(),
+      {n:'Chin-Ups',       wu:1,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — supinated grip. Weighted if easy.'},
+      P(DBB,'Dumbbell Bench Press',2),
+      {n:'Barbell Row',    wu:1,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — compound back. Pulling opponents into position.'},
+      {n:'Hanging Leg Raise',wu:0,s:3,r:10,rir:rir,rest:60,note:'ACCESSORY — guard and triangle strength.'},
+      {n:'Pallof Press',   wu:0,s:2,r:10,rir:rir,rest:60,note:'ACCESSORY — anti-rotation, hits obliques. Both sides.'},
+      fc(2),fp(),
+    ]},
+    {name:'Day 4 · Lunge + Carry',rest:false,lbl:'S&C',ex:[
+      ...wuSquat(),
+      {n:'Zercher Lunge',  wu:0,s:3,r:6,rir:rir,rest:90,note:'POWER — per leg. Clinch position strength.'},
+      {n:'Romanian Deadlift',wu:1,s:3,r:8,rir:rir,rest:90,note:'HINGE — 2nd hinge exposure. Hamstring + glute for bridging and sprawl defense. Slow eccentric.'},
+      {n:'Straight Arm Pulldown',wu:0,s:3,r:10,rir:rir,rest:60,note:'ACCESSORY — heavy hands. Snapping opponents down.'},
+      {n:'Hanging Leg Raise',wu:0,s:3,r:8,rir:rir,rest:60,note:'ACCESSORY — hip flexor + lower abs. Guard retention and triangle setup.'},
+      {n:'Plate Farmer Carry',wu:0,s:3,r:1,rir:1,rest:45,note:'GRIP — pinch grip. ~40m walk per set.'},
+      fp(),
+    ]},
+    {name:'Rest / Roll',rest:true,lbl:'REST',ex:[]},
+    {name:'Active Recovery',rest:true,lbl:'REST',ex:[]},
+  ];
+
+  // ── 5-DAY ─────────────────────────────────────────────────────
+  return[
+    {name:'Day 1 · Hinge + Pull',rest:false,lbl:'S&C',ex:[
+      ...wuHinge(),
+      P(TBD,'Trap Bar Deadlift'),
+      {n:'Pull-Ups',       wu:1,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — vertical pull. Full hang.'},
+      {n:'Cable Row',      wu:0,s:3,r:8,rir:rir,rest:90,note:'ACCESSORY — horizontal pull.'},
+      {n:'Hanging Leg Raise',wu:0,s:3,r:8,rir:rir,rest:60,note:'ACCESSORY — hip flexor + lower abs. Guard retention and triangle setup.'},
+      fc(2),fp(),
+    ]},
+    {name:'Day 2 · Squat + Push',rest:false,lbl:'S&C',ex:[
+      ...wuSquat(),
+      P(ZSQ,'Zercher Squat'),
+      {n:'Bulgarian Split Squat',wu:0,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — per leg.'},
+      {n:'Overhead Press', wu:1,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — strict press.'},
+      {n:'Dips',           wu:1,s:3,r:8,rir:rir,rest:90,note:'ACCESSORY — guard frames.'},
+      {n:'Pallof Press',   wu:0,s:2,r:10,rir:rir,rest:60,note:'ACCESSORY — anti-rotation.'},
+      fc(2),fp(),
+    ]},
+    {name:'Rest / Roll',rest:true,lbl:'REST',ex:[]},
+    {name:'Day 3 · Pull + Press',rest:false,lbl:'S&C',ex:[
+      ...wuPush(),
+      {n:'Chin-Ups',       wu:1,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — weighted if easy.'},
+      P(DBB,'Dumbbell Bench Press',2),
+      {n:'Barbell Row',    wu:1,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — compound back builder.'},
+      {n:'Hanging Leg Raise',wu:0,s:3,r:10,rir:rir,rest:60,note:'ACCESSORY — guard strength.'},
+      {n:'Pallof Press',   wu:0,s:2,r:10,rir:rir,rest:60,note:'ACCESSORY — anti-rotation, hits obliques. Both sides.'},
+      fc(2),fp(),
+    ]},
+    {name:'Day 4 · Lunge + Carry',rest:false,lbl:'S&C',ex:[
+      ...wuSquat(),
+      {n:'Zercher Lunge',  wu:0,s:3,r:6,rir:rir,rest:90,note:'POWER — per leg. Clinch strength.'},
+      {n:'Romanian Deadlift',wu:1,s:3,r:8,rir:rir,rest:90,note:'HINGE — 2nd hinge exposure. Hamstring + glute for bridging and sprawl defense. Slow eccentric.'},
+      {n:'One-Arm DB Row', wu:0,s:3,r:8,rir:rir,rest:90,note:'ACCESSORY — unilateral pull. Arm drag strength.'},
+      {n:'Straight Arm Pulldown',wu:0,s:3,r:10,rir:rir,rest:60,note:'ACCESSORY — lat isolation. Heavy hands.'},
+      {n:'Hanging Leg Raise',wu:0,s:3,r:8,rir:rir,rest:60,note:'ACCESSORY — hip flexor + lower abs. Guard retention and triangle setup.'},
+      {n:'Plate Farmer Carry',wu:0,s:3,r:1,rir:1,rest:45,note:'GRIP — pinch grip. ~40m.'},
+      fp(),
+    ]},
+    {name:'Day 5 · Accessory + Core',rest:false,lbl:'S&C',ex:[
+      ...wuGeneral(),
+      {n:'Weighted Lunge',wu:0,s:3,r:8,rir:rir,rest:90,note:'ACCESSORY — leg strength. Gait pattern for shots.'},
+      {n:'Towel Pull-Ups',wu:0,s:3,r:5,rir:rir,rest:90,note:'ACCESSORY — grip + lat combo. Gi grip simulation.'},
+      {n:'Z Press',        wu:1,s:3,r:8,rir:rir,rest:90,note:'ACCESSORY — seated OHP. Core + shoulder. Mimics BJJ seated posture.'},
+      {n:'Pallof Press',   wu:0,s:3,r:10,rir:2,rest:60, note:'ACCESSORY — anti-rotation, hits obliques.'},
+      {n:'Suitcase Carry', wu:0,s:2,r:1,rir:1, rest:45, note:'GRIP — anti-lateral core. Each side ~30m.'},
+      fp(),
+    ]},
+    {name:'Rest / Roll',rest:true,lbl:'REST',ex:[]},
+  ];
+}
+
+
+// Maps accessory exercise names to their AV table key (weekly volume wave).
+// AV supplies SETS every week, and REPS on deload week 6 to force the deload.
+// Rest values come from our rest-rules (AV's rest column is stale, ignored).
+var AV_KEY={
+  'Kettlebell Swing':'sw','Medicine Ball Slam':'sw','Medicine Ball Rotational Slam':'sw',
+  'Pull-Ups':'pu','Towel Pull-Ups':'pu','Lat Pulldown':'pu','Assisted Pull-Ups':'pu','Rope Climb':'pu',
+  'Cable Row':'cr','Barbell Row':'cr','One-Arm DB Row':'cr','Chest-Supported Row':'cr',
+  'Pendlay Row':'cr','T-Bar Row':'cr','Resistance Band Row':'cr','Straight Arm Pulldown':'cr',
+  'Chin-Ups':'cu',
+  'Bulgarian Split Squat':'bss','Weighted Lunge':'bss','Zercher Lunge':'bss',
+  'Reverse Lunge':'bss','Step-Up':'bss','Cossack Squat':'bss','Goblet Squat':'bss',
+  'Overhead Press':'ohp','Z Press':'ohp','Push Press':'ohp','Landmine Press':'ohp','Single-Arm Landmine Press':'ohp',
+  'Dips':'dip','Push-Ups':'dip','Floor Press':'dip',
+  'Pallof Press':'pp','Half-Kneeling Band Chop':'pp','Cable Anti-Rotation Hold':'pp',
+  'Hanging Leg Raise':'hlr','Hanging Knee Raise':'hlr','Ab Wheel Rollout':'aw',
+  'Face Pull':'fp',
+  'Farmer Carry':'fc','Plate Farmer Carry':'fc','Suitcase Carry':'fc',
+  'Zercher Carry':'fc','Overhead Carry':'fc',
+  'Romanian Deadlift':'bss','Dumbbell RDL':'bss','Single-Leg RDL':'bss',
+  'Barbell Hip Thrust':'bss','Single-Leg Glute Bridge':'bss','Nordic Curl':'bss',
+  'Sled Push':'fc','Prowler Drag':'fc','Hill Sprints':'fc',
+};
+
+// Wrapper: applies weekly volume waves + goal-track adjustments to every exercise
+function getProgDays(){
+  var days=getProgDaysRaw();
+  var trk=curTrack();
+  var w=wk();
+  var isDeloadWk=(w===6);
+  var av=AV['w'+Math.min(8,w)];
+
+  return days.map(function(day){
+    if(day.rest||!day.ex)return day;
+    return Object.assign({},day,{ex:day.ex.map(function(e){
+      if(e.isWarmup||e.pct)return e; // skip dynamic warmups and primary lifts
+      var out=e;
+
+      // 1. WEEKLY VOLUME WAVE — sets climb wk1→5, drop wk6 deload, rebuild wk7-8
+      var key=AV_KEY[e.n];
+      if(key&&av&&av[key]){
+        var wave=av[key];
+        var patch={s:wave[0]};
+        // On deload week, also force the lower rep target so the deload actually lands
+        if(isDeloadWk)patch.r=wave[1];
+        out=Object.assign({},out,patch);
+      }
+
+      // 2. EQUIPMENT SWAP (Minimal Equipment track)
+      if(trk.minimal){
+        var swapped=applyTrackSwap(out.n);
+        if(swapped!==out.n)out=Object.assign({},out,{n:swapped});
+      }
+
+      // 3. GOAL TRACK VOLUME — never below 2 sets, Face Pull always full
+      if(trk.volMult!==1&&out.n!=='Face Pull'&&typeof out.s==='number'&&out.s>1){
+        var newSets=Math.max(2,Math.round(out.s*trk.volMult));
+        if(newSets!==out.s)out=Object.assign({},out,{s:newSets});
+      }
+      return out;
+    })});
+  });
+}
+
+// ── STATE ──────────────────────────────────────────────────────
+var S={
+  onboarded:false, name:'Athlete', daysPerWeek:3, track:'inseason',
+  belt:'white', stripes:0, xp:0, lastSessXP:0,
+  dayIdx:0, orms:{}, prs:{}, workouts:[], startDate:null, lastLogin:null,
+  bjjDays:[], bjjLog:[], fatigueLog:[],
+  // Progressive overload tracking
+  // pctOverrides: {exerciseName: pct} — overrides the program's default %1RM
+  // dpState: {exerciseName: {reps, hitTopTwice, weight}} — double progression state for accessories
+  pctOverrides:{}, dpState:{},
+};
+function save(){ try{localStorage.setItem('rs5',JSON.stringify(S));}catch(e){} }
+function load(){ try{var d=localStorage.getItem('rs5');if(d)S=Object.assign({},S,JSON.parse(d));}catch(e){} }
+function td(){ return new Date().toISOString().split('T')[0]; }
+function round25(n){ return Math.round(n/2.5)*2.5; }
+
+// ── BELT CANVAS ────────────────────────────────────────────────
+function rrect(ctx,x,y,w,h,r){
+  r=Math.min(r,w/2,h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();ctx.fill();
+}
+
+function drawBelt(canvas,belt,stripes){
+  try{
+    var W=canvas.width,H=canvas.height;
+    if(!W||!H)return;
+    var ctx=canvas.getContext('2d');
+    ctx.clearRect(0,0,W,H);
+    var R='#c0392b',BK='#0f0f0f';
+    var isBlk=belt.type==='blk';
+    var dan=isBlk?stripes:0;
+    var pw=Math.round(W*(isBlk?0.28:0.22));
+    var bw=W-pw;
+    // Body
+    if(isBlk){
+      if(dan===0){ctx.fillStyle=BK;ctx.fillRect(0,0,Math.round(bw*.82),H);ctx.fillStyle=R;ctx.fillRect(Math.round(bw*.82),0,bw-Math.round(bw*.82),H);}
+      else if(dan<=6){var rf=0.05+dan*.10,bkw=Math.round(bw*(1-rf));ctx.fillStyle=BK;ctx.fillRect(0,0,bkw,H);ctx.fillStyle=R;ctx.fillRect(bkw,0,bw-bkw,H);}
+      else if(dan===7){var q=Math.round(bw/4);[BK,R,BK,R].forEach(function(c,i){ctx.fillStyle=c;ctx.fillRect(i*q,0,i===3?bw-q*3:q,H);});}
+      else if(dan===8){var seg=Math.round(bw/5);[R,BK,R,BK,R].forEach(function(c,i){ctx.fillStyle=c;ctx.fillRect(i*seg,0,i===4?bw-seg*4:seg,H);});}
+      else if(dan===9){var e=Math.round(bw*.08);ctx.fillStyle=BK;ctx.fillRect(0,0,e,H);ctx.fillStyle=R;ctx.fillRect(e,0,bw-e,H);}
+      else{ctx.fillStyle=R;ctx.fillRect(0,0,bw,H);}
+    } else {
+      ctx.fillStyle=belt.color;ctx.fillRect(0,0,bw,H);
+    }
+    // Panel
+    ctx.fillStyle=BK;ctx.fillRect(bw,0,pw,H);
+    // Marks
+    var total=isBlk?10:belt.stripes;
+    var filled=isBlk?dan:stripes;
+    var pad=Math.max(3,Math.round(pw*.08));
+    var uw=pw-pad*2;
+    var mw=Math.max(2,Math.floor(uw/(total+Math.max(1,total-1)*.4)));
+    var gw=total>1?Math.max(1,Math.floor((uw-mw*total)/Math.max(1,total-1))):0;
+    var mh=Math.round(H*.6),my=Math.round((H-mh)/2),mx=bw+pad;
+    for(var i=0;i<total;i++){
+      ctx.fillStyle=i<filled?'#f0ece4':'rgba(255,255,255,0.15)';
+      rrect(ctx,mx,my,mw,mh,2);
+      mx+=mw+gw;
+    }
+  }catch(e){console.warn('drawBelt:',e.message);}
+}
+
+function renderBelt(){
+  var bi=BELTS.findIndex(function(b){return b.name.toLowerCase()===S.belt;});
+  if(bi<0)bi=0;
+  var belt=BELTS[bi];
+
+  // Auto-promote — loop instead of recursion so a huge XP jump can't blow the stack
+  // Also caps at the final belt's max stripes (10th Dan black belt)
+  var guard=0;
+  while(guard++<100){
+    var base=BELTS.slice(0,bi).reduce(function(a,b){return a+b.stripes*b.xpp;},0)+(S.stripes*belt.xpp);
+    var intoCheck=Math.max(0,S.xp-base);
+    if(intoCheck<belt.xpp)break; // not enough to promote
+    if(S.stripes<belt.stripes){
+      S.stripes++;
+    } else if(bi<BELTS.length-1){
+      bi++;belt=BELTS[bi];S.belt=belt.name.toLowerCase();S.stripes=0;
+    } else {
+      // At max belt AND max stripes (10th Dan) — cap here, no further promotion
+      S.stripes=belt.stripes;
+      break;
+    }
+    save();
+  }
+
+  document.getElementById('h-belt-name').textContent=belt.name+' Belt';
+  var sl=belt.type==='blk'?(S.stripes===0?'Black Belt':S.stripes+'th Dan'):(S.stripes===0?'0 stripes':S.stripes+' stripe'+(S.stripes>1?'s':''));
+  document.getElementById('h-belt-stripe').textContent=sl;
+  var baseXP=BELTS.slice(0,bi).reduce(function(a,b){return a+b.stripes*b.xpp;},0)+(S.stripes*belt.xpp);
+  var into=Math.max(0,S.xp-baseXP);
+  // At max belt+stripes, show full bar
+  var atMax=(bi===BELTS.length-1&&S.stripes>=belt.stripes);
+  var pct=atMax?100:Math.min(100,Math.round(into/belt.xpp*100));
+  document.getElementById('h-xp-bar').style.width=pct+'%';
+  document.getElementById('h-xp-lbl').textContent=atMax?'MAX RANK':into.toLocaleString()+' / '+belt.xpp.toLocaleString()+' XP';
+  document.getElementById('h-xp-next-lbl').textContent=atMax?'10th Dan':(belt.type==='blk'?'Next Dan':'Next stripe');
+
+  // Draw canvas
+  var c=document.getElementById('belt-canvas');
+  if(!c)return;
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      try{
+        var W=c.parentElement?c.parentElement.offsetWidth:300;
+        c.width=Math.max(200,W)*2;c.height=52;
+        drawBelt(c,belt,S.stripes);
+      }catch(e){console.warn('canvas draw:',e.message);}
+    });
+  });
+}
+
+// ── GOAL TRACKS ────────────────────────────────────────────────
+// Emphasis layer on top of the existing 9-week block. Adjusts volume
+// and intensity without changing program structure.
+//   volMult   — multiplies accessory sets (fewer sets = less fatigue)
+//   pctAdj    — adds/subtracts from primary lift %1RM
+//   minimal   — restricts to dumbbell/band/bodyweight equivalents
+var TRACKS={
+  offseason:{name:'Off-Season Strength',volMult:1.0, pctAdj:0,  minimal:false,
+    blurb:'Full volume, heaviest loads.'},
+  inseason: {name:'In-Season',          volMult:0.7, pctAdj:-3, minimal:false,
+    blurb:'Reduced volume to protect mat performance.'},
+  comp:     {name:'Comp Prep',          volMult:0.6, pctAdj:+3, minimal:false,
+    blurb:'Higher intensity, lower volume. Peaking.'},
+  minimal:  {name:'Minimal Equipment',  volMult:0.9, pctAdj:0,  minimal:true,
+    blurb:'Dumbbells, bands, bodyweight only.'},
+};
+function curTrack(){ return TRACKS[S.track]||TRACKS.inseason; }
+
+// Equipment-limited swaps for Minimal Equipment track.
+// [replacement, scaleFactor] — scale converts the original lift's 1RM into a
+// sensible starting 1RM for the replacement (e.g. a DB RDL is far lighter than
+// a trap bar deadlift). Athlete can override anytime in the ORM editor.
+var MINIMAL_SWAPS={
+  'Trap Bar Deadlift':['Dumbbell RDL',0.50],
+  'Sumo Deadlift':['Dumbbell RDL',0.50],
+  'Conventional Deadlift':['Dumbbell RDL',0.50],
+  'Romanian Deadlift':['Dumbbell RDL',0.85],
+  'Barbell Hip Thrust':['Single-Leg Glute Bridge',0.25],
+  'Zercher Squat':['Goblet Squat',0.45],
+  'Front Squat':['Goblet Squat',0.45],
+  'Back Squat':['Goblet Squat',0.40],
+  'Zercher Lunge':['Weighted Lunge',0.50],
+  'Barbell Row':['One-Arm DB Row',0.35],
+  'Pendlay Row':['One-Arm DB Row',0.35],
+  'T-Bar Row':['One-Arm DB Row',0.35],
+  'Cable Row':['Resistance Band Row',1.0],
+  'Lat Pulldown':['Resistance Band Row',1.0],
+  'Straight Arm Pulldown':['Resistance Band Row',1.0],
+  'Barbell Bench Press':['Dumbbell Bench Press',0.40],
+  'Push Press':['Overhead Press',0.85],
+  'Cable Anti-Rotation Hold':['Half-Kneeling Band Chop',1.0],
+  'Sled Push':['Hill Sprints',1.0],
+  'Prowler Drag':['Hill Sprints',1.0],
+  'Plate Farmer Carry':['Farmer Carry',1.0],
+  'Zercher Carry':['Farmer Carry',1.0],
+};
+function applyTrackSwap(name){
+  if(!curTrack().minimal)return name;
+  var s=MINIMAL_SWAPS[name];
+  return s?s[0]:name;
+}
+// Returns {from, scale} if this exercise is the result of a minimal swap
+function minimalSwapSource(swappedName){
+  if(!curTrack().minimal)return null;
+  for(var orig in MINIMAL_SWAPS){
+    if(MINIMAL_SWAPS[orig][0]===swappedName)return {from:orig,scale:MINIMAL_SWAPS[orig][1]};
+  }
+  return null;
+}
+
+// ── ONBOARDING ─────────────────────────────────────────────────
+var obDays=3;
+var obTrack='inseason';
+function obSelTrack(el){
+  document.querySelectorAll('#ob-track .trk').forEach(function(t){t.classList.remove('sel');});
+  el.classList.add('sel');
+  obTrack=el.dataset.t;
+}
+function obGo(n){
+  if(n===2){
+    var nm=document.getElementById('ob-nm').value.trim();
+    if(!nm){alert('Enter your name');return;}
+    S.name=nm;
+  }
+  document.querySelectorAll('.obs').forEach(function(x){x.classList.remove('on');});
+  document.getElementById('obs'+n).classList.add('on');
+}
+function obSelDay(el){
+  document.querySelectorAll('#ob-days .chip').forEach(function(c){c.classList.remove('sel');});
+  el.classList.add('sel');
+  obDays=parseInt(el.dataset.v);
+}
+function obToggleBJJ(el){el.classList.toggle('sel');}
+function obDone(){
+  S.onboarded=true;
+  S.daysPerWeek=obDays;
+  S.track=obTrack;
+  S.belt='white';S.stripes=0;S.xp=0;S.dayIdx=0;
+  S.startDate=td();
+  // Save selected BJJ days
+  S.bjjDays=Array.from(document.querySelectorAll('#ob-bjj .chip.sel')).map(function(c){return c.dataset.d;});
+  save();
+  document.getElementById('ob').classList.remove('open');
+  initApp();
+}
+
+// ── READINESS → DECISION ───────────────────────────────────────
+// Turns a simple 3-way readiness pick into a real training decision
+// that modifies today's loads. Stored per-day so it persists.
+// 1 = Beat up → Recovery (reduce load ~10%, cut backoffs)
+// 2 = Normal → Push as programmed
+// 3 = Primed → green light to push top set harder
+
+function setReadiness(level,el){
+  // Highlight selected chip
+  document.querySelectorAll('#td-readiness .chip').forEach(function(c){c.classList.remove('sel');});
+  if(el)el.classList.add('sel');
+
+  // Store today's readiness
+  if(!S.readinessLog)S.readinessLog={};
+  S.readinessLog[td()]=level;
+  save();
+
+  // Show the decision output
+  var out=document.getElementById('td-readiness-out');
+  out.style.display='block';
+  var decision, color, bg, border, action;
+
+  if(level===1){
+    decision='RECOVERY DAY';
+    color='#e88a7d'; bg='rgba(192,57,43,.1)'; border='rgba(192,57,43,.35)';
+    action='Loads reduced ~10% and backoff sets trimmed. Move well, don\'t grind. If a lift feels rough, drop it and roll instead.';
+  } else if(level===2){
+    decision='TRAIN AS PROGRAMMED';
+    color='#e2bf73'; bg='rgba(212,162,58,.1)'; border='rgba(212,162,58,.35)';
+    action='You\'re good to go. Hit your prescribed weights and leave 1-2 reps in the tank on the top set.';
+  } else {
+    decision='PUSH IT';
+    color='#5fd592'; bg='rgba(39,174,96,.1)'; border='rgba(39,174,96,.35)';
+    action='Feeling primed — you can chase the top set hard today. If it moves fast, add a little weight.';
+  }
+
+  out.style.background=bg;
+  out.style.border='1px solid '+border;
+  out.innerHTML='<div style="font-weight:900;color:'+color+';margin-bottom:4px;">'+decision+'</div>'+
+    '<div style="color:var(--mu);">'+action+'</div>';
+
+  // Re-render preview so weights reflect the readiness adjustment
+  renderTodayPreview();
+}
+
+// Get today's readiness multiplier for loads (1 = no change)
+function readinessMult(){
+  var lvl=S.readinessLog&&S.readinessLog[td()];
+  if(lvl===1)return 0.90; // recovery: -10%
+  return 1; // normal / primed: no auto-reduction
+}
+function readinessLevel(){
+  return (S.readinessLog&&S.readinessLog[td()])||0;
+}
+
+// ── BJJ SESSION LOGGING ────────────────────────────────────────
+function logBJJ(){
+  if(!S.bjjLog)S.bjjLog=[];
+  var today=td();
+  // Prevent double-logging same day
+  if(S.bjjLog.length&&S.bjjLog[S.bjjLog.length-1]===today){
+    alert('BJJ already logged for today.');return;
+  }
+  S.bjjLog.push(today);
+  save();
+  // Show confirmation
+  var el=document.getElementById('h-bjj-today');
+  if(el)el.style.display='flex';
+}
+
+// ── FATIGUE SLIDER ──────────────────────────────────────────────
+var FATIGUE_LABELS=['','Destroyed 😩','Rough 😓','Okay 😐','Good 💪','Excellent 🔥'];
+function updateFatigueUI(val){
+  var v=parseInt(val);
+  var el=document.getElementById('fatigue-emoji');
+  var ll=document.getElementById('fatigue-label');
+  var emojis=['','😩','😓','😐','💪','🔥'];
+  var labels=['','Destroyed','Rough','Okay','Good','Excellent'];
+  if(el)el.textContent=emojis[v]||'😐';
+  if(ll)ll.textContent=labels[v]||'Okay';
+}
+function openFatigueSlider(){
+  var sl=document.getElementById('fatigue-slider');
+  if(sl){sl.value=3;updateFatigueUI(3);}
+  openOv('ov-fatigue');
+}
+function saveFatigue(){
+  if(!S.fatigueLog)S.fatigueLog=[];
+  var val=parseInt(document.getElementById('fatigue-slider').value)||3;
+  S.fatigueLog.push({date:td(),score:val});
+  save();
+  closeOv('ov-fatigue');
+  goScr('home');
+}
+
+// ── SCREENS ────────────────────────────────────────────────────
+function goScr(id){
+  document.querySelectorAll('.scr').forEach(function(s){s.classList.remove('on');});
+  document.querySelectorAll('.nb').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('scr-'+id).classList.add('on');
+  var nb=document.getElementById('nb-'+id);
+  if(nb)nb.classList.add('on');
+  if(id==='home')renderHome();
+  if(id==='today')renderToday();
+  if(id==='program')renderProgram();
+  if(id==='progress')renderProgress();
+}
+
+// ── INIT ───────────────────────────────────────────────────────
+function initApp(){
+  if(S.lastLogin!==td()){S.xp=(S.xp||0)+10;S.lastLogin=td();save();}
+  goScr('home');
+}
+
+// ── HOME ───────────────────────────────────────────────────────
+function renderHome(){
+  var h=new Date().getHours();
+  var g=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  document.getElementById('h-greet').textContent=g+', '+S.name;
+  var w=wk();
+  var wc=w===9?'#e2bf73':w===6?'#3498db':'var(--red)';
+  var wl=w===9?'BLOCK · WEEK 9 — TEST WEEK':w===6?'BLOCK · WEEK '+w+' DELOAD':'BLOCK · WEEK '+w+' OF 9';
+  var wlEl=document.getElementById('h-week-lbl');
+  wlEl.textContent=wl;wlEl.style.color=wc;
+  // Banner
+  var days=getProgDays();
+  var day=days[S.dayIdx%days.length];
+  var bn=document.getElementById('h-banner');
+  var btn=document.getElementById('h-bn-btn');
+  if(day.rest){
+    bn.className='banner rest';
+    document.getElementById('h-bn-h').textContent='Rest day';
+    document.getElementById('h-bn-s').textContent='Roll light or drill technique.';
+    btn.style.display='none';
+  } else {
+    bn.className='banner';
+    document.getElementById('h-bn-h').textContent='Today is a lift day';
+    document.getElementById('h-bn-s').textContent=day.name+' · '+day.ex.length+' exercises';
+    btn.style.display='';
+  }
+  // Goal track badge
+  var tEl=document.getElementById('h-track-lbl');
+  if(tEl)tEl.textContent=curTrack().name;
+  renderBelt();
+  // BJJ logged today indicator
+  var bjjToday=S.bjjLog&&S.bjjLog.length&&S.bjjLog[S.bjjLog.length-1]===td();
+  var bjjEl=document.getElementById('h-bjj-today');
+  if(bjjEl)bjjEl.style.display=bjjToday?'flex':'none';
+  // Stats
+  var totalSets=S.workouts.reduce(function(a,wo){return a+wo.ex.reduce(function(b,e){return b+e.sets.filter(function(s){return s.done;}).length;},0);},0);
+  document.getElementById('h-txp').textContent=(S.xp||0).toLocaleString();
+  document.getElementById('h-sess').textContent=S.workouts.length;
+  document.getElementById('h-sets').textContent=totalSets;
+  document.getElementById('h-prs').textContent=Object.keys(S.prs||{}).length;
+  // ORMs
+  var ODEFS={'Trap Bar Deadlift':0,'Zercher Squat':0,'Dumbbell Bench Press':0};
+  var orms=Object.assign({},ODEFS,S.orms||{});
+  document.getElementById('h-orm-list').innerHTML=Object.keys(ODEFS).map(function(k){
+    var v=orms[k];
+    return '<div class="prf"><span>'+k+'</span><span style="font-weight:700;">'+(v?v+' lb':'—')+'</span></div>';
+  }).join('');
+  // Recent
+  var recent=S.workouts.slice(-5).reverse();
+  document.getElementById('h-recent').innerHTML=recent.length?recent.map(function(wo){
+    var sets=wo.ex.reduce(function(a,e){return a+e.sets.filter(function(s){return s.done;}).length;},0);
+    return '<div class="prf"><span style="font-weight:700;">'+wo.dayName+'</span><span style="color:var(--mu);">'+fmtD(wo.date)+' · '+sets+' sets · '+(wo.dMin||0)+'min</span></div>';
+  }).join(''):'<div style="color:var(--mu);font-size:var(--sm);">No sessions yet. Get after it.</div>';
+}
+
+// ── TODAY ──────────────────────────────────────────────────────
+function markRestDay(){
+  S.dayIdx=(S.dayIdx||0)+1;
+  save();
+  renderToday();
+  renderHome();
+}
+
+function renderToday(){
+  var days=getProgDays();
+  var day=days[S.dayIdx%days.length];
+  var w=wk();
+  document.getElementById('td-tag').textContent='WEEK '+w+' · DAY '+((S.dayIdx%days.length)+1);
+  document.getElementById('td-title').textContent=day.name;
+  document.getElementById('td-sub').textContent=day.rest?'Rest / Roll light':day.ex.length+' exercises';
+  var startBtn=document.getElementById('td-start-btn');
+  startBtn.style.display=day.rest?'none':'';
+
+  // Readiness card — only on lift days
+  var rdCard=document.getElementById('td-readiness');
+  if(day.rest||!day.ex.length){
+    rdCard.style.display='none';
+  } else {
+    rdCard.style.display='';
+    // Restore previously selected readiness for today
+    var lvl=readinessLevel();
+    document.querySelectorAll('#td-readiness .chip').forEach(function(c){
+      c.classList.toggle('sel',parseInt(c.dataset.rd)===lvl);
+    });
+    if(lvl){
+      // Re-show the decision output
+      var chip=document.querySelector('#td-readiness .chip[data-rd="'+lvl+'"]');
+      if(chip)setReadiness(lvl,chip);
+    } else {
+      document.getElementById('td-readiness-out').style.display='none';
+    }
+  }
+
+  // Rest day preview
+  var prev=document.getElementById('td-preview');
+  if(day.rest||!day.ex.length){
+    var daysArr=days;
+    var nextLift=null;
+    for(var i=1;i<=daysArr.length;i++){
+      var nd=daysArr[(S.dayIdx+i)%daysArr.length];
+      if(!nd.rest){nextLift=nd;break;}
+    }
+    prev.innerHTML=
+      '<div style="text-align:center;padding:var(--g4) 0 var(--g3);">'+
+        '<div style="font-size:2rem;margin-bottom:var(--g3);">🛌</div>'+
+        '<div style="font-weight:700;margin-bottom:var(--g2);">Rest & Recover</div>'+
+        '<div style="font-size:var(--sm);color:var(--mu);margin-bottom:var(--g4);line-height:1.6;">Roll light, drill technique,<br>or just rest. Recovery is training.</div>'+
+        (nextLift?'<div style="font-size:var(--xs);color:var(--mu2);margin-bottom:var(--g5);">Next up: <strong style="color:var(--txt);">'+nextLift.name+'</strong></div>':'')+
+        '<button class="btn btn-p" onclick="markRestDay()" style="max-width:280px;margin:0 auto;">Mark Rest Day ✓</button>'+
+      '</div>';
+    document.getElementById('td-perf').innerHTML='';
+    return;
+  }
+
+  renderTodayPreview();
+
+  // Last time
+  var perf=document.getElementById('td-perf');
+  perf.innerHTML=day.ex.map(function(e){
+    var best=bestFor(e.n);
+    return '<div class="pl"><span>'+e.n+'</span><span style="color:var(--mu2);">'+(best||'No data yet')+'</span></div>';
+  }).join('');
+}
+
+// Resolve an exercise's effective 1RM, including Minimal Equipment scaled fallback
+function effectiveORM(name){
+  var o=S.orms[name]||0;
+  if(!o){
+    var src=minimalSwapSource(name);
+    if(src&&S.orms[src.from])o=round25(S.orms[src.from]*src.scale);
+  }
+  return o;
+}
+
+function renderTodayPreview(){
+  var days=getProgDays();
+  var day=days[S.dayIdx%days.length];
+  if(day.rest||!day.ex.length)return;
+  var mult=readinessMult();
+  var lvl=readinessLevel();
+  var prev=document.getElementById('td-preview');
+  prev.innerHTML=day.ex.map(function(e,i){
+    var orm=effectiveORM(e.n);
+    var wStr='';
+    if(e.pct&&orm){
+      var base=orm*e.pct/100;
+      var adjusted=round25(base*mult);
+      if(lvl===1&&mult<1){
+        // Show reduced weight for recovery
+        wStr=adjusted+' lb <span style="color:#e88a7d;">(recovery)</span>';
+      } else {
+        wStr=round25(base)+' lb ('+e.pct+'%)';
+      }
+    }
+    return '<div class="pl"><span style="font-weight:500;">'+String.fromCharCode(65+i)+'. '+e.n+'</span><span style="color:var(--mu2);">'+(wStr||e.s+'×'+e.r)+'</span></div>';
+  }).join('');
+}
+
+function bestFor(name){
+  var best=null;
+  (S.workouts||[]).forEach(function(wo){
+    wo.ex.forEach(function(e){
+      if(e.n===name){
+        e.sets.filter(function(s){return s.done&&s.w;}).forEach(function(s){
+          var wStr=parseFloat(s.w);
+          if(!best||wStr>parseFloat(best.split('×')[1]||0))best=s.r+'×'+wStr+' lb';
+        });
+      }
+    });
+  });
+  return best;
+}
+
+// ── PROGRAM ────────────────────────────────────────────────────
+function renderProgram(){
+  var days=getProgDays();
+  var cur=S.dayIdx%days.length;
+  var w=wk();
+  document.getElementById('prog-week-lbl').textContent='WEEK '+w+' OF 9 · '+(S.daysPerWeek)+'-DAY PROGRAM';
+  document.getElementById('prog-days').innerHTML=days.map(function(day,i){
+    var isTd=i===cur;
+    var exRows=day.ex.map(function(e){
+      var w2=effectiveORM(e.n);
+      var wStr=e.pct&&w2?e.s+'×'+e.r+' @ '+round25(w2*e.pct/100)+' lb':e.s+'×'+e.r;
+      return '<div class="pl"><span>'+e.n+'</span><span style="color:var(--mu2);">'+wStr+'</span></div>';
+    }).join('');
+    var badge=day.rest?'<span class="bdg bdg-o">REST</span>':'<span class="bdg bdg-r">S&C</span>';
+    return '<div class="wdc'+(isTd?' td':'')+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:'+(day.ex.length?'var(--g3)':'0')+';">'+'<div style="font-weight:900;">'+day.name+'</div>'+badge+'</div>'+(exRows||'<div style="color:var(--mu);font-size:var(--sm);">Rest / drill / roll light</div>')+'</div>';
+  }).join('');
+}
+
+// ── PROGRESS ───────────────────────────────────────────────────
+function renderProgress(){
+  var totalSets=0,totalReps=0,totalVol=0;
+  (S.workouts||[]).forEach(function(wo){
+    wo.ex.forEach(function(e){
+      e.sets.filter(function(s){return s.done;}).forEach(function(s){
+        totalSets++;
+        totalReps+=(parseFloat(s.r)||0);
+        totalVol+=(parseFloat(s.w)||0)*(parseFloat(s.r)||0);
+      });
+    });
+  });
+  document.getElementById('pr-sess').textContent=S.workouts.length;
+  document.getElementById('pr-sets').textContent=totalSets.toLocaleString();
+  document.getElementById('pr-reps').textContent=totalReps.toLocaleString();
+  document.getElementById('pr-vol').textContent=(totalVol/2000).toFixed(1);
+  var prs=Object.entries(S.prs||{});
+  document.getElementById('pr-list').innerHTML=prs.length?prs.map(function(p){
+    return '<div class="prf"><span>'+p[0]+'</span><span style="font-weight:700;color:var(--gold);">'+p[1]+' lb 🏆</span></div>';
+  }).join(''):'<div style="color:var(--mu);font-size:var(--sm);">Log workouts to set PRs.</div>';
+  var hist=S.workouts.slice(-20).reverse();
+  document.getElementById('pr-history').innerHTML=hist.length?hist.map(function(wo){
+    var sets=wo.ex.reduce(function(a,e){return a+e.sets.filter(function(s){return s.done;}).length;},0);
+    var vol=wo.ex.reduce(function(a,e){return a+e.sets.reduce(function(b,s){return b+(parseFloat(s.w)||0)*(parseFloat(s.r)||0);},0);},0);
+    return '<div class="prf"><div><div style="font-weight:700;">'+wo.dayName+'</div><div style="font-size:var(--xs);color:var(--mu);">'+fmtD(wo.date)+' · '+sets+' sets · '+(wo.dMin||0)+'min · '+Math.round(vol).toLocaleString()+' lb</div></div><span class="bdg bdg-r">✓</span></div>';
+  }).join(''):'<div style="color:var(--mu);font-size:var(--sm);">No sessions yet.</div>';
+}
+
+// ── WORKOUT LOGGER ─────────────────────────────────────────────
+var AWO=null,woInt=null,woStart=null;
+
+function buildSets(e){
+  // DYNAMIC WARMUP items — no weight/reps tracking, just a single check-off
+  if(e.isWarmup){
+    return [{w:'',r:e.r,done:false,type:'dynwu',lbl:''}];
+  }
+  var sets=[];
+  // Readiness multiplier — recovery day reduces loads ~10%
+  var rmult=readinessMult();
+  var recoveryMode=readinessLevel()===1;
+  // Get ORM — first check manually set, then auto-estimate from best logged set
+  var orm=effectiveORM(e.n);
+  if(!orm){
+    // Auto-estimate from best logged set using Epley formula
+    var bestW=0,bestR=0;
+    (S.workouts||[]).forEach(function(wo){
+      wo.ex.forEach(function(ex){
+        if(ex.n===e.n){
+          ex.sets.filter(function(s){return s.done&&s.w&&s.r&&s.type!=='wu';}).forEach(function(s){
+            var w=parseFloat(s.w)||0,r=parseFloat(s.r)||0;
+            if(w>0&&r>0){
+              var est=r===1?w:Math.round(w*(1+r/30)/2.5)*2.5;
+              if(est>bestW){bestW=est;bestR=r;}
+            }
+          });
+        }
+      });
+    });
+    if(bestW>0) orm=bestW; // use estimated 1RM
+  }
+  var pyramidPcts=[0,40,55,70,80];
+
+  if(e.pct){
+    var effectivePct=(S.pctOverrides&&S.pctOverrides[e.n])||e.pct;
+    var wuCount=Math.min(e.wu||4,pyramidPcts.length);
+    for(var i=0;i<wuCount;i++){
+      var p=pyramidPcts[i];
+      var w=p===0?45:orm?round25(orm*(p/100)):0;
+      var r=i===0?10:i===1?5:i===2?3:2;
+      sets.push({w:w||'',r:r,done:false,type:'wu',lbl:'W'+(i+1),rest:60});
+    }
+    sets.push({
+      w:orm?round25(orm*(effectivePct/100)*rmult):'',
+      r:e.r,done:false,type:'top',lbl:'TOP',rir:'',
+      noOrm:!S.orms[e.n]&&!orm,rest:180
+    });
+    if(e.backoff){
+      // On recovery days, cut backoff sets in half (min 1)
+      var boSets=recoveryMode?Math.max(1,Math.floor(e.backoff.s/2)):e.backoff.s;
+      for(var j=0;j<boSets;j++){
+        sets.push({w:orm?round25(orm*(e.backoff.pct/100)*rmult):'',r:e.backoff.r,done:false,type:'bo',lbl:'B'+(j+1),rest:120});
+      }
+    }
+  } else {
+    // ACCESSORY — use dpState if available, otherwise last logged weight for this exercise
+    // EXCEPTION: on deload week (6), the program's reduced reps win so the deload actually lands
+    var isDeloadWeek=(wk()===6);
+    var dp=S.dpState&&S.dpState[e.n];
+    var targetReps=(dp&&!isDeloadWeek)?dp.reps:e.r;
+    var targetW='';
+    if(dp&&dp.w){
+      // Deload also drops the weight ~15%
+      targetW=isDeloadWeek?round25(dp.w*0.85):dp.w;
+    } else {
+      // Find last logged weight for this exercise
+      var lastW=0;
+      (S.workouts||[]).forEach(function(wo){
+        wo.ex.forEach(function(ex){
+          if(ex.n===e.n){
+            ex.sets.filter(function(s){return s.done&&s.w&&s.type!=='wu';}).forEach(function(s){
+              var w=parseFloat(s.w)||0;
+              if(w>lastW)lastW=w;
+            });
+          }
+        });
+      });
+      if(lastW>0)targetW=lastW;
+    }
+    // Apply recovery reduction to accessory weights too
+    if(recoveryMode&&targetW){targetW=round25(parseFloat(targetW)*rmult);}
+    // On recovery days, drop one set from accessories (min 2)
+    var accSets=recoveryMode?Math.max(2,e.s-1):e.s;
+    if(e.wu){sets.push({w:targetW,r:targetReps,done:false,type:'wu',lbl:'W1'});}
+    for(var k=0;k<accSets;k++){
+      sets.push({w:targetW,r:targetReps,done:false,type:'work',lbl:''+(k+1)});
+    }
+  }
+  return sets;
+}
+
+function startWorkout(){
+  var days=getProgDays();
+  var day=days[S.dayIdx%days.length];
+  if(day.rest)return;
+  AWO={date:td(),dayName:day.name,ex:day.ex.map(function(e){return{n:e.n,sets:buildSets(e),rest:e.rest||90,note:e.note||'',isPrimary:!!e.pct,isWarmup:!!e.isWarmup};}),dMin:0};
+  launchWO(day.name);
+}
+
+function startCustom(){
+  AWO={date:td(),dayName:'Custom',ex:[],dMin:0};
+  launchWO('Custom Workout');
+  openOv('ov-addex');
+}
+
+// ── BUILD FROM MY EXERCISES ────────────────────────────────────
+var buildMatched=[]; // holds matched exercises pending confirmation
+
+function openBuild(){
+  document.getElementById('build-input').value='';
+  document.getElementById('build-results').innerHTML='';
+  buildMatched=[];
+  openOv('ov-build');
+}
+
+function processBuildInput(){
+  var raw=document.getElementById('build-input').value||'';
+  var lines=raw.split('\n').map(function(l){return l.trim();}).filter(function(l){return l.length>0;});
+  if(!lines.length){
+    document.getElementById('build-results').innerHTML='<div style="color:var(--mu);font-size:var(--sm);">Type at least one exercise above.</div>';
+    return;
+  }
+  buildMatched=[];
+  var rowsHTML='';
+  var seen={}; // avoid duplicate exercises
+  lines.forEach(function(line){
+    var m=matchExercise(line);
+    if(m&&!seen[m.matched]){
+      seen[m.matched]=true;
+      buildMatched.push(m.matched);
+      var labelNote=m.exact?'':'→ mapped from "'+(m.original||line)+'"';
+      rowsHTML+='<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--ln);">'+
+        '<div style="flex:1;">'+
+          '<div style="font-weight:700;font-size:var(--sm);">'+m.matched+'</div>'+
+          (labelNote?'<div style="font-size:var(--xs);color:var(--gold);margin-top:1px;">'+labelNote+'</div>':'<div style="font-size:var(--xs);color:#5fd592;margin-top:1px;">✓ exact match</div>')+
+        '</div>'+
+        '<span class="bdg bdg-r" style="flex-shrink:0;">'+patternOf(m.matched)+'</span>'+
+      '</div>';
+    } else if(!m){
+      rowsHTML+='<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--ln);opacity:.5;">'+
+        '<div style="flex:1;"><div style="font-weight:700;font-size:var(--sm);">'+line+'</div>'+
+        '<div style="font-size:var(--xs);color:var(--mu2);margin-top:1px;">no grappler equivalent — skipped</div></div>'+
+        '<span style="color:var(--mu2);font-size:var(--xs);">✕</span>'+
+      '</div>';
+    }
+  });
+
+  if(!buildMatched.length){
+    document.getElementById('build-results').innerHTML=rowsHTML+
+      '<div style="color:var(--mu);font-size:var(--sm);margin-top:var(--g3);">No exercises matched. Try more common names (e.g. "bench press", "squat", "row").</div>';
+    return;
+  }
+
+  document.getElementById('build-results').innerHTML=
+    '<div class="clbl">MATCHED — '+buildMatched.length+' EXERCISE'+(buildMatched.length>1?'S':'')+'</div>'+
+    rowsHTML+
+    '<div style="font-size:var(--xs);color:var(--mu2);margin:var(--g3) 0;font-style:italic;">Face Pull will be added as a finisher. Sets/reps auto-set — adjust in the workout.</div>'+
+    '<button class="btn btn-p" onclick="startBuiltWorkout()" style="margin-top:var(--g2);">Start This Workout →</button>';
+}
+
+function patternOf(exName){
+  var e=EX_LIB.find(function(x){return x.n===exName;});
+  var c=e?e.c:'';
+  if(c==='Vertical Pull'||c==='Horizontal Pull')return 'PULL';
+  if(c==='Carry & Grip')return 'GRIP';
+  return c.toUpperCase();
+}
+
+function startBuiltWorkout(){
+  if(!buildMatched.length)return;
+  // Ensure Face Pull finisher is included (prehab, always)
+  var exList=buildMatched.slice();
+  if(exList.indexOf('Face Pull')===-1)exList.push('Face Pull');
+
+  AWO={date:td(),dayName:'My Custom Session',ex:exList.map(function(name){
+    var sch=defaultScheme(name);
+    var e=EX_LIB.find(function(x){return x.n===name;});
+    var sets=[];
+    for(var i=0;i<sch.s;i++){
+      sets.push({w:S.orms[name]||'',r:sch.r,done:false,type:'work',lbl:''+(i+1)});
+    }
+    return {n:name,sets:sets,rest:sch.rest,note:e?e.note:'',isPrimary:false,isWarmup:false};
+  }),dMin:0};
+
+  closeOv('ov-build');
+  launchWO('My Custom Session');
+}
+
+function launchWO(title){
+  woStart=Date.now();
+  document.querySelectorAll('.scr').forEach(function(s){s.classList.remove('on');});
+  document.getElementById('scr-wo').classList.add('on');
+  document.getElementById('main-nav').style.display='none';
+  document.getElementById('wo-title').textContent=title;
+  renderWO();
+  clearInterval(woInt);
+  woInt=setInterval(function(){
+    var e=Math.floor((Date.now()-woStart)/1000),m=Math.floor(e/60),s=e%60;
+    document.getElementById('wo-timer').textContent=m+':'+(s<10?'0':'')+s;
+  },1000);
+}
+
+function renderWO(){
+  var c=document.getElementById('wo-blocks');
+  if(!AWO||!AWO.ex.length){c.innerHTML='<div style="color:var(--mu);padding:var(--g4) 0;">Add exercises to begin.</div>';return;}
+
+  // Split into dynamic warmup items (grouped together at top) and real exercises
+  var warmupItems=[],realEx=[];
+  AWO.ex.forEach(function(ex,i){ (ex.isWarmup?warmupItems:realEx).push({ex:ex,idx:i}); });
+
+  var warmupHTML='';
+  if(warmupItems.length){
+    warmupHTML='<div class="ex-b" style="background:var(--sf2);border-color:var(--ln2);">'+
+      '<div style="display:flex;align-items:center;gap:var(--g2);margin-bottom:var(--g3);">'+
+        '<span style="font-size:1.1rem;">🔥</span>'+
+        '<div style="font-weight:900;font-size:var(--sm);">Dynamic Warmup</div>'+
+      '</div>'+
+      warmupItems.map(function(item){
+        var ex=item.ex,ei=item.idx,s=ex.sets[0];
+        return '<div style="display:flex;align-items:center;gap:var(--g3);padding:9px 0;border-bottom:1px solid var(--ln);">'+
+          '<div class="sc'+(s.done?' done':'')+'" onclick="togS('+ei+',0)" style="flex-shrink:0;">'+(s.done?'✓':'○')+'</div>'+
+          '<div style="flex:1;">'+
+            '<div style="font-weight:600;font-size:var(--sm);">'+ex.n+'</div>'+
+            '<div style="font-size:var(--xs);color:var(--mu);margin-top:1px;">'+s.r+'</div>'+
+          '</div>'+
+        '</div>';
+      }).join('')+
+      '<div style="font-size:var(--xs);color:var(--mu2);margin-top:var(--g2);font-style:italic;">Quick mobility — no weight, no rest timer. Check off and move to your first lift.</div>'+
+    '</div>';
+  }
+
+  var exHTML=realEx.map(function(item){
+    var ex=item.ex,ei=item.idx;
+    var restLbl=ex.rest>=180?Math.floor(ex.rest/60)+'-'+(Math.floor(ex.rest/60)+1)+' min':ex.rest+'s';
+    var setRows=ex.sets.map(function(s,si){
+      var isWU=s.type==='wu',isTop=s.type==='top',isBO=s.type==='bo';
+      var topStyle=isTop?'border-color:rgba(212,162,58,.5);':'';
+      var lblColor=isTop?'#e2bf73':'var(--mu2)';
+      var tag=isTop?'<span style="font-size:9px;color:#e2bf73;font-weight:700;background:rgba(212,162,58,.15);padding:1px 5px;border-radius:4px;margin-left:3px;">TOP</span>':
+               isBO?'<span style="font-size:9px;color:var(--mu);font-weight:700;background:var(--sf3);padding:1px 5px;border-radius:4px;margin-left:3px;">-OFF</span>':'';
+      // TOP set: 5-col grid with RIR input
+      if(isTop){
+        var plateLineTop=(isBarbellEx(ex.n)&&s.w)?
+          '<div style="font-size:var(--xs);color:var(--gold);margin-top:5px;padding-left:2px;">🔩 '+plateBreakdownStr(s.w)+'</div>':'';
+        return '<div style="margin-bottom:var(--g2);">'+
+          '<div style="display:grid;grid-template-columns:28px 1fr 1fr 52px 40px;gap:var(--g2);align-items:center;">'+
+            '<div style="font-size:var(--xs);color:'+lblColor+';font-weight:700;text-align:center;">TOP</div>'+
+            '<input class="si" type="number" inputmode="decimal" min="0" step="2.5" value="'+(s.w||'')+'" placeholder="lb" onchange="updS('+ei+','+si+',\'w\',this.value);renderWO();" style="'+topStyle+'">'+
+            '<input class="si" type="number" inputmode="numeric" min="0" value="'+(s.r||'')+'" placeholder="reps" onchange="updS('+ei+','+si+',\'r\',this.value)">'+
+            '<input class="si" type="number" inputmode="numeric" min="0" max="10" value="'+(s.rir!=null&&s.rir!==''?s.rir:'')+'" placeholder="RIR" onchange="updS('+ei+','+si+',\'rir\',this.value)" style="font-size:var(--xs);background:rgba(212,162,58,.07);border-color:rgba(212,162,58,.3);">'+
+            '<div class="sc'+(s.done?' done':'')+'" onclick="togS('+ei+','+si+')">'+(s.done?'✓':'○')+'</div>'+
+          '</div>'+
+          '<div style="display:grid;grid-template-columns:28px 1fr 1fr 52px 40px;gap:var(--g2);margin-top:2px;">'+
+            '<span></span><span style="font-size:9px;color:var(--mu2);text-align:center;">LBS</span>'+
+            '<span style="font-size:9px;color:var(--mu2);text-align:center;">REPS</span>'+
+            '<span style="font-size:9px;color:rgba(212,162,58,.6);text-align:center;">RIR</span><span></span>'+
+          '</div>'+
+          plateLineTop+
+        '</div>';
+      }
+      var plateLine=(isBarbellEx(ex.n)&&s.w&&!isWU)?
+        '<div style="grid-column:2/3;font-size:9px;color:var(--gold);margin-top:2px;">🔩 '+plateBreakdownStr(s.w)+'</div>':'';
+      return '<div class="sr" style="'+(isWU?'opacity:.6':'')+'display:grid;grid-template-columns:28px 1fr 1fr 40px;gap:var(--g2);align-items:start;">'+
+        '<div style="font-size:var(--xs);color:'+lblColor+';font-weight:700;text-align:center;padding-top:9px;">'+s.lbl+'</div>'+
+        '<div><input class="si" type="number" inputmode="decimal" min="0" step="2.5" value="'+(s.w||'')+'" placeholder="lb" onchange="updS('+ei+','+si+',\'w\',this.value);renderWO();" style="'+topStyle+'width:100%;">'+plateLine+'</div>'+
+        '<input class="si" type="number" inputmode="numeric" min="0" value="'+(s.r||'')+'" placeholder="reps" onchange="updS('+ei+','+si+',\'r\',this.value)" style="align-self:start;">'+
+        '<div class="sc'+(s.done?' done':'')+'" onclick="togS('+ei+','+si+')" style="align-self:start;">'+(s.done?'✓':'○')+'</div>'+
+        '</div>';
+    }).join('');
+    var primBadge=ex.isPrimary?'<span style="font-size:9px;color:#e2bf73;font-weight:700;background:rgba(212,162,58,.15);padding:1px 6px;border-radius:4px;margin-left:6px;">★ PRIMARY</span>':'';
+    return '<div class="ex-b">'+
+      '<div style="display:flex;align-items:center;gap:var(--g3);margin-bottom:'+(ex.note?'var(--g2)':'var(--g3)')+';">'+
+        '<div style="width:28px;height:28px;border-radius:8px;background:var(--reds);color:#e88a7d;font-weight:900;font-size:var(--xs);display:flex;align-items:center;justify-content:center;flex-shrink:0;">'+String.fromCharCode(65+realEx.indexOf(item))+'</div>'+
+        '<div style="flex:1;"><div style="font-weight:700;">'+ex.n+primBadge+'</div>'+
+        '<div style="font-size:var(--xs);color:var(--mu);margin-top:1px;">'+restLbl+' rest</div></div>'+
+        '<button onclick="openSwap('+ei+')" style="color:var(--gold);padding:4px 8px;font-size:var(--xs);font-weight:700;border:1px solid rgba(212,162,58,.3);border-radius:6px;margin-right:4px;">⇄ Swap</button>'+
+        '<button onclick="rmEx('+ei+')" style="color:var(--mu2);padding:4px 8px;">✕</button>'+
+      '</div>'+
+      (ex.note?'<div style="font-size:var(--xs);color:var(--mu2);font-style:italic;margin-bottom:var(--g3);padding:var(--g2) var(--g3);background:var(--sf3);border-radius:6px;line-height:1.5;">'+ex.note+'</div>':'')+
+      '<div style="display:grid;grid-template-columns:28px 1fr 1fr 40px;gap:var(--g2);margin-bottom:var(--g2);">'+
+        '<span style="font-size:var(--xs);color:var(--mu2);font-weight:700;text-align:center;">SET</span>'+
+        '<span style="font-size:var(--xs);color:var(--mu2);font-weight:700;text-align:center;">LBS</span>'+
+        '<span style="font-size:var(--xs);color:var(--mu2);font-weight:700;text-align:center;">REPS</span>'+
+        '<span></span></div>'+
+      setRows+
+      '<button onclick="addSet('+ei+')" style="width:100%;text-align:center;padding:var(--g2) 0;color:var(--mu);font-size:var(--xs);background:var(--sf2);border:1px dashed var(--ln2);border-radius:8px;cursor:pointer;margin-top:var(--g2);">+ Set</button>'+
+    '</div>';
+  }).join('');
+
+  c.innerHTML=warmupHTML+exHTML;
+}
+
+function updS(ei,si,f,v){AWO.ex[ei].sets[si][f]=parseFloat(v)||0;}
+function togS(ei,si){
+  var s=AWO.ex[ei].sets[si];
+  s.done=!s.done;
+  if(s.done){
+    var w=parseFloat(s.w)||0,n=AWO.ex[ei].n;
+    if(w>0&&(!S.prs[n]||w>S.prs[n])){S.prs[n]=w;flashPR('New PR: '+n+' — '+w+' lb 🏆');}
+    // Per-set rest (warmup/top/backoff on primary lifts) takes priority over exercise-level rest
+    startRest(s.rest!=null?s.rest:(AWO.ex[ei].rest||90));
+  }
+  renderWO();
+}
+function addSet(ei){var ex=AWO.ex[ei];var last=ex.sets[ex.sets.length-1];ex.sets.push({w:last?last.w:'',r:last?last.r:8,done:false,type:'work',lbl:''+(ex.sets.filter(function(s){return s.type==='work'||s.type==='top'||s.type==='bo';}).length+1)});renderWO();}
+function rmEx(ei){AWO.ex.splice(ei,1);renderWO();}
+function flashPR(msg){var f=document.getElementById('pr-fl');document.getElementById('pr-fl-tx').textContent=msg;f.classList.add('on');setTimeout(function(){f.classList.remove('on');},3000);}
+
+// ── PROGRESSIVE OVERLOAD ENGINE ────────────────────────────────
+// Called once after every saved workout. Reads logged sets, writes
+// S.pctOverrides (for primary lifts) and S.dpState (for accessories).
+// Nothing else in the app is modified.
+
+var PRIMARY_LIFTS=['Trap Bar Deadlift','Zercher Squat','Dumbbell Bench Press'];
+var TARGET_RIR=2; // program targets 0-2 RIR; if logged >= TARGET_RIR+2, bump %
+
+function applyProgressiveOverload(savedWorkout){
+  if(!savedWorkout||!savedWorkout.ex)return;
+  if(!S.pctOverrides)S.pctOverrides={};
+  if(!S.dpState)S.dpState={};
+  var feedback=[];
+
+  savedWorkout.ex.forEach(function(ex){
+    var isPrimary=PRIMARY_LIFTS.indexOf(ex.n)!==-1;
+
+    // ── Auto-update ORM estimate from best set this session ──────
+    // For primary lifts, use the actual top set weight as the new ORM
+    // if it's higher than what we have. For accessories, use Epley.
+    var workSetsThisSession=ex.sets.filter(function(s){return s.done&&s.w&&s.type!=='wu';});
+    workSetsThisSession.forEach(function(s){
+      var w=parseFloat(s.w)||0,r=parseFloat(s.r)||0;
+      if(w<=0||r<=0)return;
+      var est=r===1?w:Math.round(w*(1+r/30)/2.5)*2.5;
+      // Only update if this is a new high estimate
+      if(isPrimary&&s.type==='top'){
+        // For primary top set: use actual weight as 1RM reference if r<=3
+        if(r<=3&&w>(S.orms[ex.n]||0)){
+          S.orms[ex.n]=w;
+        } else if(est>(S.orms[ex.n]||0)){
+          S.orms[ex.n]=est;
+        }
+      } else if(!isPrimary&&est>(S.orms[ex.n]||0)){
+        // Accessories: use Epley estimate, but don't overwrite a real 1RM input
+        // Only auto-set if user hasn't manually entered one
+        if(!(S.orms[ex.n]&&S.orms[ex.n]>0)){
+          S.orms[ex.n]=est;
+        }
+      }
+    });
+
+    if(isPrimary){
+      var topSet=ex.sets.find(function(s){return s.type==='top'&&s.done;});
+      if(!topSet)return;
+      var loggedRIR=parseFloat(topSet.rir);
+      if(isNaN(loggedRIR))return;
+      var currentPct=S.pctOverrides[ex.n]||null;
+      if(loggedRIR>=(TARGET_RIR+2)){
+        var basePct=currentPct||75;
+        var newPct=Math.min(97,basePct+2);
+        S.pctOverrides[ex.n]=newPct;
+        feedback.push(ex.n+': felt easy (RIR '+loggedRIR+'). Next session → '+newPct+'%');
+      } else {
+        if(currentPct){
+          feedback.push(ex.n+': holding at '+currentPct+'%');
+        }
+      }
+    } else {
+      var workSets=ex.sets.filter(function(s){return (s.type==='work'||s.type==='bo')&&s.done;});
+      if(!workSets.length)return;
+      var dp=S.dpState[ex.n];
+      if(!dp){
+        var loggedReps=workSets[workSets.length-1].r||0;
+        var loggedW2=parseFloat(workSets[workSets.length-1].w)||0;
+        S.dpState[ex.n]={reps:loggedReps,w:loggedW2,hitTopCount:0};
+        return;
+      }
+      var topSetW=parseFloat(workSets[workSets.length-1].w)||dp.w||0;
+      var topSetR=workSets[workSets.length-1].r||dp.reps||0;
+      var repCeiling=Math.min(10,dp.reps+2);
+      if(topSetR>=repCeiling){
+        dp.hitTopCount=(dp.hitTopCount||0)+1;
+      } else {
+        dp.reps=Math.min(repCeiling,topSetR+1);
+        dp.hitTopCount=0;
+        dp.w=topSetW;
+        S.dpState[ex.n]=dp;
+        feedback.push(ex.n+': reps up to '+dp.reps+' next session');
+        return;
+      }
+      if(dp.hitTopCount>=2){
+        var increment=5;
+        var newW=topSetW+increment;
+        var baseReps=Math.max(4,repCeiling-2);
+        dp.reps=baseReps;
+        dp.w=newW;
+        dp.hitTopCount=0;
+        S.dpState[ex.n]=dp;
+        feedback.push(ex.n+': weight → '+newW+' lb, reps reset to '+baseReps);
+      } else {
+        dp.reps=topSetR;
+        dp.w=topSetW;
+        S.dpState[ex.n]=dp;
+      }
+    }
+  });
+
+  if(feedback.length){
+    S.lastOverloadFeedback=feedback;
+  }
+}
+
+// ── OVERLOAD FEEDBACK OVERLAY ───────────────────────────────────
+// Shows a simple sheet after workout with what's changing next session.
+function showOverloadFeedback(feedback){
+  if(!feedback||!feedback.length)return;
+  var msg=feedback.join('\n');
+  // Use a simple alert for now — no new UI elements needed
+  setTimeout(function(){
+    alert('📈 Next Session Updates:\n\n'+feedback.map(function(f){return '• '+f;}).join('\n'));
+  },400);
+}
+
+function cancelWO(){if(!confirm('Cancel workout? Progress will be lost.'))return;endWO(false);}
+function finishWO(){
+  var done=AWO.ex.reduce(function(a,e){return a+e.sets.filter(function(s){return s.done;}).length;},0);
+  if(!done){alert('Complete at least one set first!');return;}
+  endWO(true);
+}
+function endWO(doSave){
+  clearInterval(woInt);stopRest();
+  if(doSave){
+    var mins=Math.round((Date.now()-woStart)/60000);
+    AWO.dMin=mins;
+    var sets=AWO.ex.reduce(function(a,e){return a+e.sets.filter(function(s){return s.done;}).length;},0);
+    S.xp=(S.xp||0)+sets*5+25;
+    S.lastSessXP=sets*5+25;
+    // Run progressive overload BEFORE pushing workout so we can read prior sessions
+    applyProgressiveOverload(AWO);
+    S.workouts.push(JSON.parse(JSON.stringify(AWO)));
+    S.dayIdx=(S.dayIdx||0)+1;
+    save();
+    // Show feedback after state is saved
+    if(S.lastOverloadFeedback&&S.lastOverloadFeedback.length){
+      showOverloadFeedback(S.lastOverloadFeedback);
+      S.lastOverloadFeedback=[];
+    }
+  }
+  AWO=null;
+  document.getElementById('main-nav').style.display='';
+  if(doSave){
+    // Show fatigue slider after workout
+    setTimeout(function(){openFatigueSlider();},300);
+  } else {
+    goScr('home');
+  }
+}
+
+// ── ADD EXERCISE ───────────────────────────────────────────────
+function openAddExLib(){
+  var cats={};
+  EX_LIB.forEach(function(e){if(!cats[e.c])cats[e.c]=[];cats[e.c].push(e);});
+  document.getElementById('ex-lib').innerHTML=Object.keys(cats).map(function(cat){
+    return '<div style="margin-bottom:var(--g3);"><div style="font-size:var(--xs);color:var(--mu2);font-weight:700;text-transform:uppercase;margin-bottom:var(--g2);">'+cat+'</div>'+
+      cats[cat].map(function(e){
+        return '<div onclick="addLibEx(\''+e.n.replace(/'/g,"\\'")+'\')" style="padding:11px var(--g3);background:var(--sf);border:1px solid var(--ln);border-radius:var(--rs);margin-bottom:var(--g2);cursor:pointer;font-weight:500;font-size:var(--sm);">'+e.n+'</div>';
+      }).join('')+'</div>';
+  }).join('');
+}
+function addLibEx(n){
+  if(!AWO)return;
+  AWO.ex.push({n:n,sets:[{w:S.orms[n]||'',r:8,done:false,type:'work',lbl:'1'},{w:S.orms[n]||'',r:8,done:false,type:'work',lbl:'2'},{w:S.orms[n]||'',r:8,done:false,type:'work',lbl:'3'}],rest:90,note:'',isPrimary:false});
+  closeOv('ov-addex');renderWO();
+}
+function addCxEx(){
+  var n=document.getElementById('cx-nm').value.trim();
+  if(!n){alert('Enter a name');return;}
+  var sets=parseInt(document.getElementById('cx-s').value)||3;
+  var reps=parseInt(document.getElementById('cx-r').value)||8;
+  if(!AWO)return;
+  AWO.ex.push({n:n,sets:Array.from({length:sets},function(_,i){return{w:'',r:reps,done:false,type:'work',lbl:''+(i+1)};}),rest:90,note:'',isPrimary:false});
+  closeOv('ov-addex');renderWO();
+}
+
+// ── REST TIMER ─────────────────────────────────────────────────
+var restInt=null;
+function startRest(secs){
+  var circ=2*Math.PI*57;
+  var arc=document.getElementById('rest-arc');
+  var cnt=document.getElementById('rest-cnt');
+  arc.style.strokeDasharray=circ;
+  var rem=secs;
+  document.getElementById('rest-ov').classList.add('open');
+  document.getElementById('rest-ov').onclick=stopRest;
+  clearInterval(restInt);
+  function tick(){cnt.textContent=rem;arc.style.strokeDashoffset=circ*(1-rem/secs);if(rem<=0){stopRest();return;}rem--;}
+  tick();restInt=setInterval(tick,1000);
+}
+function stopRest(){clearInterval(restInt);document.getElementById('rest-ov').classList.remove('open');}
+
+// ── ORMs ───────────────────────────────────────────────────────
+function openORMInputs(){
+  var defs={'Trap Bar Deadlift':0,'Zercher Squat':0,'Dumbbell Bench Press':0};
+  var orms=Object.assign({},defs,S.orms||{});
+  document.getElementById('orm-inputs').innerHTML=Object.keys(defs).map(function(k){
+    return '<div style="margin-bottom:var(--g3);"><div style="font-size:var(--xs);color:var(--mu);margin-bottom:4px;">'+k+'</div>'+
+      '<input class="si" data-orm="'+k+'" type="number" inputmode="decimal" value="'+(orms[k]||'')+'" placeholder="lb" style="border-radius:var(--rs);padding:11px var(--g4);width:100%;text-align:left;"></div>';
+  }).join('');
+}
+function saveORMs(){
+  document.querySelectorAll('[data-orm]').forEach(function(inp){
+    var v=parseFloat(inp.value);
+    if(!isNaN(v)&&v>0)S.orms[inp.dataset.orm]=v;
+  });
+  save();renderHome();closeOv('ov-orm');
+}
+
+// ── ROADMAP ────────────────────────────────────────────────────
+function openRoadmap(){
+  var curBi=Math.max(0,BELTS.findIndex(function(b){return b.name.toLowerCase()===S.belt;}));
+  var html='';
+  BELTS.forEach(function(belt,bi){
+    var isCur=bi===curBi,isDone=bi<curBi;
+    var badge=isDone?'<span class="bdg" style="background:rgba(39,174,96,.16);color:#5fd592;margin-left:8px;">✓</span>':isCur?'<span class="bdg bdg-o" style="margin-left:8px;">YOU</span>':'';
+    html+='<div style="margin-bottom:20px;"><div style="font-weight:900;font-size:var(--sm);margin-bottom:8px;display:flex;align-items:center;">'+belt.name+' Belt'+badge+'</div>';
+    var n=belt.type==='blk'?11:belt.stripes+1;
+    for(var si=0;si<n;si++){
+      var isCurPos=isCur&&si===S.stripes;
+      var done2=isDone||(isCur&&si<S.stripes);
+      var label=belt.type==='blk'?(si===0?'Black Belt':si+'th Dan'):(si===0?'No stripes':si+' stripe'+(si>1?'s':''));
+      var cid='rm_'+bi+'_'+si;
+      html+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">'+
+        '<canvas id="'+cid+'" width="560" height="34" style="display:block;flex:1;height:17px;border-radius:4px;min-width:0;'+(isCurPos?'outline:2px solid var(--gold);outline-offset:2px;':'')+'"></canvas>'+
+        '<div style="width:80px;text-align:right;font-size:var(--xs);font-weight:700;color:'+(isCurPos?'var(--gold)':done2?'#5fd592':'var(--mu2)');+'">'+
+        (isCurPos?'← YOU':done2?'✓':label)+'</div></div>';
+    }
+    html+='</div>';
+  });
+  document.getElementById('roadmap-body').innerHTML=html;
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      BELTS.forEach(function(belt,bi){
+        var n=belt.type==='blk'?11:belt.stripes+1;
+        for(var si=0;si<n;si++){
+          var c=document.getElementById('rm_'+bi+'_'+si);
+          if(c)drawBelt(c,belt,si);
+        }
+      });
+    });
+  });
+}
+
+// ── OVERLAYS ───────────────────────────────────────────────────
+function openOv(id){
+  if(id==='ov-orm')openORMInputs();
+  if(id==='ov-addex')openAddExLib();
+  if(id==='ov-roadmap')openRoadmap();
+  if(id==='ov-track')renderTrackList();
+  document.getElementById(id).classList.add('open');
+}
+
+function renderTrackList(){
+  var keys=['offseason','inseason','comp','minimal'];
+  document.getElementById('track-list').innerHTML=keys.map(function(k){
+    var t=TRACKS[k];
+    var sel=(S.track||'inseason')===k;
+    return '<div class="trk'+(sel?' sel':'')+'" onclick="setTrack(\''+k+'\')">'+
+      '<div class="trk-n">'+t.name+(sel?' ✓':'')+'</div>'+
+      '<div class="trk-d">'+t.blurb+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+function setTrack(k){
+  if(!TRACKS[k])return;
+  S.track=k;
+  save();
+  renderTrackList();
+  closeOv('ov-track');
+  renderHome();renderToday();renderProgram();
+}
+function closeOv(id){document.getElementById(id).classList.remove('open');}
+function fmtD(s){if(!s)return '—';var d=new Date(s+'T00:00:00');return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+
+// ── BOOT ───────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded',function(){
+  try{
+    load();
+    if(!S.onboarded){
+      document.getElementById('ob').classList.add('open');
+    } else {
+      initApp();
+    }
+  }catch(e){console.error('Boot error:',e.message,e.stack);}
+});
+</script>
+</body>
+</html>
