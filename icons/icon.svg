@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#161412"/>
+  <text x="256" y="210" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-weight="900" font-size="124" letter-spacing="-4"><tspan fill="#f2eee9">roll</tspan><tspan fill="#c0392b">-fit</tspan></text>
+  <!-- belt band -->
+  <rect x="36" y="276" width="440" height="54" rx="6" fill="#0f0f0f" stroke="#4a4541" stroke-width="3"/>
+  <!-- left tail -->
+  <g transform="translate(236 318) rotate(24)">
+    <rect x="-23" y="0" width="46" height="138" rx="3" fill="#0f0f0f" stroke="#4a4541" stroke-width="3"/>
+  </g>
+  <!-- right tail with red rank bar + 4 white stripes -->
+  <g transform="translate(276 318) rotate(-24)">
+    <rect x="-23" y="0" width="46" height="138" rx="3" fill="#0f0f0f" stroke="#4a4541" stroke-width="3"/>
+    <rect x="-21.5" y="62" width="43" height="50" fill="#c0392b"/>
+    <rect x="-21.5" y="70" width="43" height="5" fill="#f2eee9"/>
+    <rect x="-21.5" y="80" width="43" height="5" fill="#f2eee9"/>
+    <rect x="-21.5" y="90" width="43" height="5" fill="#f2eee9"/>
+    <rect x="-21.5" y="100" width="43" height="5" fill="#f2eee9"/>
+  </g>
+  <!-- knot -->
+  <rect x="220" y="264" width="72" height="78" rx="9" fill="#0f0f0f" stroke="#4a4541" stroke-width="3"/>
+  <path d="M224 286 L288 322" stroke="#2c2926" stroke-width="5"/>
+</svg>
