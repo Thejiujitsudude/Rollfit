@@ -167,6 +167,19 @@ h1{font-weight:900;letter-spacing:-.02em;}
         <div class="trk-d">Dumbbells, bands, bodyweight only. Home gym or travel friendly.</div>
       </div>
     </div>
+    <div style="margin-top:auto;"><button class="btn btn-p" onclick="obGo(5)">Continue →</button></div>
+  </div>
+
+  <div class="obs" id="obs5">
+    <div style="font-size:1.2rem;font-weight:900;margin-bottom:var(--g3);">What are your 1-rep maxes?</div>
+    <div style="color:var(--mu);font-size:var(--sm);margin-bottom:var(--g4);">Used to load your warmup and top sets. A best guess is fine — the app adjusts as you log.</div>
+    <div style="margin-bottom:var(--g3);"><div style="font-size:var(--xs);color:var(--mu);margin-bottom:4px;">Trap Bar Deadlift</div>
+      <input class="si" data-ob-orm="Trap Bar Deadlift" type="number" inputmode="decimal" placeholder="lb" style="border-radius:var(--rs);padding:11px var(--g4);width:100%;text-align:left;"></div>
+    <div style="margin-bottom:var(--g3);"><div style="font-size:var(--xs);color:var(--mu);margin-bottom:4px;">Zercher Squat</div>
+      <input class="si" data-ob-orm="Zercher Squat" type="number" inputmode="decimal" placeholder="lb" style="border-radius:var(--rs);padding:11px var(--g4);width:100%;text-align:left;"></div>
+    <div style="margin-bottom:var(--g3);"><div style="font-size:var(--xs);color:var(--mu);margin-bottom:4px;">Dumbbell Bench Press (per dumbbell)</div>
+      <input class="si" data-ob-orm="Dumbbell Bench Press" type="number" inputmode="decimal" placeholder="lb" style="border-radius:var(--rs);padding:11px var(--g4);width:100%;text-align:left;"></div>
+    <div style="color:var(--mu2);font-size:var(--xs);margin-bottom:var(--g4);">Don't know one? Leave it blank and enter your top set weight in your first workout. Edit anytime from Home.</div>
     <div style="margin-top:auto;"><button class="btn btn-p" onclick="obDone()">Build My Program →</button></div>
   </div>
 </div>
@@ -1144,8 +1157,8 @@ function getProgDaysRaw(){
     {name:'Rest / Roll',rest:true,lbl:'REST',ex:[]},
     {name:'Day 3 · Pull + Press',rest:false,lbl:'S&C',ex:[
       ...wuPush(),
-      {n:'Chin-Ups',       wu:1,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — supinated grip. Weighted if easy.'},
       P(DBB,'Dumbbell Bench Press',2),
+      {n:'Chin-Ups',       wu:1,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — supinated grip. Weighted if easy.'},
       {n:'Barbell Row',    wu:1,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — compound back. Pulling opponents into position.'},
       {n:'Hanging Leg Raise',wu:0,s:3,r:10,rir:rir,rest:60,note:'ACCESSORY — guard and triangle strength.'},
       {n:'Pallof Press',   wu:0,s:2,r:10,rir:rir,rest:60,note:'ACCESSORY — anti-rotation, hits obliques. Both sides.'},
@@ -1186,8 +1199,8 @@ function getProgDaysRaw(){
     {name:'Rest / Roll',rest:true,lbl:'REST',ex:[]},
     {name:'Day 3 · Pull + Press',rest:false,lbl:'S&C',ex:[
       ...wuPush(),
-      {n:'Chin-Ups',       wu:1,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — weighted if easy.'},
       P(DBB,'Dumbbell Bench Press',2),
+      {n:'Chin-Ups',       wu:1,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — weighted if easy.'},
       {n:'Barbell Row',    wu:1,s:3,r:6,rir:rir,rest:90,note:'ACCESSORY — compound back builder.'},
       {n:'Hanging Leg Raise',wu:0,s:3,r:10,rir:rir,rest:60,note:'ACCESSORY — guard strength.'},
       {n:'Pallof Press',   wu:0,s:2,r:10,rir:rir,rest:60,note:'ACCESSORY — anti-rotation, hits obliques. Both sides.'},
@@ -1287,9 +1300,9 @@ var S={
   dayIdx:0, orms:{}, prs:{}, workouts:[], startDate:null, lastLogin:null,
   bjjDays:[], bjjLog:[], fatigueLog:[],
   // Progressive overload tracking
-  // pctOverrides: {exerciseName: pct} — overrides the program's default %1RM
+  // pctBump: {exerciseName: +pct} — added on top of the program's weekly %1RM (not on deload/test week)
   // dpState: {exerciseName: {reps, hitTopTwice, weight}} — double progression state for accessories
-  pctOverrides:{}, dpState:{},
+  pctBump:{}, dpState:{},
 };
 function save(){ try{localStorage.setItem('rs5',JSON.stringify(S));}catch(e){} }
 function load(){ try{var d=localStorage.getItem('rs5');if(d)S=Object.assign({},S,JSON.parse(d));}catch(e){} }
@@ -1488,6 +1501,11 @@ function obDone(){
   S.startDate=td();
   // Save selected BJJ days
   S.bjjDays=Array.from(document.querySelectorAll('#ob-bjj .chip.sel')).map(function(c){return c.dataset.d;});
+  // Save any 1RMs entered (blank = skip)
+  document.querySelectorAll('[data-ob-orm]').forEach(function(inp){
+    var v=parseFloat(inp.value);
+    if(!isNaN(v)&&v>0)S.orms[inp.dataset.obOrm]=v;
+  });
   save();
   document.getElementById('ob').classList.remove('open');
   initApp();
@@ -1741,6 +1759,15 @@ function effectiveORM(name){
   return o;
 }
 
+// Program %1RM for a primary lift + any earned progressive-overload bump.
+// Deload (wk6) and test week (wk9) always use the program % as written.
+function topSetPct(e){
+  var w=wk();
+  if(w===6||w===9)return e.pct;
+  var bump=(S.pctBump&&S.pctBump[e.n])||0;
+  return Math.min(95,e.pct+bump);
+}
+
 function renderTodayPreview(){
   var days=getProgDays();
   var day=days[S.dayIdx%days.length];
@@ -1752,13 +1779,14 @@ function renderTodayPreview(){
     var orm=effectiveORM(e.n);
     var wStr='';
     if(e.pct&&orm){
-      var base=orm*e.pct/100;
+      var pct=topSetPct(e);
+      var base=orm*pct/100;
       var adjusted=round25(base*mult);
       if(lvl===1&&mult<1){
         // Show reduced weight for recovery
         wStr=adjusted+' lb <span style="color:#e88a7d;">(recovery)</span>';
       } else {
-        wStr=round25(base)+' lb ('+e.pct+'%)';
+        wStr=round25(base)+' lb ('+pct+'%)';
       }
     }
     return '<div class="pl"><span style="font-weight:500;">'+String.fromCharCode(65+i)+'. '+e.n+'</span><span style="color:var(--mu2);">'+(wStr||e.s+'×'+e.r)+'</span></div>';
@@ -1790,7 +1818,7 @@ function renderProgram(){
     var isTd=i===cur;
     var exRows=day.ex.map(function(e){
       var w2=effectiveORM(e.n);
-      var wStr=e.pct&&w2?e.s+'×'+e.r+' @ '+round25(w2*e.pct/100)+' lb':e.s+'×'+e.r;
+      var wStr=e.pct&&w2?e.s+'×'+e.r+' @ '+round25(w2*topSetPct(e)/100)+' lb':e.s+'×'+e.r;
       return '<div class="pl"><span>'+e.n+'</span><span style="color:var(--mu2);">'+wStr+'</span></div>';
     }).join('');
     var badge=day.rest?'<span class="bdg bdg-o">REST</span>':'<span class="bdg bdg-r">S&C</span>';
@@ -1861,7 +1889,7 @@ function buildSets(e){
   var pyramidPcts=[0,40,55,70,80];
 
   if(e.pct){
-    var effectivePct=(S.pctOverrides&&S.pctOverrides[e.n])||e.pct;
+    var effectivePct=topSetPct(e);
     var wuCount=Math.min(e.wu||4,pyramidPcts.length);
     for(var i=0;i<wuCount;i++){
       var p=pyramidPcts[i];
@@ -2070,7 +2098,8 @@ function renderWO(){
       // TOP set: 5-col grid with RIR input
       if(isTop){
         var plateLineTop=(isBarbellEx(ex.n)&&s.w)?
-          '<div style="font-size:var(--xs);color:var(--gold);margin-top:5px;padding-left:2px;">🔩 '+plateBreakdownStr(s.w)+'</div>':'';
+          '<div style="font-size:var(--xs);color:var(--gold);margin-top:5px;padding-left:2px;">🔩 '+plateBreakdownStr(s.w)+'</div>':
+          (s.noOrm&&!s.w)?'<div style="font-size:var(--xs);color:var(--mu);margin-top:5px;padding-left:2px;">No 1RM set — enter the weight you use for this top set. Add your 1RM on Home to auto-load weights.</div>':'';
         return '<div style="margin-bottom:var(--g2);">'+
           '<div style="display:grid;grid-template-columns:28px 1fr 1fr 52px 40px;gap:var(--g2);align-items:center;">'+
             '<div style="font-size:var(--xs);color:'+lblColor+';font-weight:700;text-align:center;">TOP</div>'+
@@ -2137,7 +2166,7 @@ function flashPR(msg){var f=document.getElementById('pr-fl');document.getElement
 
 // ── PROGRESSIVE OVERLOAD ENGINE ────────────────────────────────
 // Called once after every saved workout. Reads logged sets, writes
-// S.pctOverrides (for primary lifts) and S.dpState (for accessories).
+// S.pctBump (for primary lifts) and S.dpState (for accessories).
 // Nothing else in the app is modified.
 
 var PRIMARY_LIFTS=['Trap Bar Deadlift','Zercher Squat','Dumbbell Bench Press'];
@@ -2145,12 +2174,13 @@ var TARGET_RIR=2; // program targets 0-2 RIR; if logged >= TARGET_RIR+2, bump %
 
 function applyProgressiveOverload(savedWorkout){
   if(!savedWorkout||!savedWorkout.ex)return;
-  if(!S.pctOverrides)S.pctOverrides={};
+  if(!S.pctBump)S.pctBump={};
   if(!S.dpState)S.dpState={};
   var feedback=[];
 
   savedWorkout.ex.forEach(function(ex){
-    var isPrimary=PRIMARY_LIFTS.indexOf(ex.n)!==-1;
+    // isPrimary flag covers Minimal Equipment swaps (e.g. Goblet Squat as the day's primary)
+    var isPrimary=!!ex.isPrimary||PRIMARY_LIFTS.indexOf(ex.n)!==-1;
 
     // ── Auto-update ORM estimate from best set this session ──────
     // For primary lifts, use the actual top set weight as the new ORM
@@ -2182,15 +2212,17 @@ function applyProgressiveOverload(savedWorkout){
       if(!topSet)return;
       var loggedRIR=parseFloat(topSet.rir);
       if(isNaN(loggedRIR))return;
-      var currentPct=S.pctOverrides[ex.n]||null;
+      // Deload and test weeks don't change the bump — easy sets are expected there
+      var w=wk();
+      if(w===6||w===9)return;
+      var curBump=S.pctBump[ex.n]||0;
       if(loggedRIR>=(TARGET_RIR+2)){
-        var basePct=currentPct||75;
-        var newPct=Math.min(97,basePct+2);
-        S.pctOverrides[ex.n]=newPct;
-        feedback.push(ex.n+': felt easy (RIR '+loggedRIR+'). Next session → '+newPct+'%');
+        var newBump=Math.min(10,curBump+2);
+        S.pctBump[ex.n]=newBump;
+        feedback.push(ex.n+': felt easy (RIR '+loggedRIR+'). Top set now +'+newBump+'% above program');
       } else {
-        if(currentPct){
-          feedback.push(ex.n+': holding at '+currentPct+'%');
+        if(curBump){
+          feedback.push(ex.n+': holding at +'+curBump+'% above program');
         }
       }
     } else {

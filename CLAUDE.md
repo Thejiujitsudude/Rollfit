@@ -20,7 +20,7 @@ Grappler (BJJ) strength training web app. Single self-contained `index.html` (~2
 - Data is per-device AND per-URL. **Changing the hosting URL wipes users' data.** Keep one permanent URL.
 
 ## State object `S` (key fields)
-onboarded, name, daysPerWeek (2–5), track, belt, stripes, xp, dayIdx, orms{}, prs{}, workouts[], pctOverrides{}, dpState{}, readinessLog{}, fatigueLog[], bjjLog[], bjjDays[], lastLogin, startDate
+onboarded, name, daysPerWeek (2–5), track, belt, stripes, xp, dayIdx, orms{}, prs{}, workouts[], pctBump{}, dpState{}, readinessLog{}, fatigueLog[], bjjLog[], bjjDays[], lastLogin, startDate
 
 ## Program engine
 - `getProgDaysRaw()` — hardcoded days per daysPerWeek (2/3/4/5), plus week 9 test week.
@@ -44,7 +44,8 @@ onboarded, name, daysPerWeek (2–5), track, belt, stripes, xp, dayIdx, orms{}, 
 - `effectiveORM(name)` — single source for 1RM (includes Minimal Equipment scaled fallback). Use this, never `S.orms[x]` directly.
 - `togS()` uses per-set `rest` first, then exercise `rest`.
 - Readiness (`setReadiness`): 1 = recovery (loads x0.90, fewer backoff/accessory sets), 2 = normal, 3 = push.
-- `applyProgressiveOverload()` runs on finish: RIR ≥ 4 on top set → +2% next time; accessories double progression (+5 lb after hitting rep ceiling twice).
+- `applyProgressiveOverload()` runs on finish: RIR ≥ 4 on top set → `S.pctBump[lift]` += 2 (cap +10), added on top of the program's weekly % via `topSetPct(e)` (max 95%). Bump is ignored and not changed on deload (wk6) and test (wk9) weeks. Accessories: double progression (+5 lb after hitting rep ceiling twice).
+- Onboarding step 5 (`obs5`) collects the 3 primary 1RMs (optional). If none is set, the workout's top set shows a "No 1RM set" hint.
 - Plate calculator: `calcPlates()` / `plateBreakdownStr()`, 45 lb bar, plates 45/35/25/10/5/2.5, only for `BARBELL_EXERCISES`.
 
 ## Rest rules
