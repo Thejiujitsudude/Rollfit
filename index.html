@@ -139,6 +139,18 @@ h1{font-weight:900;letter-spacing:-.02em;}
 .more summary{list-style:none;cursor:pointer;text-align:center;color:var(--mu);font-size:var(--sm);font-weight:700;padding:var(--g3) 0;}
 .more summary::-webkit-details-marker{display:none;}
 .nb svg{width:22px;height:22px;}
+.acc{border-bottom:1px solid var(--ln);}
+.acc:last-child{border-bottom:none;}
+.acc summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:var(--g3);padding:12px 0;cursor:pointer;font-size:var(--sm);}
+.acc summary::-webkit-details-marker{display:none;}
+.acc summary::after{content:'+';color:var(--mu2);font-weight:700;width:14px;text-align:center;flex-shrink:0;}
+.acc[open] summary::after{content:'\2013';}
+.acc-v{color:var(--mu2);margin-left:auto;white-space:nowrap;}
+.acc-b{padding:0 0 12px;font-size:var(--xs);color:var(--mu);line-height:1.55;}
+details.wdc>summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:var(--g3);cursor:pointer;}
+details.wdc>summary::-webkit-details-marker{display:none;}
+details.wdc[open]>summary{margin-bottom:var(--g2);}
+.wo-resume{position:fixed;left:50%;transform:translateX(-50%);width:calc(100% - 2*var(--g4));max-width:608px;bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:45;background:var(--red);color:#fff;border-radius:var(--rs);padding:10px var(--g4);display:none;align-items:center;justify-content:space-between;font-weight:700;font-size:var(--sm);cursor:pointer;}
 </style>
 </head>
 <body>
@@ -354,7 +366,7 @@ h1{font-weight:900;letter-spacing:-.02em;}
   <div style="padding:var(--g5) 0 var(--g2);">
     <div style="color:var(--red);font-size:var(--sm);font-weight:700;" id="prog-week-lbl">WEEK 1 OF 9</div>
     <h1 style="font-size:1.4rem;margin-top:2px;">Your Week</h1>
-    <div class="purpose">Every session this week. Today is outlined in red.</div>
+    <div class="purpose">Every session this week. Tap a day to see its exercises.</div>
   </div>
   <div id="prog-days"></div>
 </section>
@@ -385,6 +397,7 @@ h1{font-weight:900;letter-spacing:-.02em;}
 <section class="scr" id="scr-wo">
   <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--g5) 0 var(--g3);">
     <div>
+      <button class="lnk" onclick="woBack()" style="padding:0 0 6px;font-size:var(--sm);">&lsaquo; Back</button>
       <div style="font-size:1.1rem;font-weight:900;" id="wo-title">Workout</div>
       <div style="font-size:1.1rem;font-weight:900;color:var(--red);font-variant-numeric:tabular-nums;" id="wo-timer">0:00</div>
     </div>
@@ -398,6 +411,7 @@ h1{font-weight:900;letter-spacing:-.02em;}
   <button class="btn btn-s" onclick="openOv('ov-addex')" style="margin-bottom:var(--g4);">+ Add Exercise</button>
 </section>
 
+<div class="wo-resume" id="wo-resume" onclick="resumeWO()"><span>Workout in progress &middot; <span id="wo-resume-t">0:00</span></span><span>Resume &rsaquo;</span></div>
 <nav class="nav" id="main-nav">
   <button class="nb on" id="nb-home" onclick="goScr('home')"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z"/></svg></span><span>Home</span></button>
   <button class="nb" id="nb-today" onclick="goScr('today')"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7v10M3 9.5v5M18 7v10M21 9.5v5M6 12h12"/></svg></span><span>Today</span></button>
@@ -1669,11 +1683,15 @@ function saveFatigue(){
   S.fatigueLog.push({date:td(),score:val});
   save();
   closeOv('ov-fatigue');
-  goScr('home');
+  goScr(woOrigin);
 }
 
 // ── SCREENS ────────────────────────────────────────────────────
+var curScr='home',woOrigin='today';
 function goScr(id){
+  curScr=id;
+  var rb=document.getElementById('wo-resume');
+  if(rb)rb.style.display=AWO?'flex':'none';
   document.querySelectorAll('.scr').forEach(function(s){s.classList.remove('on');});
   document.querySelectorAll('.nb').forEach(function(b){b.classList.remove('on');});
   document.getElementById('scr-'+id).classList.add('on');
@@ -1836,6 +1854,13 @@ function topSetPct(e){
   return Math.min(95,e.pct+bump);
 }
 
+// One expandable row per exercise; warm-up moves grouped into a single row
+function exDetailLine(e){
+  var parts=[];
+  if(!e.isWarmup)parts.push(e.s+(e.s===1?' set':' sets')+' × '+e.r+(typeof e.r==='number'&&e.r===1?' rep':' reps'));
+  if(e.rest)parts.push('rest '+fmtRest(e.pct?180:e.rest));
+  return parts.join(' · ');
+}
 function renderTodayPreview(){
   var days=getProgDays();
   var day=days[S.dayIdx%days.length];
@@ -1843,22 +1868,26 @@ function renderTodayPreview(){
   var mult=readinessMult();
   var lvl=readinessLevel();
   var prev=document.getElementById('td-preview');
-  prev.innerHTML=day.ex.map(function(e,i){
+  var wus=day.ex.filter(function(e){return e.isWarmup;});
+  var real=day.ex.filter(function(e){return !e.isWarmup;});
+  var html='';
+  if(wus.length){
+    html+='<details class="acc"><summary><span style="font-weight:600;">Warm-up</span><span class="acc-v">'+wus.length+' moves</span></summary>'+
+      '<div class="acc-b">'+wus.map(function(e){return e.n+' &mdash; '+e.r;}).join('<br>')+'</div></details>';
+  }
+  html+=real.map(function(e,i){
     var orm=effectiveORM(e.n);
     var wStr='';
     if(e.pct&&orm){
       var pct=topSetPct(e);
       var base=orm*pct/100;
-      var adjusted=round25(base*mult);
-      if(lvl===1&&mult<1){
-        // Show reduced weight for recovery
-        wStr=adjusted+' lb <span style="color:#e88a7d;">(recovery)</span>';
-      } else {
-        wStr=round25(base)+' lb ('+pct+'%)';
-      }
+      wStr=(lvl===1&&mult<1)?round25(base*mult)+' lb (recovery)':round25(base)+' lb';
     }
-    return '<div class="pl"><span style="font-weight:500;">'+String.fromCharCode(65+i)+'. '+e.n+'</span><span style="color:var(--mu2);">'+(wStr||e.s+'×'+e.r)+'</span></div>';
+    return '<details class="acc"><summary><span style="font-weight:600;">'+String.fromCharCode(65+i)+'. '+e.n+'</span>'+
+      '<span class="acc-v">'+(wStr||e.s+'×'+e.r)+'</span></summary>'+
+      '<div class="acc-b">'+(e.pct?'<span class="tag">Main lift</span>':'')+exDetailLine(e)+(e.note?'<br>'+e.note:'')+'</div></details>';
   }).join('');
+  prev.innerHTML=html;
 }
 
 function bestFor(name){
@@ -1884,13 +1913,17 @@ function renderProgram(){
   document.getElementById('prog-week-lbl').textContent='WEEK '+w+' OF 9 · '+(S.daysPerWeek)+'-DAY PROGRAM';
   document.getElementById('prog-days').innerHTML=days.map(function(day,i){
     var isTd=i===cur;
-    var exRows=day.ex.map(function(e){
-      var w2=effectiveORM(e.n);
-      var wStr=e.pct&&w2?e.s+'×'+e.r+' @ '+round25(w2*topSetPct(e)/100)+' lb':e.s+'×'+e.r;
-      return '<div class="pl"><span>'+e.n+'</span><span style="color:var(--mu2);">'+wStr+'</span></div>';
-    }).join('');
-    var badge=day.rest?'<span class="bdg bdg-o">REST</span>':'<span class="bdg bdg-r">S&C</span>';
-    return '<div class="wdc'+(isTd?' td':'')+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:'+(day.ex.length?'var(--g3)':'0')+';">'+'<div style="font-weight:900;">'+day.name+'</div>'+badge+'</div>'+(exRows||'<div style="color:var(--mu);font-size:var(--sm);">Rest / drill / roll light</div>')+'</div>';
+    var wuN=day.ex.filter(function(e){return e.isWarmup;}).length;
+    var real=day.ex.filter(function(e){return !e.isWarmup;});
+    var exRows=(wuN?'<div class="pl"><span>Warm-up</span><span style="color:var(--mu2);">'+wuN+' moves</span></div>':'')+
+      real.map(function(e){
+        var w2=effectiveORM(e.n);
+        var wStr=e.pct&&w2?e.s+'×'+e.r+' @ '+round25(w2*topSetPct(e)/100)+' lb':e.s+'×'+e.r;
+        return '<div class="pl"><span>'+e.n+'</span><span style="color:var(--mu2);">'+wStr+'</span></div>';
+      }).join('');
+    var badge=isTd?'<span class="bdg bdg-r">TODAY</span>':day.rest?'<span class="bdg bdg-o">REST</span>':'<span style="font-size:var(--xs);color:var(--mu2);">'+real.length+' exercises</span>';
+    if(day.rest)return '<div class="wdc'+(isTd?' td':'')+'" style="display:flex;justify-content:space-between;align-items:center;"><div style="font-weight:900;">'+day.name+'</div>'+badge+'</div>';
+    return '<details class="wdc'+(isTd?' td':'')+'"'+(isTd?' open':'')+'><summary><div style="font-weight:900;">'+day.name+'</div>'+badge+'</summary>'+exRows+'</details>';
   }).join('');
 }
 
@@ -2015,6 +2048,7 @@ function buildSets(e){
 }
 
 function startWorkout(){
+  if(AWO){closeOv('ov-build');resumeWO();return;}
   var days=getProgDays();
   var day=days[S.dayIdx%days.length];
   if(day.rest)return;
@@ -2040,6 +2074,7 @@ function noGymSession(){
   ];
 }
 function startNoGym(){
+  if(AWO){closeOv('ov-build');resumeWO();return;}
   AWO={date:td(),dayName:'No-Gym Session',noGym:true,ex:noGymSession().map(function(e){
     // Bodyweight only — never pull gym weights from dpState
     var sets=e.isWarmup?buildSets(e):Array.from({length:e.s},function(_,i){return{w:'',r:e.r,done:false,type:'work',lbl:''+(i+1)};});
@@ -2049,6 +2084,7 @@ function startNoGym(){
 }
 
 function startCustom(){
+  if(AWO){closeOv('ov-build');resumeWO();return;}
   AWO={date:td(),dayName:'Custom',ex:[],dMin:0};
   launchWO('Custom Workout');
   openOv('ov-addex');
@@ -2118,6 +2154,7 @@ function patternOf(exName){
 }
 
 function startBuiltWorkout(){
+  if(AWO){closeOv('ov-build');resumeWO();return;}
   if(!buildMatched.length)return;
   // Ensure Face Pull finisher is included (prehab, always)
   var exList=buildMatched.slice();
@@ -2139,24 +2176,61 @@ function startBuiltWorkout(){
 
 function launchWO(title){
   woStart=Date.now();
-  document.querySelectorAll('.scr').forEach(function(s){s.classList.remove('on');});
-  document.getElementById('scr-wo').classList.add('on');
-  document.getElementById('main-nav').style.display='none';
+  woOrigin=curScr||'today';
+  AWO.title=title;
   document.getElementById('wo-title').textContent=title;
-  renderWO();
+  showWO();
+  startWOTimer();
+}
+function startWOTimer(){
   clearInterval(woInt);
   woInt=setInterval(function(){
     var e=Math.floor((Date.now()-woStart)/1000),m=Math.floor(e/60),s=e%60;
-    document.getElementById('wo-timer').textContent=m+':'+(s<10?'0':'')+s;
+    var t=m+':'+(s<10?'0':'')+s;
+    document.getElementById('wo-timer').textContent=t;
+    document.getElementById('wo-resume-t').textContent=t;
   },1000);
 }
+function showWO(){
+  document.querySelectorAll('.scr').forEach(function(s){s.classList.remove('on');});
+  document.getElementById('scr-wo').classList.add('on');
+  document.getElementById('main-nav').style.display='none';
+  document.getElementById('wo-resume').style.display='none';
+  renderWO();
+  window.scrollTo(0,0);
+}
+// Leave the workout screen without ending it; a Resume bar stays above the nav
+function woBack(){
+  stopRest();
+  document.getElementById('main-nav').style.display='';
+  goScr(woOrigin);
+}
+function resumeWO(){ if(AWO)showWO(); }
 
 function fmtRest(sec){
   if(!sec)return '';
   return sec>=120?(Math.round(sec/30)/2)+' min':sec+' sec';
 }
 
+// In-progress workout survives the app being closed (separate key; cleared on finish/cancel)
+function saveAWO(){
+  try{
+    if(AWO)localStorage.setItem('rs5-awo',JSON.stringify({awo:AWO,start:woStart,origin:woOrigin}));
+    else localStorage.removeItem('rs5-awo');
+  }catch(e){}
+}
+function restoreAWO(){
+  try{
+    var d=JSON.parse(localStorage.getItem('rs5-awo')||'null');
+    if(!d||!d.awo)return;
+    AWO=d.awo;woStart=d.start||Date.now();woOrigin=d.origin||'today';
+    document.getElementById('wo-title').textContent=AWO.title||'Workout';
+    startWOTimer();
+    showWO();
+  }catch(e){console.warn('restoreAWO:',e.message);}
+}
 function renderWO(){
+  saveAWO();
   var c=document.getElementById('wo-blocks');
   if(!AWO||!AWO.ex.length){c.innerHTML='<div style="color:var(--mu);padding:var(--g4) 0;">Add exercises to begin.</div>';return;}
 
@@ -2252,7 +2326,7 @@ function setFeel(ei,si,rir){
   renderWO();
 }
 
-function updS(ei,si,f,v){AWO.ex[ei].sets[si][f]=parseFloat(v)||0;}
+function updS(ei,si,f,v){AWO.ex[ei].sets[si][f]=parseFloat(v)||0;saveAWO();}
 function togS(ei,si){
   var s=AWO.ex[ei].sets[si];
   s.done=!s.done;
@@ -2414,12 +2488,14 @@ function endWO(doSave){
     }
   }
   AWO=null;
+  saveAWO();
+  document.getElementById('wo-resume').style.display='none';
   document.getElementById('main-nav').style.display='';
   if(doSave){
     // Show fatigue slider after workout
     setTimeout(function(){openFatigueSlider();},300);
   } else {
-    goScr('home');
+    goScr(woOrigin);
   }
 }
 
@@ -2688,6 +2764,7 @@ window.addEventListener('DOMContentLoaded',function(){
       document.getElementById('ob').classList.add('open');
     } else {
       initApp();
+      restoreAWO();
     }
     sbBoot();
   }catch(e){console.error('Boot error:',e.message,e.stack);}

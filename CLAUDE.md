@@ -50,6 +50,8 @@ onboarded, name, daysPerWeek (2–5), track, belt, stripes, xp, dayIdx, orms{}, 
 - Onboarding step 5 (`obs5`) collects the 3 primary 1RMs (optional). If none is set, the workout's top set shows a "No 1RM set" hint.
 - Workout UI (`renderWO`): primary warm-up pyramid collapses to one tappable row (`togWU`, no rest timer/PRs); top set has Easy / Solid / Hard buttons (`setFeel`) stored as RIR 4 / 2 / 0; exercise notes sit behind a "How to do it" toggle. Dynamic-warmup checklist taps don't start the rest timer.
 - UI style: no emojis anywhere (tester feedback). Nav icons are inline SVG. Each tab has a one-line `.purpose` explaining it. Today's secondary actions (No Gym / Custom / Build) live in an "Other options" `<details>`.
+- Workout navigation: `launchWO` remembers `woOrigin` (screen it was started from); finish/cancel return there. "‹ Back" (`woBack`) leaves the workout running with a Resume bar (`#wo-resume`) above the nav; starters call `resumeWO()` instead of overwriting an active `AWO`. In-progress workout is saved to localStorage key `rs5-awo` on every change (`saveAWO`) and restored on launch (`restoreAWO`).
+- Today preview and Program days are tap-to-expand `<details>` (`.acc`, `details.wdc`); today's program day opens by default.
 - Plate calculator: `calcPlates()` / `plateBreakdownStr()`, 45 lb bar, plates 45/35/25/10/5/2.5, only for `BARBELL_EXERCISES`.
 
 ## Rest rules
