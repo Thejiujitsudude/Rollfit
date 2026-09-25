@@ -221,12 +221,14 @@ details.wdc[open]>summary{margin-bottom:var(--g2);}
   </div>
 
   <div class="obs" id="obs1">
+    <button class="lnk" onclick="obGo(0)" style="align-self:flex-start;padding:0 0 var(--g4);font-size:var(--sm);">&lsaquo; Back</button>
     <div style="font-size:1.2rem;font-weight:900;margin-bottom:var(--g4);">What's your name?</div>
     <input id="ob-nm" class="si" type="text" placeholder="Your name" style="border-radius:var(--rs);padding:14px var(--g4);width:100%;margin-bottom:var(--g4);text-align:left;">
     <div style="margin-top:auto;"><button class="btn btn-p" onclick="obGo(2)">Continue →</button></div>
   </div>
 
   <div class="obs" id="obs2">
+    <button class="lnk" onclick="obGo(1)" style="align-self:flex-start;padding:0 0 var(--g4);font-size:var(--sm);">&lsaquo; Back</button>
     <div style="font-size:1.2rem;font-weight:900;margin-bottom:var(--g3);">How many days/week can you lift?</div>
     <div style="color:var(--mu);font-size:var(--sm);margin-bottom:var(--g4);">This runs alongside your mat time, not instead of it.</div>
     <div class="chip-row" id="ob-days" style="margin-bottom:var(--g5);">
@@ -239,6 +241,7 @@ details.wdc[open]>summary{margin-bottom:var(--g2);}
   </div>
 
   <div class="obs" id="obs4">
+    <button class="lnk" onclick="obGo(2)" style="align-self:flex-start;padding:0 0 var(--g4);font-size:var(--sm);">&lsaquo; Back</button>
     <div style="font-size:1.2rem;font-weight:900;margin-bottom:var(--g3);">What's your focus right now?</div>
     <div style="color:var(--mu);font-size:var(--sm);margin-bottom:var(--g4);">This sets how hard the program pushes. Change it anytime.</div>
     <div id="ob-track" style="margin-bottom:var(--g5);">
@@ -263,6 +266,7 @@ details.wdc[open]>summary{margin-bottom:var(--g2);}
   </div>
 
   <div class="obs" id="obs5">
+    <button class="lnk" onclick="obGo(4)" style="align-self:flex-start;padding:0 0 var(--g4);font-size:var(--sm);">&lsaquo; Back</button>
     <div style="font-size:1.2rem;font-weight:900;margin-bottom:var(--g3);">What are your 1-rep maxes?</div>
     <div style="color:var(--mu);font-size:var(--sm);margin-bottom:var(--g4);">Used to load your warmup and top sets. A best guess is fine — the app adjusts as you log.</div>
     <div style="margin-bottom:var(--g3);"><div style="font-size:var(--xs);color:var(--mu);margin-bottom:4px;">Trap Bar Deadlift</div>
@@ -1614,6 +1618,7 @@ function obGo(n){
   }
   document.querySelectorAll('.obs').forEach(function(x){x.classList.remove('on');});
   document.getElementById('obs'+n).classList.add('on');
+  document.getElementById('ob').scrollTop=0;
 }
 function obSelDay(el){
   document.querySelectorAll('#ob-days .chip').forEach(function(c){c.classList.remove('sel');});
