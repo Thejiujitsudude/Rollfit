@@ -7,6 +7,8 @@ Grappler (BJJ) strength training web app. Single self-contained `index.html` (~2
 - Pitch: "Build strength and muscle for the mats."
 - **Later (not v1):** program customized to the user's needs/goals, and bring-your-own exercises (keep your own or accept a grappler swap with a reason).
 - **No mat-schedule planning** (owner decision). Only a daily "Jiu-jitsu today" switch.
+- **FEATURE FREEZE (MVP testing).** No new features until testers (incl. Robert) say the core app is solid. Only fix bugs and confusing UX reported by testers.
+- **Parked for after testing:** goal picker (Strength / Muscle / Conditioning, any combination) replacing the Focus tracks, with Minimal Equipment as an on/off switch. Conditioning stays out until then.
 
 ## Owner preferences
 - Has ADHD: answer first, short bullets, bold key terms, micro-steps, one question at a time.
