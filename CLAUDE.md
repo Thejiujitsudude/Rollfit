@@ -3,8 +3,9 @@
 Grappler (BJJ) strength training web app. Single self-contained `index.html` (~2,400 lines: inline CSS + JS). No backend. Mobile-first, tested on iPhone Safari.
 
 ## Product direction (decided)
-- **Roll Fit = bring your own program, fit it to jiu-jitsu.** Users can keep the exercises from their own plan, or accept a grappler swap (with a reason). Nothing changes unless the user taps it. Users with no plan get the built-in Roll Fit program.
-- Pitch: "Bring the program you already run. Roll Fit fits it around your jiu-jitsu."
+- **v1 (now): Roll Fit is a ready-made program that helps grapplers build strength and muscle for the mats.** Keep it simple: no plan import, no heavy customization yet.
+- Pitch: "Build strength and muscle for the mats."
+- **Later (not v1):** program customized to the user's needs/goals, and bring-your-own exercises (keep your own or accept a grappler swap with a reason).
 - **No mat-schedule planning** (owner decision). Only a daily "Jiu-jitsu today" switch.
 
 ## Owner preferences
