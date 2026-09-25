@@ -46,6 +46,8 @@ onboarded, name, daysPerWeek (2–5), track, belt, stripes, xp, dayIdx, orms{}, 
 - Readiness (`setReadiness`): 1 = recovery (loads x0.90, fewer backoff/accessory sets), 2 = normal, 3 = push.
 - `applyProgressiveOverload()` runs on finish: RIR ≥ 4 on top set → `S.pctBump[lift]` += 2 (cap +10), added on top of the program's weekly % via `topSetPct(e)` (max 95%). Bump is ignored and not changed on deload (wk6) and test (wk9) weeks. Accessories: double progression (+5 lb after hitting rep ceiling twice).
 - Onboarding step 5 (`obs5`) collects the 3 primary 1RMs (optional). If none is set, the workout's top set shows a "No 1RM set" hint.
+- Workout UI (`renderWO`): primary warm-up pyramid collapses to one tappable row (`togWU`, no rest timer/PRs); top set has Easy / Solid / Hard buttons (`setFeel`) stored as RIR 4 / 2 / 0; exercise notes sit behind a "How to do it" toggle. Dynamic-warmup checklist taps don't start the rest timer.
+- UI style: no emojis anywhere (tester feedback). Nav icons are inline SVG. Each tab has a one-line `.purpose` explaining it. Today's secondary actions (No Gym / Custom / Build) live in an "Other options" `<details>`.
 - Plate calculator: `calcPlates()` / `plateBreakdownStr()`, 45 lb bar, plates 45/35/25/10/5/2.5, only for `BARBELL_EXERCISES`.
 
 ## Rest rules

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Roll Strong</title>
+<title>Roll Fit</title>
 <!-- Home Screen app: icon, full-screen, label -->
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
@@ -84,7 +84,7 @@ h1{font-weight:900;letter-spacing:-.02em;}
 .sr{display:grid;grid-template-columns:28px 1fr 1fr 40px;gap:var(--g2);align-items:center;margin-bottom:var(--g2);}
 .si{background:var(--sf2);border:1px solid var(--ln2);border-radius:8px;padding:9px var(--g2);color:var(--txt);text-align:center;width:100%;outline:none;}
 .si:focus{border-color:var(--red);}
-.sc{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:var(--sf3);border:1px solid var(--ln2);cursor:pointer;font-size:.95rem;}
+.sc{width:40px;height:40px;flex-shrink:0;border-radius:9px;display:flex;align-items:center;justify-content:center;background:var(--sf3);border:1px solid var(--ln2);cursor:pointer;font-size:.95rem;}
 .sc.done{background:rgba(39,174,96,.14);border-color:rgba(39,174,96,.4);color:#5fd592;}
 
 .prf{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--ln);font-size:var(--md);}
@@ -105,6 +105,39 @@ h1{font-weight:900;letter-spacing:-.02em;}
 .wdc.td{border-color:var(--redb);}
 .pl{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--ln);font-size:var(--sm);}
 .pl:last-child{border-bottom:none;}
+
+/* Simplified workout + screen helpers */
+.purpose{color:var(--mu);font-size:var(--sm);margin-top:4px;line-height:1.45;}
+.ex-h{display:flex;align-items:center;gap:var(--g3);margin-bottom:var(--g2);}
+.ex-ltr{width:28px;height:28px;border-radius:8px;background:var(--reds);color:#e88a7d;font-weight:900;font-size:var(--xs);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ex-n{font-weight:800;font-size:var(--md);}
+.ex-m{font-size:var(--xs);color:var(--mu);margin-top:1px;}
+.tag{color:#e2bf73;font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin-right:6px;}
+.lnk{font-size:var(--xs);font-weight:700;color:var(--mu);padding:6px 4px;}
+.tips{margin:0 0 var(--g2);font-size:var(--xs);color:var(--mu);}
+.tips summary{cursor:pointer;color:var(--mu2);font-weight:700;list-style:none;padding:2px 0;}
+.tips summary::-webkit-details-marker{display:none;}
+.tips div{margin-top:4px;line-height:1.5;}
+.set-row{display:flex;align-items:center;gap:var(--g3);padding:10px 0;border-top:1px solid var(--ln);}
+.set-row.wu{cursor:pointer;}
+.set-l{width:70px;flex-shrink:0;font-size:var(--sm);font-weight:700;color:var(--mu);}
+.set-l.top{color:#e2bf73;}
+.set-v{flex:1;display:flex;align-items:center;gap:6px;font-size:var(--md);min-width:0;}
+.set-v.mu{color:var(--mu);font-size:var(--sm);}
+.si-in{width:64px;background:transparent;border:none;border-bottom:1px solid var(--ln2);border-radius:0;padding:4px 2px;color:var(--txt);font-size:var(--md);font-weight:700;text-align:center;outline:none;}
+.si-in.r{width:44px;}
+.si-in:focus{border-bottom-color:var(--red);}
+.x{color:var(--mu2);font-size:var(--sm);}
+.set-row.is-done .si-in{color:var(--mu);}
+.plates{font-size:var(--xs);color:var(--gold);padding:0 0 8px 82px;}
+.feel-row{display:flex;align-items:center;gap:6px;padding:0 0 4px;}
+.feel{flex:1;height:36px;border-radius:8px;background:var(--sf2);border:1px solid var(--ln2);color:var(--mu);font-weight:700;font-size:var(--xs);}
+.feel.sel{background:var(--reds);border-color:var(--redb);color:var(--txt);}
+.sub{font-size:var(--xs);color:var(--mu2);padding-bottom:10px;}
+.more{margin-bottom:var(--g4);}
+.more summary{list-style:none;cursor:pointer;text-align:center;color:var(--mu);font-size:var(--sm);font-weight:700;padding:var(--g3) 0;}
+.more summary::-webkit-details-marker{display:none;}
+.nb svg{width:22px;height:22px;}
 </style>
 </head>
 <body>
@@ -112,12 +145,17 @@ h1{font-weight:900;letter-spacing:-.02em;}
 <!-- ONBOARDING -->
 <div class="ob" id="ob">
   <div class="obs on" id="obs0">
-    <div style="padding-top:8vh;margin-bottom:auto;">
-      <div style="font-size:2.2rem;font-weight:900;margin-bottom:var(--g2);">Roll <span style="color:var(--red);">Strong</span></div>
-      <div style="color:var(--mu);font-size:var(--md);margin-bottom:var(--g4);">Strength training built for grapplers. Periodized programs, belt rank progression, and PR tracking — all in one place.</div>
-      <div style="background:var(--reds);border:1px solid var(--redb);border-radius:var(--rs);padding:var(--g3) var(--g4);font-size:var(--sm);color:var(--mu);">Everyone starts at <strong style="color:var(--txt);">White Belt</strong>. Your rank is earned through consistent training.</div>
+    <div style="padding-top:10vh;margin-bottom:auto;">
+      <div style="color:var(--red);font-size:var(--sm);font-weight:800;letter-spacing:.08em;margin-bottom:var(--g3);">ROLL FIT</div>
+      <h1 style="font-size:2.3rem;line-height:1.1;margin-bottom:var(--g4);">Get stronger for jiu-jitsu.</h1>
+      <div style="color:var(--mu);font-size:var(--md);margin-bottom:var(--g6);line-height:1.5;">Short strength sessions, 2&ndash;5 days a week, built around your mat time.</div>
+      <div style="display:flex;flex-direction:column;gap:var(--g4);font-size:var(--md);">
+        <div style="display:flex;gap:var(--g3);"><span style="color:var(--red);font-weight:900;width:18px;">1</span><span>Open the app. <span style="color:var(--mu);">Today's workout is ready.</span></span></div>
+        <div style="display:flex;gap:var(--g3);"><span style="color:var(--red);font-weight:900;width:18px;">2</span><span>Lift what it tells you. <span style="color:var(--mu);">Tap each set when it's done.</span></span></div>
+        <div style="display:flex;gap:var(--g3);"><span style="color:var(--red);font-weight:900;width:18px;">3</span><span>It adjusts as you get stronger. <span style="color:var(--mu);">Earn stripes and belts along the way.</span></span></div>
+      </div>
     </div>
-    <button class="btn btn-p" onclick="obGo(1)">Get Started →</button>
+    <button class="btn btn-p" onclick="obGo(1)">Get Started</button>
     <div style="height:var(--g4);"></div>
   </div>
 
@@ -199,7 +237,7 @@ h1{font-weight:900;letter-spacing:-.02em;}
 <!-- HOME -->
 <section class="scr on" id="scr-home">
   <div style="padding:var(--g5) 0 var(--g3);">
-    <div style="color:var(--red);font-size:var(--sm);font-weight:700;margin-bottom:2px;" id="h-week-lbl">ROLL STRONG</div>
+    <div style="color:var(--red);font-size:var(--sm);font-weight:700;margin-bottom:2px;" id="h-week-lbl">ROLL FIT</div>
     <h1 style="font-size:1.5rem;" id="h-greet">Welcome back</h1>
     <div onclick="openOv('ov-track')" style="display:inline-flex;align-items:center;gap:5px;margin-top:6px;padding:4px 11px;background:var(--sf2);border:1px solid var(--ln2);border-radius:999px;cursor:pointer;">
       <span style="font-size:var(--xs);color:var(--mu);">Focus:</span>
@@ -236,7 +274,7 @@ h1{font-weight:900;letter-spacing:-.02em;}
 
   <!-- BJJ Session log -->
   <div style="display:flex;gap:var(--g2);margin-bottom:var(--g3);">
-    <button class="btn btn-s" onclick="logBJJ()" style="flex:1;min-height:44px;font-size:var(--sm);">🥋 Log BJJ Session</button>
+    <button class="btn btn-s" onclick="logBJJ()" style="flex:1;min-height:44px;font-size:var(--sm);">Log a BJJ Session</button>
     <div id="h-bjj-today" style="display:none;background:rgba(39,174,96,.1);border:1px solid rgba(39,174,96,.3);border-radius:var(--rs);padding:0 var(--g3);align-items:center;font-size:var(--xs);color:#5fd592;font-weight:700;flex-shrink:0;min-height:44px;">Logged ✓</div>
   </div>
 
@@ -268,6 +306,7 @@ h1{font-weight:900;letter-spacing:-.02em;}
     <div style="color:var(--red);font-size:var(--sm);font-weight:700;" id="td-tag">TODAY</div>
     <h1 style="font-size:1.3rem;margin-top:2px;" id="td-title">Day 1</h1>
     <div style="color:var(--mu);font-size:var(--sm);margin-top:2px;" id="td-sub"></div>
+    <div class="purpose" id="td-purpose">Tell us how you feel, then tap Start. Your weights are already loaded.</div>
   </div>
 
   <!-- READINESS CHECK (shows on lift days before workout) -->
@@ -275,17 +314,20 @@ h1{font-weight:900;letter-spacing:-.02em;}
     <div class="clbl">READINESS CHECK</div>
     <div style="font-size:var(--sm);color:var(--mu);margin-bottom:var(--g3);">How's your body today? This adjusts your loads.</div>
     <div style="display:flex;gap:var(--g2);margin-bottom:var(--g3);">
-      <button class="chip" data-rd="1" onclick="setReadiness(1,this)" style="flex:1;justify-content:center;">😩 Beat up</button>
-      <button class="chip" data-rd="2" onclick="setReadiness(2,this)" style="flex:1;justify-content:center;">😐 Normal</button>
-      <button class="chip" data-rd="3" onclick="setReadiness(3,this)" style="flex:1;justify-content:center;">🔥 Primed</button>
+      <button class="chip" data-rd="1" onclick="setReadiness(1,this)" style="flex:1;justify-content:center;">Beat up</button>
+      <button class="chip" data-rd="2" onclick="setReadiness(2,this)" style="flex:1;justify-content:center;">Normal</button>
+      <button class="chip" data-rd="3" onclick="setReadiness(3,this)" style="flex:1;justify-content:center;">Primed</button>
     </div>
     <div id="td-readiness-out" style="display:none;border-radius:var(--rs);padding:var(--g3) var(--g4);font-size:var(--sm);line-height:1.6;"></div>
   </div>
 
   <button class="btn btn-p" id="td-start-btn" onclick="startWorkout()" style="margin-bottom:var(--g2);">Start Workout</button>
-  <button class="btn btn-s" id="td-nogym-btn" onclick="startNoGym()" style="margin-bottom:var(--g2);">🏠 No Gym Today — Bodyweight Session</button>
-  <button class="btn btn-s" onclick="startCustom()" style="margin-bottom:var(--g2);">Custom Workout</button>
-  <button class="btn btn-s" onclick="openBuild()" style="margin-bottom:var(--g4);">📋 Build From My Exercises</button>
+  <details class="more">
+    <summary>Other options</summary>
+    <button class="btn btn-s" id="td-nogym-btn" onclick="startNoGym()" style="margin-bottom:var(--g2);">No gym today &mdash; bodyweight session</button>
+    <button class="btn btn-s" onclick="startCustom()" style="margin-bottom:var(--g2);">Custom workout</button>
+    <button class="btn btn-s" onclick="openBuild()">Build from my exercises</button>
+  </details>
 
   <div class="card">
     <div class="clbl">TODAY'S EXERCISES</div>
@@ -302,7 +344,8 @@ h1{font-weight:900;letter-spacing:-.02em;}
 <section class="scr" id="scr-program">
   <div style="padding:var(--g5) 0 var(--g2);">
     <div style="color:var(--red);font-size:var(--sm);font-weight:700;" id="prog-week-lbl">WEEK 1 OF 9</div>
-    <h1 style="font-size:1.4rem;margin-top:2px;">Your Program</h1>
+    <h1 style="font-size:1.4rem;margin-top:2px;">Your Week</h1>
+    <div class="purpose">Every session this week. Today is outlined in red.</div>
   </div>
   <div id="prog-days"></div>
 </section>
@@ -311,7 +354,8 @@ h1{font-weight:900;letter-spacing:-.02em;}
 <section class="scr" id="scr-progress">
   <div style="padding:var(--g5) 0 var(--g3);">
     <div style="color:var(--red);font-size:var(--sm);font-weight:700;">PROGRESS</div>
-    <h1 style="font-size:1.4rem;margin-top:2px;">Your Stats</h1>
+    <h1 style="font-size:1.4rem;margin-top:2px;">Your Progress</h1>
+    <div class="purpose">Your best lifts and every session you've logged.</div>
   </div>
 
   <div class="sg">
@@ -337,19 +381,19 @@ h1{font-weight:900;letter-spacing:-.02em;}
     </div>
     <div style="display:flex;gap:var(--g2);">
       <button class="btn btn-sm btn-g" onclick="cancelWO()" style="color:#e88a7d;border-color:var(--redb);">Cancel</button>
-      <button class="btn btn-sm" onclick="finishWO()" style="background:rgba(39,174,96,.13);color:#5fd592;border:1px solid rgba(39,174,96,.35);">Finish ✓</button>
+      <button class="btn btn-sm" onclick="finishWO()" style="background:rgba(39,174,96,.13);color:#5fd592;border:1px solid rgba(39,174,96,.35);">Finish</button>
     </div>
   </div>
-  <div class="prfl" id="pr-fl">🏆 <span id="pr-fl-tx"></span></div>
+  <div class="prfl" id="pr-fl"><span id="pr-fl-tx"></span></div>
   <div id="wo-blocks"></div>
   <button class="btn btn-s" onclick="openOv('ov-addex')" style="margin-bottom:var(--g4);">+ Add Exercise</button>
 </section>
 
 <nav class="nav" id="main-nav">
-  <button class="nb on" id="nb-home" onclick="goScr('home')"><span class="i">🏠</span><span>Home</span></button>
-  <button class="nb" id="nb-today" onclick="goScr('today')"><span class="i">🔥</span><span>Today</span></button>
-  <button class="nb" id="nb-program" onclick="goScr('program')"><span class="i">📋</span><span>Program</span></button>
-  <button class="nb" id="nb-progress" onclick="goScr('progress')"><span class="i">📈</span><span>Progress</span></button>
+  <button class="nb on" id="nb-home" onclick="goScr('home')"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z"/></svg></span><span>Home</span></button>
+  <button class="nb" id="nb-today" onclick="goScr('today')"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7v10M3 9.5v5M18 7v10M21 9.5v5M6 12h12"/></svg></span><span>Today</span></button>
+  <button class="nb" id="nb-program" onclick="goScr('program')"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span>Program</span></button>
+  <button class="nb" id="nb-progress" onclick="goScr('progress')"><span class="i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M6 16v-5M11 16V6M16 16v-8"/></svg></span><span>Progress</span></button>
 </nav>
 </div>
 
@@ -362,9 +406,9 @@ h1{font-weight:900;letter-spacing:-.02em;}
 
     <div style="margin-bottom:var(--g5);">
       <div style="display:flex;justify-content:space-between;font-size:var(--xs);color:var(--mu);margin-bottom:var(--g3);">
-        <span>💀 Gassed</span><span>⚡ Fresh</span>
+        <span>Gassed</span><span>Fresh</span>
       </div>
-      <input type="range" id="fatigue-slider" min="1" max="5" value="3"
+      <input type="range" id="fatigue-slider" min="1" max="5" value="3" oninput="updateFatigueUI(this.value)"
         style="width:100%;accent-color:var(--red);height:6px;cursor:pointer;">
       <div style="display:flex;justify-content:space-between;font-size:var(--xs);color:var(--mu2);margin-top:var(--g2);">
         <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
@@ -388,7 +432,7 @@ h1{font-weight:900;letter-spacing:-.02em;}
 <div class="ov" id="ov-block-done">
   <div class="sh">
     <div class="hnd"></div>
-    <div style="font-size:1.2rem;font-weight:900;margin-bottom:4px;">🏆 Block Complete!</div>
+    <div style="font-size:1.2rem;font-weight:900;margin-bottom:4px;">Block Complete</div>
     <div style="font-size:var(--sm);color:var(--mu);margin-bottom:var(--g5);">9 weeks done. Here are your suggested new 1RMs based on your best logged sets.</div>
     <div class="clbl">SUGGESTED 1RMs</div>
     <div id="block-orm-list" style="margin-bottom:var(--g4);"></div>
@@ -469,7 +513,7 @@ h1{font-weight:900;letter-spacing:-.02em;}
   <div class="sh">
     <div class="hnd"></div>
     <div style="font-size:1.1rem;font-weight:900;margin-bottom:4px;">Build From My Exercises</div>
-    <div style="font-size:var(--sm);color:var(--mu);margin-bottom:var(--g4);">Paste or type your exercises — one per line. Roll Strong matches each to a grappler-optimized movement and builds your session.</div>
+    <div style="font-size:var(--sm);color:var(--mu);margin-bottom:var(--g4);">Paste or type your exercises — one per line. Roll Fit matches each to a grappler-optimized movement and builds your session.</div>
     <textarea id="build-input" placeholder="Barbell Squat&#10;Bench Press&#10;Lat Pulldown&#10;Bicep Curls&#10;Plank" style="width:100%;min-height:140px;background:var(--sf2);border:1px solid var(--ln2);border-radius:var(--rs);padding:var(--g3) var(--g4);color:var(--txt);font-family:inherit;font-size:var(--sm);outline:none;resize:vertical;margin-bottom:var(--g3);"></textarea>
     <button class="btn btn-p" onclick="processBuildInput()">Match My Exercises →</button>
     <div id="build-results" style="margin-top:var(--g4);"></div>
@@ -477,27 +521,6 @@ h1{font-weight:900;letter-spacing:-.02em;}
   </div>
 </div>
 
-
-<!-- FATIGUE SLIDER OVERLAY -->
-<div class="ov" id="ov-fatigue">
-  <div class="sh">
-    <div class="hnd"></div>
-    <div style="font-size:1.1rem;font-weight:900;margin-bottom:4px;">How did you feel?</div>
-    <div style="font-size:var(--sm);color:var(--mu);margin-bottom:var(--g5);">Rate your energy and recovery today. This helps the app detect fatigue buildup from stacked BJJ + lifting.</div>
-    <div style="text-align:center;margin-bottom:var(--g4);">
-      <div style="font-size:3rem;margin-bottom:var(--g2);" id="fatigue-emoji">😐</div>
-      <div style="font-size:1.1rem;font-weight:900;" id="fatigue-label">Okay</div>
-    </div>
-    <input type="range" id="fatigue-slider" min="1" max="5" value="3"
-      oninput="updateFatigueUI(this.value)"
-      style="width:100%;margin-bottom:var(--g4);accent-color:var(--red);">
-    <div style="display:flex;justify-content:space-between;font-size:var(--xs);color:var(--mu);margin-bottom:var(--g5);">
-      <span>Destroyed</span><span>Okay</span><span>Excellent</span>
-    </div>
-    <button class="btn btn-p" onclick="saveFatigue()">Save &amp; Done</button>
-    <button class="btn btn-g" onclick="closeOv('ov-fatigue')" style="margin-top:var(--g2);">Skip</button>
-  </div>
-</div>
 
 <!-- ROADMAP -->
 <div class="ov" id="ov-roadmap">
@@ -1080,7 +1103,7 @@ function getProgDaysRaw(){
       wu:wuOverride||t.wu,
       s:t.s, r:t.r, pct:pct, rest:t.rest,
       backoff: (t.bo&&!isDeload)?t.bo:null,
-      note:(isDeload?'⬇️ DELOAD — ':'')+'STRENGTH — pyramid warmup sets, then 1 top set at '+pct+'% × '+t.r+' reps. Leave '+(isDeload?'3':'1-2')+' RIR. Work up, hit it, move on.'
+      note:(isDeload?'DELOAD — ':'')+'STRENGTH — pyramid warmup sets, then 1 top set at '+pct+'% × '+t.r+' reps. Leave '+(isDeload?'3':'1-2')+' RIR. Work up, hit it, move on.'
     };
   }
 
@@ -1596,15 +1619,11 @@ function logBJJ(){
 }
 
 // ── FATIGUE SLIDER ──────────────────────────────────────────────
-var FATIGUE_LABELS=['','Destroyed 😩','Rough 😓','Okay 😐','Good 💪','Excellent 🔥'];
 function updateFatigueUI(val){
   var v=parseInt(val);
-  var el=document.getElementById('fatigue-emoji');
-  var ll=document.getElementById('fatigue-label');
-  var emojis=['','😩','😓','😐','💪','🔥'];
   var labels=['','Destroyed','Rough','Okay','Good','Excellent'];
-  if(el)el.textContent=emojis[v]||'😐';
-  if(ll)ll.textContent=labels[v]||'Okay';
+  var ll=document.getElementById('fatigue-label');
+  if(ll)ll.textContent=v+' — '+(labels[v]||'Okay');
 }
 function openFatigueSlider(){
   var sl=document.getElementById('fatigue-slider');
@@ -1711,6 +1730,7 @@ function renderToday(){
   document.getElementById('td-sub').textContent=day.rest?'Rest / Roll light':day.ex.length+' exercises';
   var startBtn=document.getElementById('td-start-btn');
   startBtn.style.display=day.rest?'none':'';
+  document.getElementById('td-purpose').textContent=day.rest?'No lifting today. Roll, drill, or rest, then mark the day done.':'Tell us how you feel, then tap Start. Your weights are already loaded.';
   document.getElementById('td-nogym-btn').style.display=day.rest?'none':'';
 
   // Readiness card — only on lift days
@@ -1744,11 +1764,10 @@ function renderToday(){
     }
     prev.innerHTML=
       '<div style="text-align:center;padding:var(--g4) 0 var(--g3);">'+
-        '<div style="font-size:2rem;margin-bottom:var(--g3);">🛌</div>'+
-        '<div style="font-weight:700;margin-bottom:var(--g2);">Rest & Recover</div>'+
+                '<div style="font-weight:700;margin-bottom:var(--g2);">Rest & Recover</div>'+
         '<div style="font-size:var(--sm);color:var(--mu);margin-bottom:var(--g4);line-height:1.6;">Roll light, drill technique,<br>or just rest. Recovery is training.</div>'+
         (nextLift?'<div style="font-size:var(--xs);color:var(--mu2);margin-bottom:var(--g5);">Next up: <strong style="color:var(--txt);">'+nextLift.name+'</strong></div>':'')+
-        '<button class="btn btn-p" onclick="markRestDay()" style="max-width:280px;margin:0 auto;">Mark Rest Day ✓</button>'+
+        '<button class="btn btn-p" onclick="markRestDay()" style="max-width:280px;margin:0 auto;">Mark Rest Day Done</button>'+
       '</div>';
     document.getElementById('td-perf').innerHTML='';
     return;
@@ -1859,7 +1878,7 @@ function renderProgress(){
   document.getElementById('pr-vol').textContent=(totalVol/2000).toFixed(1);
   var prs=Object.entries(S.prs||{});
   document.getElementById('pr-list').innerHTML=prs.length?prs.map(function(p){
-    return '<div class="prf"><span>'+p[0]+'</span><span style="font-weight:700;color:var(--gold);">'+p[1]+' lb 🏆</span></div>';
+    return '<div class="prf"><span>'+p[0]+'</span><span style="font-weight:700;color:var(--gold);">'+p[1]+' lb</span></div>';
   }).join(''):'<div style="color:var(--mu);font-size:var(--sm);">Log workouts to set PRs.</div>';
   var hist=S.workouts.slice(-20).reverse();
   document.getElementById('pr-history').innerHTML=hist.length?hist.map(function(wo){
@@ -2098,104 +2117,114 @@ function launchWO(title){
   },1000);
 }
 
+function fmtRest(sec){
+  if(!sec)return '';
+  return sec>=120?(Math.round(sec/30)/2)+' min':sec+' sec';
+}
+
 function renderWO(){
   var c=document.getElementById('wo-blocks');
   if(!AWO||!AWO.ex.length){c.innerHTML='<div style="color:var(--mu);padding:var(--g4) 0;">Add exercises to begin.</div>';return;}
 
-  // Split into dynamic warmup items (grouped together at top) and real exercises
+  // Dynamic warmup items are grouped into one checklist card at the top
   var warmupItems=[],realEx=[];
   AWO.ex.forEach(function(ex,i){ (ex.isWarmup?warmupItems:realEx).push({ex:ex,idx:i}); });
 
   var warmupHTML='';
   if(warmupItems.length){
-    warmupHTML='<div class="ex-b" style="background:var(--sf2);border-color:var(--ln2);">'+
-      '<div style="display:flex;align-items:center;gap:var(--g2);margin-bottom:var(--g3);">'+
-        '<span style="font-size:1.1rem;">🔥</span>'+
-        '<div style="font-weight:900;font-size:var(--sm);">Dynamic Warmup</div>'+
-      '</div>'+
+    warmupHTML='<div class="ex-b">'+
+      '<div class="ex-h"><div style="flex:1;"><div class="ex-n">Warm-up</div><div class="ex-m">Quick mobility, no weight. Tap each one when done.</div></div></div>'+
       warmupItems.map(function(item){
-        var ex=item.ex,ei=item.idx,s=ex.sets[0];
-        return '<div style="display:flex;align-items:center;gap:var(--g3);padding:9px 0;border-bottom:1px solid var(--ln);">'+
-          '<div class="sc'+(s.done?' done':'')+'" onclick="togS('+ei+',0)" style="flex-shrink:0;">'+(s.done?'✓':'○')+'</div>'+
-          '<div style="flex:1;">'+
-            '<div style="font-weight:600;font-size:var(--sm);">'+ex.n+'</div>'+
-            '<div style="font-size:var(--xs);color:var(--mu);margin-top:1px;">'+s.r+'</div>'+
-          '</div>'+
+        var ex=item.ex,s=ex.sets[0];
+        return '<div class="set-row wu" onclick="togS('+item.idx+',0)">'+
+          '<div style="flex:1;"><div style="font-weight:600;font-size:var(--sm);">'+ex.n+'</div><div class="ex-m">'+s.r+'</div></div>'+
+          '<div class="sc'+(s.done?' done':'')+'">'+(s.done?'✓':'')+'</div>'+
         '</div>';
       }).join('')+
-      '<div style="font-size:var(--xs);color:var(--mu2);margin-top:var(--g2);font-style:italic;">Quick mobility — no weight, no rest timer. Check off and move to your first lift.</div>'+
     '</div>';
   }
 
-  var exHTML=realEx.map(function(item){
+  var exHTML=realEx.map(function(item,n){
     var ex=item.ex,ei=item.idx;
-    var restLbl=ex.rest>=180?Math.floor(ex.rest/60)+'-'+(Math.floor(ex.rest/60)+1)+' min':ex.rest+'s';
-    var setRows=ex.sets.map(function(s,si){
-      var isWU=s.type==='wu',isTop=s.type==='top',isBO=s.type==='bo';
-      var topStyle=isTop?'border-color:rgba(212,162,58,.5);':'';
-      var lblColor=isTop?'#e2bf73':'var(--mu2)';
-      var tag=isTop?'<span style="font-size:9px;color:#e2bf73;font-weight:700;background:rgba(212,162,58,.15);padding:1px 5px;border-radius:4px;margin-left:3px;">TOP</span>':
-               isBO?'<span style="font-size:9px;color:var(--mu);font-weight:700;background:var(--sf3);padding:1px 5px;border-radius:4px;margin-left:3px;">-OFF</span>':'';
-      // TOP set: 5-col grid with RIR input
+    var wu=[],main=[];
+    ex.sets.forEach(function(s,si){ (s.type==='wu'?wu:main).push({s:s,si:si}); });
+    var restSec=(main[0]&&main[0].s.rest)||ex.rest;
+
+    var head='<div class="ex-h">'+
+      '<div class="ex-ltr">'+String.fromCharCode(65+n)+'</div>'+
+      '<div style="flex:1;min-width:0;"><div class="ex-n">'+ex.n+'</div>'+
+        '<div class="ex-m">'+(ex.isPrimary?'<span class="tag">Main lift</span>':'')+(restSec?'Rest '+fmtRest(restSec):'')+'</div></div>'+
+      '<button class="lnk" onclick="openSwap('+ei+')">Swap</button>'+
+      '<button class="lnk" onclick="rmEx('+ei+')">Remove</button>'+
+    '</div>';
+    var tips=ex.note?'<details class="tips"><summary>How to do it</summary><div>'+ex.note+'</div></details>':'';
+
+    // Warm-up sets collapse into one tappable row
+    var wuHTML='';
+    if(wu.length){
+      var allDone=wu.every(function(x){return x.s.done;});
+      var haveW=wu.every(function(x){return x.s.w;});
+      var txt=haveW?wu.map(function(x){return x.s.w+'×'+x.s.r;}).join(' · '):
+        (wu.length>1?'Build up in '+wu.length+' light sets':'1 light set');
+      wuHTML='<div class="set-row wu" onclick="togWU('+ei+')">'+
+        '<div class="set-l">Warm-up</div><div class="set-v mu">'+txt+'</div>'+
+        '<div class="sc'+(allDone?' done':'')+'">'+(allDone?'✓':'')+'</div>'+
+      '</div>';
+    }
+
+    var setNo=0,boNo=0;
+    var rows=main.map(function(x){
+      var s=x.s,si=x.si,isTop=s.type==='top';
+      var lbl=isTop?'Top set':s.type==='bo'?'Back-off '+(++boNo):'Set '+(++setNo);
+      var row='<div class="set-row'+(s.done?' is-done':'')+'">'+
+        '<div class="set-l'+(isTop?' top':'')+'">'+lbl+'</div>'+
+        '<div class="set-v">'+
+          '<input class="si-in" type="number" inputmode="decimal" min="0" step="2.5" value="'+(s.w||'')+'" placeholder="lb" onchange="updS('+ei+','+si+',\'w\',this.value);renderWO();">'+
+          '<span class="x">lb &times;</span>'+
+          '<input class="si-in r" type="number" inputmode="numeric" min="0" value="'+(s.r||'')+'" placeholder="reps" onchange="updS('+ei+','+si+',\'r\',this.value)">'+
+        '</div>'+
+        '<div class="sc'+(s.done?' done':'')+'" onclick="togS('+ei+','+si+')">'+(s.done?'✓':'')+'</div>'+
+      '</div>';
+      if(isBarbellEx(ex.n)&&s.w)row+='<div class="plates">'+plateBreakdownStr(s.w)+'</div>';
       if(isTop){
-        var plateLineTop=(isBarbellEx(ex.n)&&s.w)?
-          '<div style="font-size:var(--xs);color:var(--gold);margin-top:5px;padding-left:2px;">🔩 '+plateBreakdownStr(s.w)+'</div>':
-          (s.noOrm&&!s.w)?'<div style="font-size:var(--xs);color:var(--mu);margin-top:5px;padding-left:2px;">No 1RM set — enter the weight you use for this top set. Add your 1RM on Home to auto-load weights.</div>':'';
-        return '<div style="margin-bottom:var(--g2);">'+
-          '<div style="display:grid;grid-template-columns:28px 1fr 1fr 52px 40px;gap:var(--g2);align-items:center;">'+
-            '<div style="font-size:var(--xs);color:'+lblColor+';font-weight:700;text-align:center;">TOP</div>'+
-            '<input class="si" type="number" inputmode="decimal" min="0" step="2.5" value="'+(s.w||'')+'" placeholder="lb" onchange="updS('+ei+','+si+',\'w\',this.value);renderWO();" style="'+topStyle+'">'+
-            '<input class="si" type="number" inputmode="numeric" min="0" value="'+(s.r||'')+'" placeholder="reps" onchange="updS('+ei+','+si+',\'r\',this.value)">'+
-            '<input class="si" type="number" inputmode="numeric" min="0" max="10" value="'+(s.rir!=null&&s.rir!==''?s.rir:'')+'" placeholder="RIR" onchange="updS('+ei+','+si+',\'rir\',this.value)" style="font-size:var(--xs);background:rgba(212,162,58,.07);border-color:rgba(212,162,58,.3);">'+
-            '<div class="sc'+(s.done?' done':'')+'" onclick="togS('+ei+','+si+')">'+(s.done?'✓':'○')+'</div>'+
-          '</div>'+
-          '<div style="display:grid;grid-template-columns:28px 1fr 1fr 52px 40px;gap:var(--g2);margin-top:2px;">'+
-            '<span></span><span style="font-size:9px;color:var(--mu2);text-align:center;">LBS</span>'+
-            '<span style="font-size:9px;color:var(--mu2);text-align:center;">REPS</span>'+
-            '<span style="font-size:9px;color:rgba(212,162,58,.6);text-align:center;">RIR</span><span></span>'+
-          '</div>'+
-          plateLineTop+
-        '</div>';
+        if(s.noOrm&&!s.w)row+='<div class="sub">No 1RM set. Enter the weight you use for this set, or add your 1RM on Home to load it automatically.</div>';
+        var cur=(s.rir===''||s.rir==null)?null:+s.rir;
+        row+='<div class="feel-row">'+[['Easy',4],['Solid',2],['Hard',0]].map(function(f){
+          return '<button class="feel'+(cur===f[1]?' sel':'')+'" onclick="setFeel('+ei+','+si+','+f[1]+')">'+f[0]+'</button>';
+        }).join('')+'</div>'+
+        '<div class="sub">How did the top set feel? Easy = 4+ reps left in the tank, Solid = about 2, Hard = 0&ndash;1.</div>';
       }
-      var plateLine=(isBarbellEx(ex.n)&&s.w&&!isWU)?
-        '<div style="grid-column:2/3;font-size:9px;color:var(--gold);margin-top:2px;">🔩 '+plateBreakdownStr(s.w)+'</div>':'';
-      return '<div class="sr" style="'+(isWU?'opacity:.6':'')+'display:grid;grid-template-columns:28px 1fr 1fr 40px;gap:var(--g2);align-items:start;">'+
-        '<div style="font-size:var(--xs);color:'+lblColor+';font-weight:700;text-align:center;padding-top:9px;">'+s.lbl+'</div>'+
-        '<div><input class="si" type="number" inputmode="decimal" min="0" step="2.5" value="'+(s.w||'')+'" placeholder="lb" onchange="updS('+ei+','+si+',\'w\',this.value);renderWO();" style="'+topStyle+'width:100%;">'+plateLine+'</div>'+
-        '<input class="si" type="number" inputmode="numeric" min="0" value="'+(s.r||'')+'" placeholder="reps" onchange="updS('+ei+','+si+',\'r\',this.value)" style="align-self:start;">'+
-        '<div class="sc'+(s.done?' done':'')+'" onclick="togS('+ei+','+si+')" style="align-self:start;">'+(s.done?'✓':'○')+'</div>'+
-        '</div>';
+      return row;
     }).join('');
-    var primBadge=ex.isPrimary?'<span style="font-size:9px;color:#e2bf73;font-weight:700;background:rgba(212,162,58,.15);padding:1px 6px;border-radius:4px;margin-left:6px;">★ PRIMARY</span>':'';
-    return '<div class="ex-b">'+
-      '<div style="display:flex;align-items:center;gap:var(--g3);margin-bottom:'+(ex.note?'var(--g2)':'var(--g3)')+';">'+
-        '<div style="width:28px;height:28px;border-radius:8px;background:var(--reds);color:#e88a7d;font-weight:900;font-size:var(--xs);display:flex;align-items:center;justify-content:center;flex-shrink:0;">'+String.fromCharCode(65+realEx.indexOf(item))+'</div>'+
-        '<div style="flex:1;"><div style="font-weight:700;">'+ex.n+primBadge+'</div>'+
-        '<div style="font-size:var(--xs);color:var(--mu);margin-top:1px;">'+restLbl+' rest</div></div>'+
-        '<button onclick="openSwap('+ei+')" style="color:var(--gold);padding:4px 8px;font-size:var(--xs);font-weight:700;border:1px solid rgba(212,162,58,.3);border-radius:6px;margin-right:4px;">⇄ Swap</button>'+
-        '<button onclick="rmEx('+ei+')" style="color:var(--mu2);padding:4px 8px;">✕</button>'+
-      '</div>'+
-      (ex.note?'<div style="font-size:var(--xs);color:var(--mu2);font-style:italic;margin-bottom:var(--g3);padding:var(--g2) var(--g3);background:var(--sf3);border-radius:6px;line-height:1.5;">'+ex.note+'</div>':'')+
-      '<div style="display:grid;grid-template-columns:28px 1fr 1fr 40px;gap:var(--g2);margin-bottom:var(--g2);">'+
-        '<span style="font-size:var(--xs);color:var(--mu2);font-weight:700;text-align:center;">SET</span>'+
-        '<span style="font-size:var(--xs);color:var(--mu2);font-weight:700;text-align:center;">LBS</span>'+
-        '<span style="font-size:var(--xs);color:var(--mu2);font-weight:700;text-align:center;">REPS</span>'+
-        '<span></span></div>'+
-      setRows+
-      '<button onclick="addSet('+ei+')" style="width:100%;text-align:center;padding:var(--g2) 0;color:var(--mu);font-size:var(--xs);background:var(--sf2);border:1px dashed var(--ln2);border-radius:8px;cursor:pointer;margin-top:var(--g2);">+ Set</button>'+
+
+    return '<div class="ex-b">'+head+tips+wuHTML+rows+
+      '<button class="lnk" onclick="addSet('+ei+')" style="width:100%;padding-top:10px;border-top:1px solid var(--ln);">+ Add set</button>'+
     '</div>';
   }).join('');
 
   c.innerHTML=warmupHTML+exHTML;
 }
 
+// Tap the collapsed warm-up row: marks every warm-up set done (or undone). No rest timer, no PRs.
+function togWU(ei){
+  var wu=AWO.ex[ei].sets.filter(function(s){return s.type==='wu';});
+  var to=!wu.every(function(s){return s.done;});
+  wu.forEach(function(s){s.done=to;});
+  renderWO();
+}
+// Easy / Solid / Hard on the top set → stored as RIR for the overload engine
+function setFeel(ei,si,rir){
+  AWO.ex[ei].sets[si].rir=rir;
+  renderWO();
+}
+
 function updS(ei,si,f,v){AWO.ex[ei].sets[si][f]=parseFloat(v)||0;}
 function togS(ei,si){
   var s=AWO.ex[ei].sets[si];
   s.done=!s.done;
-  if(s.done){
+  if(s.done&&s.type!=='dynwu'){
     var w=parseFloat(s.w)||0,n=AWO.ex[ei].n;
-    if(w>0&&(!S.prs[n]||w>S.prs[n])){S.prs[n]=w;flashPR('New PR: '+n+' — '+w+' lb 🏆');}
+    if(w>0&&(!S.prs[n]||w>S.prs[n])){S.prs[n]=w;flashPR('New PR: '+n+' — '+w+' lb');}
     // Per-set rest (warmup/top/backoff on primary lifts) takes priority over exercise-level rest
     startRest(s.rest!=null?s.rest:(AWO.ex[ei].rest||90));
   }
@@ -2260,7 +2289,7 @@ function applyProgressiveOverload(savedWorkout){
       if(loggedRIR>=(TARGET_RIR+2)){
         var newBump=Math.min(10,curBump+2);
         S.pctBump[ex.n]=newBump;
-        feedback.push(ex.n+': felt easy (RIR '+loggedRIR+'). Top set now +'+newBump+'% above program');
+        feedback.push(ex.n+': felt easy, so your top set goes up (+'+newBump+'% total).');
       } else {
         if(curBump){
           feedback.push(ex.n+': holding at +'+curBump+'% above program');
@@ -2318,7 +2347,7 @@ function showOverloadFeedback(feedback){
   var msg=feedback.join('\n');
   // Use a simple alert for now — no new UI elements needed
   setTimeout(function(){
-    alert('📈 Next Session Updates:\n\n'+feedback.map(function(f){return '• '+f;}).join('\n'));
+    alert('Next session updates:\n\n'+feedback.map(function(f){return '• '+f;}).join('\n'));
   },400);
 }
 
