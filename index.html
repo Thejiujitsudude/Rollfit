@@ -139,6 +139,13 @@ h1{font-weight:900;letter-spacing:-.02em;}
 .more summary{list-style:none;cursor:pointer;text-align:center;color:var(--mu);font-size:var(--sm);font-weight:700;padding:var(--g3) 0;}
 .more summary::-webkit-details-marker{display:none;}
 .nb svg{width:22px;height:22px;}
+.sw{position:relative;width:50px;height:30px;flex-shrink:0;display:inline-block;}
+.sw input{opacity:0;width:0;height:0;position:absolute;}
+.sw span{position:absolute;inset:0;background:var(--sf3);border:1px solid var(--ln2);border-radius:999px;transition:background .2s;}
+.sw span::before{content:'';position:absolute;width:24px;height:24px;left:2px;top:2px;background:#fff;border-radius:50%;transition:transform .2s;}
+.sw input:checked+span{background:var(--red);border-color:var(--red);}
+.sw input:checked+span::before{transform:translateX(20px);}
+.bjj-row{display:flex;align-items:center;justify-content:space-between;gap:var(--g3);cursor:pointer;}
 .acc{border-bottom:1px solid var(--ln);}
 .acc:last-child{border-bottom:none;}
 .acc summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:var(--g3);padding:12px 0;cursor:pointer;font-size:var(--sm);}
@@ -188,22 +195,6 @@ details.wdc[open]>summary{margin-bottom:var(--g2);}
       <div class="chip" data-v="4" onclick="obSelDay(this)">4 days</div>
       <div class="chip" data-v="5" onclick="obSelDay(this)">5 days</div>
     </div>
-    <div style="margin-top:auto;"><button class="btn btn-p" onclick="obGo(3)">Continue →</button></div>
-  </div>
-
-  <div class="obs" id="obs3">
-    <div style="font-size:1.2rem;font-weight:900;margin-bottom:var(--g3);">Which days do you train BJJ?</div>
-    <div style="color:var(--mu);font-size:var(--sm);margin-bottom:var(--g4);">The app uses this to flag scheduling conflicts with your heavy lift days.</div>
-    <div class="chip-row" id="ob-bjj" style="margin-bottom:var(--g3);">
-      <div class="chip" data-d="Mon" onclick="obToggleBJJ(this)">Mon</div>
-      <div class="chip" data-d="Tue" onclick="obToggleBJJ(this)">Tue</div>
-      <div class="chip" data-d="Wed" onclick="obToggleBJJ(this)">Wed</div>
-      <div class="chip" data-d="Thu" onclick="obToggleBJJ(this)">Thu</div>
-      <div class="chip" data-d="Fri" onclick="obToggleBJJ(this)">Fri</div>
-      <div class="chip" data-d="Sat" onclick="obToggleBJJ(this)">Sat</div>
-      <div class="chip" data-d="Sun" onclick="obToggleBJJ(this)">Sun</div>
-    </div>
-    <div style="font-size:var(--xs);color:var(--mu2);margin-bottom:var(--g5);">Select all that apply. You can change this later.</div>
     <div style="margin-top:auto;"><button class="btn btn-p" onclick="obGo(4)">Continue →</button></div>
   </div>
 
@@ -293,11 +284,12 @@ details.wdc[open]>summary{margin-bottom:var(--g2);}
     <div class="bar-t"><div class="bar-f" id="h-xp-bar" style="width:0%"></div></div>
   </div>
 
-  <!-- BJJ Session log -->
-  <div style="display:flex;gap:var(--g2);margin-bottom:var(--g3);">
-    <button class="btn btn-s" onclick="logBJJ()" style="flex:1;min-height:44px;font-size:var(--sm);">Log a BJJ Session</button>
-    <div id="h-bjj-today" style="display:none;background:rgba(39,174,96,.1);border:1px solid rgba(39,174,96,.3);border-radius:var(--rs);padding:0 var(--g3);align-items:center;font-size:var(--xs);color:#5fd592;font-weight:700;flex-shrink:0;min-height:44px;">Logged ✓</div>
-  </div>
+  <!-- Jiu-jitsu today switch -->
+  <label class="card bjj-row">
+    <div><div style="font-weight:800;font-size:var(--sm);">Jiu-jitsu today</div>
+    <div class="bjj-sub" style="font-size:var(--xs);color:var(--mu);margin-top:2px;">Rolling today? Turn this on and we'll trim your lift so you're fresh for the mat.</div></div>
+    <span class="sw"><input type="checkbox" class="bjj-sw" onchange="setBJJToday(this.checked)"><span></span></span>
+  </label>
 
   <!-- Stats -->
   <div class="sg">
@@ -329,6 +321,13 @@ details.wdc[open]>summary{margin-bottom:var(--g2);}
     <div style="color:var(--mu);font-size:var(--sm);margin-top:2px;" id="td-sub"></div>
     <div class="purpose" id="td-purpose">Tell us how you feel, then tap Start. Your weights are already loaded.</div>
   </div>
+
+  <!-- Jiu-jitsu today switch -->
+  <label class="card bjj-row">
+    <div><div style="font-weight:800;font-size:var(--sm);">Jiu-jitsu today</div>
+    <div class="bjj-sub" style="font-size:var(--xs);color:var(--mu);margin-top:2px;">Rolling today? Turn this on and we'll trim your lift so you're fresh for the mat.</div></div>
+    <span class="sw"><input type="checkbox" class="bjj-sw" onchange="setBJJToday(this.checked)"><span></span></span>
+  </label>
 
   <!-- READINESS CHECK (shows on lift days before workout) -->
   <div class="card" id="td-readiness" style="display:none;">
@@ -1651,18 +1650,21 @@ function readinessLevel(){
 }
 
 // ── BJJ SESSION LOGGING ────────────────────────────────────────
-function logBJJ(){
-  if(!S.bjjLog)S.bjjLog=[];
-  var today=td();
-  // Prevent double-logging same day
-  if(S.bjjLog.length&&S.bjjLog[S.bjjLog.length-1]===today){
-    alert('BJJ already logged for today.');return;
-  }
-  S.bjjLog.push(today);
+// "Jiu-jitsu today" switch: today's date in S.bjjLog = on.
+// When on, buildSets trims volume (fewer back-off + accessory sets); loads unchanged.
+function bjjToday(){ return (S.bjjLog||[]).indexOf(td())!==-1; }
+function setBJJToday(on){
+  S.bjjLog=(S.bjjLog||[]).filter(function(d){return d!==td();});
+  if(on)S.bjjLog.push(td());
   save();
-  // Show confirmation
-  var el=document.getElementById('h-bjj-today');
-  if(el)el.style.display='flex';
+  syncBJJSwitches();
+}
+function syncBJJSwitches(){
+  var on=bjjToday();
+  document.querySelectorAll('.bjj-sw').forEach(function(x){x.checked=on;});
+  document.querySelectorAll('.bjj-sub').forEach(function(x){
+    x.textContent=on?'On: today\'s lift has fewer back-off and accessory sets. Same weights.':'Rolling today? Turn this on and we\'ll trim your lift so you\'re fresh for the mat.';
+  });
 }
 
 // ── FATIGUE SLIDER ──────────────────────────────────────────────
@@ -1740,10 +1742,7 @@ function renderHome(){
   if(tEl)tEl.textContent=curTrack().name;
   renderAcctCard();
   renderBelt();
-  // BJJ logged today indicator
-  var bjjToday=S.bjjLog&&S.bjjLog.length&&S.bjjLog[S.bjjLog.length-1]===td();
-  var bjjEl=document.getElementById('h-bjj-today');
-  if(bjjEl)bjjEl.style.display=bjjToday?'flex':'none';
+  syncBJJSwitches();
   // Stats
   var totalSets=S.workouts.reduce(function(a,wo){return a+wo.ex.reduce(function(b,e){return b+e.sets.filter(function(s){return s.done;}).length;},0);},0);
   document.getElementById('h-txp').textContent=(S.xp||0).toLocaleString();
@@ -1782,6 +1781,7 @@ function renderToday(){
   document.getElementById('td-sub').textContent=day.rest?'Rest / Roll light':day.ex.length+' exercises';
   var startBtn=document.getElementById('td-start-btn');
   startBtn.style.display=day.rest?'none':'';
+  syncBJJSwitches();
   document.getElementById('td-purpose').textContent=day.rest?'No lifting today. Roll, drill, or rest, then mark the day done.':'Tell us how you feel, then tap Start. Your weights are already loaded.';
   document.getElementById('td-nogym-btn').style.display=day.rest?'none':'';
 
@@ -1967,6 +1967,7 @@ function buildSets(e){
   // Readiness multiplier — recovery day reduces loads ~10%
   var rmult=readinessMult();
   var recoveryMode=readinessLevel()===1;
+  var trimVolume=recoveryMode||bjjToday(); // beat-up OR rolling today → fewer sets
   // Get ORM — first check manually set, then auto-estimate from best logged set
   var orm=effectiveORM(e.n);
   if(!orm){
@@ -2005,7 +2006,7 @@ function buildSets(e){
     });
     if(e.backoff){
       // On recovery days, cut backoff sets in half (min 1)
-      var boSets=recoveryMode?Math.max(1,Math.floor(e.backoff.s/2)):e.backoff.s;
+      var boSets=trimVolume?Math.max(1,Math.floor(e.backoff.s/2)):e.backoff.s;
       for(var j=0;j<boSets;j++){
         sets.push({w:orm?round25(orm*(e.backoff.pct/100)*rmult):'',r:e.backoff.r,done:false,type:'bo',lbl:'B'+(j+1),rest:120});
       }
@@ -2038,7 +2039,7 @@ function buildSets(e){
     // Apply recovery reduction to accessory weights too
     if(recoveryMode&&targetW){targetW=round25(parseFloat(targetW)*rmult);}
     // On recovery days, drop one set from accessories (min 2)
-    var accSets=recoveryMode?Math.max(2,e.s-1):e.s;
+    var accSets=trimVolume?Math.max(2,e.s-1):e.s;
     if(e.wu){sets.push({w:targetW,r:targetReps,done:false,type:'wu',lbl:'W1'});}
     for(var k=0;k<accSets;k++){
       sets.push({w:targetW,r:targetReps,done:false,type:'work',lbl:''+(k+1)});

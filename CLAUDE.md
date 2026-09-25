@@ -2,11 +2,18 @@
 
 Grappler (BJJ) strength training web app. Single self-contained `index.html` (~2,400 lines: inline CSS + JS). No backend. Mobile-first, tested on iPhone Safari.
 
+## Product direction (decided)
+- **Roll Fit = bring your own program, fit it to jiu-jitsu.** Users can keep the exercises from their own plan, or accept a grappler swap (with a reason). Nothing changes unless the user taps it. Users with no plan get the built-in Roll Fit program.
+- Pitch: "Bring the program you already run. Roll Fit fits it around your jiu-jitsu."
+- **No mat-schedule planning** (owner decision). Only a daily "Jiu-jitsu today" switch.
+
 ## Owner preferences
 - Has ADHD: answer first, short bullets, bold key terms, micro-steps, one question at a time.
 - Direct, no hype. Show exact code changes.
 
 ## Hard rules (do not break)
+These apply to **Roll Fit's own program and its suggestions**. Exercises a user keeps from their own plan are allowed even if they break these (e.g. curls); the app may offer a swap but never forces it.
+
 - **Session order:** Dynamic warmup → primary compound → accessories → carry/grip → **Face Pull ALWAYS last**.
 - **Performance, not bodybuilding.** Movement patterns (hinge, squat, push, pull, carry, anti-rotation), no curls/extensions.
 - **Core = Hanging Leg Raise + Pallof Press family only** (rotational/hanging). No planks, crunches, dead bugs.
@@ -62,6 +69,7 @@ Primary top 180s · backoff 120s · primary warmup 60s · compound accessories 9
 - Swaps: `SUBSTITUTES` (every EX_LIB exercise has ≥2), `openSwap()` / `doSwap()`.
 - Build From My Exercises: `MATCH_RULES` + `matchExercise()` keyword mapper → `startBuiltWorkout()`.
 - Rest days: `markRestDay()` advances dayIdx.
+- "Jiu-jitsu today" switch (`.bjj-row` on Home + Today, `setBJJToday()` / `bjjToday()` / `syncBJJSwitches()`): today's date in `S.bjjLog` = on. When on, `buildSets` trims volume exactly like readiness "Beat up" (back-offs halved, accessories −1 set, min 2) but **does not reduce loads**. Onboarding no longer asks for BJJ days (`bjjDays` is legacy/unused).
 - No Gym Today: `startNoGym()` / `noGymSession()` — zero-equipment session on lift days (Broad Jump, BSS, SL Glute Bridge, Push-Ups, Doorframe Row, Lying Leg Raise, Bear Crawl, Face Pull last). `AWO.noGym` → does NOT advance dayIdx and skips `applyProgressiveOverload`, so gym progression is untouched.
 - Week 9 test week applies `applyTrackSwap()`, so Minimal Equipment tests DB RDL / Goblet Squat.
 
