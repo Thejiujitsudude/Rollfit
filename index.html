@@ -283,6 +283,7 @@ h1{font-weight:900;letter-spacing:-.02em;}
   </div>
 
   <button class="btn btn-p" id="td-start-btn" onclick="startWorkout()" style="margin-bottom:var(--g2);">Start Workout</button>
+  <button class="btn btn-s" id="td-nogym-btn" onclick="startNoGym()" style="margin-bottom:var(--g2);">🏠 No Gym Today — Bodyweight Session</button>
   <button class="btn btn-s" onclick="startCustom()" style="margin-bottom:var(--g2);">Custom Workout</button>
   <button class="btn btn-s" onclick="openBuild()" style="margin-bottom:var(--g4);">📋 Build From My Exercises</button>
 
@@ -1035,19 +1036,23 @@ function getProgDaysRaw(){
   var rir=isDeload?3:1;
 
   // ── WEEK 9: TEST WEEK ─────────────────────────────────────────
+  // Minimal Equipment tests its swapped primaries (DB RDL / Goblet Squat)
+  var tbTest=applyTrackSwap('Trap Bar Deadlift'),zsTest=applyTrackSwap('Zercher Squat');
   if(w===9) return[
     {name:'Test 1 · Trap Bar Max',rest:false,lbl:'TEST',ex:[
       ...wuHinge(),
-      {n:'Trap Bar Deadlift',wu:5,s:1,r:1,pct:97,rest:360,
-       note:'STRENGTH TEST — pyramid: 50%×3, 65%×2, 75%×1, 85%×1, 92%×1, then max attempt. Log your best single — this becomes your new 1RM.'},
+      {n:tbTest,wu:5,s:1,r:1,pct:97,rest:360,
+       note:tbTest==='Trap Bar Deadlift'?'STRENGTH TEST — pyramid: 50%×3, 65%×2, 75%×1, 85%×1, 92%×1, then max attempt. Log your best single — this becomes your new 1RM.':
+         'STRENGTH TEST — work up to the heaviest dumbbells you can control for 1 clean rep. Log your best — this becomes your new 1RM.'},
       {n:'Pull-Ups',wu:1,s:2,r:5,rir:2,rest:90,note:'ACCESSORY — light volume only. Save energy for the test.'},
       fc(2),fp(),
     ]},
     {name:'Rest / Roll',rest:true,lbl:'REST',ex:[]},
     {name:'Test 2 · Zercher Max',rest:false,lbl:'TEST',ex:[
       ...wuSquat(),
-      {n:'Zercher Squat',wu:4,s:1,r:1,pct:97,rest:360,
-       note:'STRENGTH TEST — pyramid up to max. Bar in elbow crooks. Log your best single — new 1RM for next block.'},
+      {n:zsTest,wu:4,s:1,r:1,pct:97,rest:360,
+       note:zsTest==='Zercher Squat'?'STRENGTH TEST — pyramid up to max. Bar in elbow crooks. Log your best single — new 1RM for next block.':
+         'STRENGTH TEST — work up to the heaviest goblet squat you can do for 1 clean rep. Log your best — new 1RM for next block.'},
       {n:'Overhead Press',wu:2,s:2,r:6,rir:2,rest:90,note:'ACCESSORY — maintenance volume only.'},
       fc(2),fp(),
     ]},
@@ -1706,6 +1711,7 @@ function renderToday(){
   document.getElementById('td-sub').textContent=day.rest?'Rest / Roll light':day.ex.length+' exercises';
   var startBtn=document.getElementById('td-start-btn');
   startBtn.style.display=day.rest?'none':'';
+  document.getElementById('td-nogym-btn').style.display=day.rest?'none':'';
 
   // Readiness card — only on lift days
   var rdCard=document.getElementById('td-readiness');
@@ -1961,6 +1967,32 @@ function startWorkout(){
   if(day.rest)return;
   AWO={date:td(),dayName:day.name,ex:day.ex.map(function(e){return{n:e.n,sets:buildSets(e),rest:e.rest||90,note:e.note||'',isPrimary:!!e.pct,isWarmup:!!e.isWarmup};}),dMin:0};
   launchWO(day.name);
+}
+
+// ── NO GYM TODAY ───────────────────────────────────────────────
+// Zero-equipment session for lift days you can't get to the gym.
+// Same session order (warmup → power → legs/hinge → push/pull → core → carry → Face Pull last).
+// Does NOT advance dayIdx — the scheduled lift is still waiting next time.
+function noGymSession(){
+  return [
+    ...wuGeneral(),
+    {n:'Broad Jump',wu:0,s:4,r:3,rest:60,note:'POWER — explosive hip extension for shots. Stick the landing, full reset each rep.'},
+    {n:'Bulgarian Split Squat',wu:0,s:3,r:10,rest:90,note:'LEGS — bodyweight, rear foot on a couch or chair. Per leg, slow 3-sec descent.'},
+    {n:'Single-Leg Glute Bridge',wu:0,s:3,r:12,rest:90,note:'HINGE — per leg. Drive through the heel, pause 1 sec at the top. Bridge-out power.'},
+    {n:'Push-Ups',wu:0,s:3,r:15,rest:90,note:'PUSH — frames and pushing off the mat. Stop 1-2 reps before failure.'},
+    {n:'Doorframe Row',wu:0,s:3,r:12,rest:90,note:'PULL — grip both sides of a sturdy door frame, lean back, row your chest to the frame. Walk feet in to make it harder.'},
+    {n:'Lying Leg Raise',wu:0,s:3,r:12,rest:60,note:'CORE — floor version of the Hanging Leg Raise. Low back flat, slow lower.'},
+    {n:'Bear Crawl',wu:0,s:3,r:1,rest:45,note:'CARRY — ~20m per set, knees 1 inch off the floor. Shoulder and grip endurance.'},
+    {n:'Face Pull',wu:0,s:3,r:15,rest:45,note:'PREHAB — always last. Use a band if you have one; no band → Prone Y-T-W Raises, 5 each letter.'},
+  ];
+}
+function startNoGym(){
+  AWO={date:td(),dayName:'No-Gym Session',noGym:true,ex:noGymSession().map(function(e){
+    // Bodyweight only — never pull gym weights from dpState
+    var sets=e.isWarmup?buildSets(e):Array.from({length:e.s},function(_,i){return{w:'',r:e.r,done:false,type:'work',lbl:''+(i+1)};});
+    return{n:e.n,sets:sets,rest:e.rest,note:e.note,isPrimary:false,isWarmup:!!e.isWarmup};
+  }),dMin:0};
+  launchWO('No-Gym Session');
 }
 
 function startCustom(){
@@ -2304,10 +2336,13 @@ function endWO(doSave){
     var sets=AWO.ex.reduce(function(a,e){return a+e.sets.filter(function(s){return s.done;}).length;},0);
     S.xp=(S.xp||0)+sets*5+25;
     S.lastSessXP=sets*5+25;
-    // Run progressive overload BEFORE pushing workout so we can read prior sessions
-    applyProgressiveOverload(AWO);
+    // No-Gym sessions don't touch gym progression or move the program forward
+    if(!AWO.noGym){
+      // Run progressive overload BEFORE pushing workout so we can read prior sessions
+      applyProgressiveOverload(AWO);
+    }
     S.workouts.push(JSON.parse(JSON.stringify(AWO)));
-    S.dayIdx=(S.dayIdx||0)+1;
+    if(!AWO.noGym)S.dayIdx=(S.dayIdx||0)+1;
     save();
     // Show feedback after state is saved
     if(S.lastOverloadFeedback&&S.lastOverloadFeedback.length){

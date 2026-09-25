@@ -56,6 +56,8 @@ Primary top 180s · backoff 120s · primary warmup 60s · compound accessories 9
 - Swaps: `SUBSTITUTES` (every EX_LIB exercise has ≥2), `openSwap()` / `doSwap()`.
 - Build From My Exercises: `MATCH_RULES` + `matchExercise()` keyword mapper → `startBuiltWorkout()`.
 - Rest days: `markRestDay()` advances dayIdx.
+- No Gym Today: `startNoGym()` / `noGymSession()` — zero-equipment session on lift days (Broad Jump, BSS, SL Glute Bridge, Push-Ups, Doorframe Row, Lying Leg Raise, Bear Crawl, Face Pull last). `AWO.noGym` → does NOT advance dayIdx and skips `applyProgressiveOverload`, so gym progression is untouched.
+- Week 9 test week applies `applyTrackSwap()`, so Minimal Equipment tests DB RDL / Goblet Squat.
 
 ## Known quirks
 - Kettlebell Swing is categorized "Warmup" in EX_LIB but functions as a hinge.
