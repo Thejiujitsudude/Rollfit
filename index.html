@@ -13,6 +13,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="roll-fit">
 <meta name="theme-color" content="#161412">
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 :root{
   --bg:#161412;--sf:#1d1b19;--sf2:#222020;--sf3:#2a2826;
@@ -156,6 +157,7 @@ h1{font-weight:900;letter-spacing:-.02em;}
       </div>
     </div>
     <button class="btn btn-p" onclick="obGo(1)">Get Started</button>
+    <button class="btn btn-g" onclick="openOv('ov-account')" style="margin-top:var(--g2);border:none;">Already have an account? Sign in</button>
     <div style="height:var(--g4);"></div>
   </div>
 
@@ -253,6 +255,13 @@ h1{font-weight:900;letter-spacing:-.02em;}
       <div style="font-size:var(--sm);opacity:.88;" id="h-bn-s">Time to put in work.</div>
     </div>
     <button class="btn-pill" id="h-bn-btn" onclick="goScr('today')">Start →</button>
+  </div>
+
+  <!-- Account / backup -->
+  <div class="card" id="h-acct" onclick="openOv('ov-account')" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:var(--g3);">
+    <div><div style="font-weight:800;font-size:var(--sm);" id="h-acct-h">Back up your progress</div>
+    <div style="font-size:var(--xs);color:var(--mu);margin-top:2px;" id="h-acct-s">Right now your workouts are only saved on this phone.</div></div>
+    <span style="color:var(--red);font-size:var(--sm);font-weight:700;flex-shrink:0;" id="h-acct-cta">Set up</span>
   </div>
 
   <!-- Belt card -->
@@ -453,6 +462,29 @@ h1{font-weight:900;letter-spacing:-.02em;}
     <div id="rest-cnt" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.4rem;font-weight:900;font-variant-numeric:tabular-nums;">90</div>
   </div>
   <button class="btn btn-g btn-sm" onclick="stopRest()" style="min-width:110px;">Skip →</button>
+</div>
+
+<!-- ACCOUNT OVERLAY -->
+<div class="ov" id="ov-account" style="z-index:110;">
+  <div class="sh">
+    <div class="hnd"></div>
+    <div id="acct-out">
+      <div style="font-size:1.1rem;font-weight:900;margin-bottom:4px;">Save your progress</div>
+      <div style="font-size:var(--sm);color:var(--mu);margin-bottom:var(--g4);">Create a free account so your workouts are backed up and follow you to a new phone.</div>
+      <input class="si" id="acct-email" type="email" autocomplete="email" placeholder="Email" style="border-radius:var(--rs);padding:12px var(--g4);width:100%;text-align:left;margin-bottom:var(--g2);">
+      <input class="si" id="acct-pw" type="password" autocomplete="current-password" placeholder="Password (6+ characters)" style="border-radius:var(--rs);padding:12px var(--g4);width:100%;text-align:left;margin-bottom:var(--g3);">
+      <button class="btn btn-p" onclick="acctSignUp()" style="margin-bottom:var(--g2);">Create account</button>
+      <button class="btn btn-s" onclick="acctSignIn()">Sign in</button>
+    </div>
+    <div id="acct-in" style="display:none;">
+      <div style="font-size:1.1rem;font-weight:900;margin-bottom:4px;">Your account</div>
+      <div style="font-size:var(--sm);color:var(--mu);margin-bottom:var(--g4);">Signed in as <strong style="color:var(--txt);" id="acct-who"></strong>. Your progress backs up automatically.</div>
+      <button class="btn btn-s" onclick="syncNow()" style="margin-bottom:var(--g2);">Back up now</button>
+      <button class="btn btn-g" onclick="acctSignOut()">Sign out</button>
+    </div>
+    <div id="acct-msg" style="font-size:var(--sm);color:var(--mu);margin-top:var(--g3);min-height:1.2em;"></div>
+    <button class="btn btn-g" onclick="closeOv('ov-account')" style="margin-top:var(--g2);border:none;">Close</button>
+  </div>
 </div>
 
 <!-- ORM OVERLAY -->
@@ -1341,7 +1373,8 @@ var S={
   // dpState: {exerciseName: {reps, hitTopTwice, weight}} — double progression state for accessories
   pctBump:{}, dpState:{},
 };
-function save(){ try{localStorage.setItem('rs5',JSON.stringify(S));}catch(e){} }
+function saveLocal(){ try{localStorage.setItem('rs5',JSON.stringify(S));}catch(e){} }
+function save(){ S._ts=Date.now(); saveLocal(); queueSync(); }
 function load(){ try{var d=localStorage.getItem('rs5');if(d)S=Object.assign({},S,JSON.parse(d));}catch(e){} }
 function td(){ return new Date().toISOString().split('T')[0]; }
 function round25(n){ return Math.round(n/2.5)*2.5; }
@@ -1687,6 +1720,7 @@ function renderHome(){
   // Goal track badge
   var tEl=document.getElementById('h-track-lbl');
   if(tEl)tEl.textContent=curTrack().name;
+  renderAcctCard();
   renderBelt();
   // BJJ logged today indicator
   var bjjToday=S.bjjLog&&S.bjjLog.length&&S.bjjLog[S.bjjLog.length-1]===td();
@@ -2489,6 +2523,7 @@ function openOv(id){
   if(id==='ov-addex')openAddExLib();
   if(id==='ov-roadmap')openRoadmap();
   if(id==='ov-track')renderTrackList();
+  if(id==='ov-account'){renderAccount();acctMsg('');}
   document.getElementById(id).classList.add('open');
 }
 
@@ -2515,6 +2550,136 @@ function setTrack(k){
 function closeOv(id){document.getElementById(id).classList.remove('open');}
 function fmtD(s){if(!s)return '—';var d=new Date(s+'T00:00:00');return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
 
+// ── CLOUD SYNC (Supabase) ──────────────────────────────────────
+// Local-first: localStorage is always written; when signed in, the whole S
+// object is also backed up to public.user_state (one row per user, RLS-locked).
+// Conflict rule: whichever copy has the newer S._ts wins.
+var SB_URL='https://glzmmnqamulkawxruhbr.supabase.co';
+var SB_KEY='sb_publishable_OyWBZl3QgXx-lIoqCRwVbQ_abKoWA7R'; // publishable key — safe in the browser
+var sb=null,sbUser=null,syncTimer=null,lastSync=null;
+
+function sbInit(){
+  try{ if(!sb&&window.supabase)sb=window.supabase.createClient(SB_URL,SB_KEY); }catch(e){console.warn('sbInit:',e.message);}
+  return sb;
+}
+function acctMsg(t,isErr){
+  var el=document.getElementById('acct-msg');
+  if(el){el.textContent=t||'';el.style.color=isErr?'#e88a7d':'var(--mu)';}
+}
+function queueSync(){
+  if(!sb||!sbUser)return;
+  clearTimeout(syncTimer);
+  syncTimer=setTimeout(pushState,1500);
+}
+function pushState(){
+  if(!sb||!sbUser)return Promise.resolve(false);
+  return sb.from('user_state').upsert({user_id:sbUser.id,state:S,updated_at:new Date().toISOString()})
+    .then(function(r){
+      if(r.error){console.warn('sync push:',r.error.message);return false;}
+      lastSync=new Date();renderAcctCard();return true;
+    }).catch(function(e){console.warn('sync push:',e.message);return false;});
+}
+// Pull the cloud copy; keep whichever is newer. Returns true if local S was replaced.
+function pullAndMerge(){
+  if(!sb||!sbUser)return Promise.resolve(false);
+  return sb.from('user_state').select('state').eq('user_id',sbUser.id).maybeSingle()
+    .then(function(r){
+      if(r.error){console.warn('sync pull:',r.error.message);return false;}
+      var remote=r.data&&r.data.state;
+      if(!remote){ if(S.onboarded)return pushState().then(function(){return false;}); return false; }
+      if(!S.onboarded||(remote._ts||0)>(S._ts||0)){
+        S=Object.assign({},S,remote);
+        saveLocal();lastSync=new Date();
+        return true;
+      }
+      if((S._ts||0)>(remote._ts||0))return pushState().then(function(){return false;});
+      lastSync=new Date();return false;
+    }).catch(function(e){console.warn('sync pull:',e.message);return false;});
+}
+// After the cloud copy replaced local data, show it (never interrupt a live workout)
+function applyPulledState(){
+  if(AWO)return;
+  var ob=document.getElementById('ob');
+  if(S.onboarded&&ob.classList.contains('open')){ob.classList.remove('open');initApp();}
+  else if(S.onboarded){goScr('home');}
+}
+function onSignedIn(user){
+  sbUser=user;
+  acctMsg('Syncing your progress…');
+  return pullAndMerge().then(function(replaced){
+    acctMsg(replaced?'Your saved progress is loaded.':'You\'re backed up.');
+    renderAccount();
+    if(replaced){closeOv('ov-account');applyPulledState();}
+    else renderAcctCard();
+  });
+}
+function acctCreds(){
+  var em=(document.getElementById('acct-email').value||'').trim();
+  var pw=document.getElementById('acct-pw').value||'';
+  if(!em||em.indexOf('@')<1){acctMsg('Enter a valid email.',true);return null;}
+  if(pw.length<6){acctMsg('Password needs at least 6 characters.',true);return null;}
+  if(!sbInit()){acctMsg('Can\'t reach the server. Check your connection and try again.',true);return null;}
+  return {email:em,password:pw};
+}
+function acctSignUp(){
+  var c=acctCreds();if(!c)return;
+  acctMsg('Creating your account…');
+  sb.auth.signUp(c).then(function(r){
+    if(r.error){acctMsg(r.error.message,true);return;}
+    if(!r.data.session){acctMsg('Check your email and tap the confirm link. Then come back here and tap Sign in.');return;}
+    onSignedIn(r.data.session.user);
+  }).catch(function(e){acctMsg(e.message,true);});
+}
+function acctSignIn(){
+  var c=acctCreds();if(!c)return;
+  acctMsg('Signing in…');
+  sb.auth.signInWithPassword(c).then(function(r){
+    if(r.error){acctMsg(r.error.message,true);return;}
+    onSignedIn(r.data.user);
+  }).catch(function(e){acctMsg(e.message,true);});
+}
+function acctSignOut(){
+  if(!sb)return;
+  pushState().then(function(){return sb.auth.signOut();}).then(function(){
+    sbUser=null;lastSync=null;
+    acctMsg('Signed out. Your data is still on this phone.');
+    renderAccount();renderAcctCard();
+  });
+}
+function syncNow(){
+  acctMsg('Backing up…');
+  pushState().then(function(ok){acctMsg(ok?'Backed up just now.':'Backup failed. Check your connection.',!ok);});
+}
+function renderAccount(){
+  var inEl=document.getElementById('acct-in'),outEl=document.getElementById('acct-out');
+  if(!inEl)return;
+  inEl.style.display=sbUser?'':'none';
+  outEl.style.display=sbUser?'none':'';
+  if(sbUser)document.getElementById('acct-who').textContent=sbUser.email||'';
+}
+function renderAcctCard(){
+  var h=document.getElementById('h-acct-h');if(!h)return;
+  if(sbUser){
+    h.textContent='Progress backed up';
+    document.getElementById('h-acct-s').textContent=(sbUser.email||'')+(lastSync?' · last backup '+lastSync.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}):'');
+    document.getElementById('h-acct-cta').textContent='Account';
+  } else {
+    h.textContent='Back up your progress';
+    document.getElementById('h-acct-s').textContent='Right now your workouts are only saved on this phone.';
+    document.getElementById('h-acct-cta').textContent='Set up';
+  }
+}
+// On launch: restore an existing session and pull the latest cloud copy
+function sbBoot(){
+  if(!sbInit())return;
+  sb.auth.getSession().then(function(r){
+    var sess=r&&r.data&&r.data.session;
+    if(!sess)return;
+    sbUser=sess.user;renderAccount();renderAcctCard();
+    pullAndMerge().then(function(replaced){ if(replaced)applyPulledState(); else renderAcctCard(); });
+  }).catch(function(e){console.warn('sbBoot:',e.message);});
+}
+
 // ── BOOT ───────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded',function(){
   try{
@@ -2524,6 +2689,7 @@ window.addEventListener('DOMContentLoaded',function(){
     } else {
       initApp();
     }
+    sbBoot();
   }catch(e){console.error('Boot error:',e.message,e.stack);}
 });
 </script>

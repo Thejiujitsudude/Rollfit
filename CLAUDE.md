@@ -18,6 +18,8 @@ Grappler (BJJ) strength training web app. Single self-contained `index.html` (~2
 ## Persistence
 - `localStorage` key **`rs5`**, whole `S` object as JSON. `save()` / `load()` wrapped in try/catch.
 - Data is per-device AND per-URL. **Changing the hosting URL wipes users' data.** Keep one permanent URL.
+- **Cloud backup (Supabase):** optional email/password account (`ov-account`). Local-first: `save()` stamps `S._ts`, writes localStorage (`saveLocal()`), then debounced `pushState()` upserts the whole `S` into `public.user_state` (`user_id`, `state jsonb`, `updated_at`; RLS = own row only). `pullAndMerge()` on sign-in and on launch (`sbBoot()`): newer `_ts` wins. Once signed in, a URL/domain change no longer loses data.
+- supabase-js loads from jsDelivr with `defer`; if it fails, the app still works offline and sign-in shows "Can't reach the server". Project URL + publishable key are in `SB_URL` / `SB_KEY` (never put the secret key in the app).
 
 ## State object `S` (key fields)
 onboarded, name, daysPerWeek (2–5), track, belt, stripes, xp, dayIdx, orms{}, prs{}, workouts[], pctBump{}, dpState{}, readinessLog{}, fatigueLog[], bjjLog[], bjjDays[], lastLogin, startDate
@@ -72,4 +74,4 @@ After any change: extract the `<script>` block, run `node --check`, then a mocke
 1. Git init + first commit.
 2. Deploy to Netlify with a **permanent URL**.
 3. Get 1–2 testers running it.
-4. Later: accounts + cloud sync (Supabase/Firebase) before charging money.
+4. Accounts + cloud sync: v1 done (Supabase, whole-state backup). Later: per-workout tables, password reset, Apple sign-in.
