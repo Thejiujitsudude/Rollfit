@@ -70,6 +70,12 @@ Primary top 180s · backoff 120s · primary warmup 60s · compound accessories 9
 ## Verification habit
 After any change: extract the `<script>` block, run `node --check`, then a mocked-DOM run of: all 4 tracks × 2/3/4/5 days × weeks 1–9 through `getProgDays/renderToday/renderProgram/renderHome`, plus start → log → finish workout.
 
+## Before public launch (checklist)
+- Supabase → Authentication → Sign In / Providers → turn **Confirm email back ON** (off during testing because the built-in mailer is heavily rate-limited and confirm links open in Safari, not the Home Screen app).
+- Connect a real SMTP/email service (e.g. Resend) so confirm + reset emails send reliably.
+- Add "Forgot password" flow.
+- Supabase free tier pauses inactive projects and has no backups → move to Pro before paying users.
+
 ## Next priorities
 1. Git init + first commit.
 2. Deploy to Netlify with a **permanent URL**.
