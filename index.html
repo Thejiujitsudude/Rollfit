@@ -711,6 +711,8 @@ const EX_LIB=[
   {n:'Hanging Leg Raise',     c:'Core',           note:'Hip flexor + lower abs. Guard retention and triangle setup strength.'},
   {n:'Hanging Knee Raise',    c:'Core',           note:'Regression of hanging leg raise. Build hip-flexor strength and grip endurance.'},
   {n:'Lying Leg Raise',       c:'Core',           note:'Floor version of the hanging leg raise. Low back flat, slow lower. Guard retention strength.'},
+  {n:'Plank',                 c:'Core',           note:'Anti-extension hold. Forearms down, squeeze glutes, ribs down, straight line head to heels. Holding position under pressure.'},
+  {n:'Side Plank',            c:'Core',           note:'Anti-lateral hold, each side. Hips high, body in a straight line. Builds the base and hip stability you post and frame from.'},
   {n:'Shoulder Taps',         c:'Core',           note:'Anti-rotation without a band. Push-up position, feet wide, tap each shoulder slowly without letting your hips twist.'},
   {n:'Ab Wheel Rollout',      c:'Core',           note:'Anti-extension core in a different plane. Brace hard, nose toward floor.'},
 
@@ -827,7 +829,9 @@ var SUBSTITUTES={
   'Prone Y-T-W Raises':['Face Pull','Doorframe Row'],
   'Pike Push-Up':['Push-Ups','Overhead Press'],
   'Lying Leg Raise':['Hanging Leg Raise','Hanging Knee Raise'],
-  'Shoulder Taps':['Pallof Press','Lying Leg Raise'],
+  'Shoulder Taps':['Pallof Press','Side Plank','Plank'],
+  'Plank':['Side Plank','Ab Wheel Rollout','Shoulder Taps'],
+  'Side Plank':['Plank','Pallof Press','Shoulder Taps'],
   'Bear Crawl':['Farmer Carry','Suitcase Carry'],
   // PUSH
   'Overhead Press':['Push Press','Z Press','Landmine Press'],
@@ -841,12 +845,12 @@ var SUBSTITUTES={
   'Landmine Press':['Single-Arm Landmine Press','Overhead Press','Dumbbell Bench Press'],
   'Single-Arm Landmine Press':['Landmine Press','Overhead Press'],
   // CORE
-  'Hanging Leg Raise':['Hanging Knee Raise','Ab Wheel Rollout'],
+  'Hanging Leg Raise':['Hanging Knee Raise','Ab Wheel Rollout','Plank'],
   'Hanging Knee Raise':['Hanging Leg Raise','Ab Wheel Rollout'],
-  'Ab Wheel Rollout':['Hanging Leg Raise','Hanging Knee Raise'],
-  'Pallof Press':['Half-Kneeling Band Chop','Cable Anti-Rotation Hold'],
-  'Half-Kneeling Band Chop':['Pallof Press','Cable Anti-Rotation Hold'],
-  'Cable Anti-Rotation Hold':['Pallof Press','Half-Kneeling Band Chop'],
+  'Ab Wheel Rollout':['Hanging Leg Raise','Plank'],
+  'Pallof Press':['Half-Kneeling Band Chop','Side Plank','Shoulder Taps'],
+  'Half-Kneeling Band Chop':['Pallof Press','Side Plank'],
+  'Cable Anti-Rotation Hold':['Pallof Press','Side Plank'],
   // CARRY & GRIP
   'Farmer Carry':['Plate Farmer Carry','Suitcase Carry','Overhead Carry'],
   'Plate Farmer Carry':['Farmer Carry','Suitcase Carry'],
@@ -929,7 +933,9 @@ var MATCH_RULES=[
   {kw:['cable chop','band chop','wood chop','woodchop','chop'],ex:'Half-Kneeling Band Chop'},
   {kw:['anti-rotation','antirotation','anti rotation'],ex:'Pallof Press'},
   {kw:['russian twist','oblique','rotation','landmine rotation'],ex:'Half-Kneeling Band Chop'},
-  {kw:['plank','dead bug','sit up','sit-up','crunch','ab'],ex:'Hanging Leg Raise'},
+  {kw:['side plank'],ex:'Side Plank'},
+  {kw:['plank'],ex:'Plank'},
+  {kw:['dead bug','sit up','sit-up','crunch','ab'],ex:'Hanging Leg Raise'},
   // Carry & grip
   {kw:['farmer'],ex:'Farmer Carry'},
   {kw:['suitcase'],ex:'Suitcase Carry'},
@@ -972,7 +978,7 @@ function defaultScheme(exName){
   var cat=e?e.c:'';
   if(cat==='Warmup')return {s:3,r:5,rest:60};
   if(cat==='Carry & Grip')return {s:3,r:1,rest:60};
-  if(cat==='Core')return {s:3,r:10,rest:60};
+  if(cat==='Core')return {s:3,r:isHold(exName)?HOLD_SECS[exName]:10,rest:60};
   if(cat.indexOf('Pull')!==-1)return {s:3,r:8,rest:90};
   if(cat==='Push')return {s:3,r:8,rest:90};
   if(cat==='Hinge'||cat==='Squat')return {s:3,r:6,rest:90};
@@ -1018,6 +1024,8 @@ function doSwap(ei,newName){
   // keep reps/structure but clear weights so athlete enters fresh numbers
   ex.sets.forEach(function(s){
     if(s.type!=='dynwu')s.w='';
+    if(isHold(newName))s.r=HOLD_SECS[newName];
+    else if(isHold(oldName))s.r=10;
   });
   ex.note='SUBSTITUTED for '+oldName+'. Adjust weight as needed for this movement.';
   closeOv('ov-swap');
@@ -1399,7 +1407,7 @@ var AV_KEY={
   'Pallof Press':'pp','Half-Kneeling Band Chop':'pp','Cable Anti-Rotation Hold':'pp',
   'Hanging Leg Raise':'hlr','Hanging Knee Raise':'hlr','Ab Wheel Rollout':'aw',
   'Face Pull':'fp','Prone Y-T-W Raises':'fp',
-  'Doorframe Row':'cr','Towel Door Row':'pu','Pike Push-Up':'ohp','Lying Leg Raise':'hlr','Shoulder Taps':'pp','Bear Crawl':'fc',
+  'Doorframe Row':'cr','Towel Door Row':'pu','Pike Push-Up':'ohp','Lying Leg Raise':'hlr','Shoulder Taps':'pp','Plank':'pp','Side Plank':'pp','Bear Crawl':'fc',
   'Farmer Carry':'fc','Plate Farmer Carry':'fc','Suitcase Carry':'fc',
   'Zercher Carry':'fc','Overhead Carry':'fc',
   'Romanian Deadlift':'bss','Dumbbell RDL':'bss','Single-Leg RDL':'bss',
@@ -1433,7 +1441,8 @@ function getProgDays(){
 
       // 2. EQUIPMENT SWAP (Bodyweight track)
       if(trk.minimal){
-        var swapped=applyTrackSwap(out.n);
+        // Anti-rotation slot: Side Plank on squat/press days, Shoulder Taps on pull/lunge days
+        var swapped=out.n==='Pallof Press'?(/Squat|Press|Full Body B/.test(day.name)?'Side Plank':'Shoulder Taps'):applyTrackSwap(out.n);
         if(swapped!==out.n)out=Object.assign({},out,{n:swapped});
       }
 
@@ -1442,6 +1451,8 @@ function getProgDays(){
         var newSets=Math.max(2,Math.round(out.s*trk.volMult));
         if(newSets!==out.s)out=Object.assign({},out,{s:newSets});
       }
+      // 4. Timed holds use seconds, not reps
+      if(isHold(out.n))out=Object.assign({},out,{r:isDeloadWk?20:HOLD_SECS[out.n]});
       return out;
     })});
   });
@@ -1604,8 +1615,8 @@ var MINIMAL_SWAPS={
   'Barbell Row':['Doorframe Row',0],'Pendlay Row':['Doorframe Row',0],'T-Bar Row':['Doorframe Row',0],'One-Arm DB Row':['Doorframe Row',0],
   'Chest-Supported Row':['Doorframe Row',0],'Cable Row':['Doorframe Row',0],'Resistance Band Row':['Doorframe Row',0],
   // Core
-  'Hanging Leg Raise':['Lying Leg Raise',0],'Hanging Knee Raise':['Lying Leg Raise',0],'Ab Wheel Rollout':['Lying Leg Raise',0],
-  'Pallof Press':['Shoulder Taps',0],'Half-Kneeling Band Chop':['Shoulder Taps',0],'Cable Anti-Rotation Hold':['Shoulder Taps',0],
+  'Hanging Leg Raise':['Lying Leg Raise',0],'Hanging Knee Raise':['Lying Leg Raise',0],'Ab Wheel Rollout':['Plank',0],
+  'Pallof Press':['Shoulder Taps',0],'Half-Kneeling Band Chop':['Shoulder Taps',0],'Cable Anti-Rotation Hold':['Side Plank',0],
   // Carries / conditioning
   'Farmer Carry':['Bear Crawl',0],'Plate Farmer Carry':['Bear Crawl',0],'Suitcase Carry':['Bear Crawl',0],
   'Zercher Carry':['Bear Crawl',0],'Overhead Carry':['Bear Crawl',0],'Sled Push':['Hill Sprints',0],'Prowler Drag':['Hill Sprints',0],
@@ -1931,9 +1942,13 @@ function topSetPct(e){
 }
 
 // One expandable row per exercise; warm-up moves grouped into a single row
+// Timed holds (planks) are logged in seconds instead of reps
+var HOLD_SECS={'Plank':30,'Side Plank':30};
+function isHold(n){ return !!HOLD_SECS[n]; }
+function fmtReps(n,r){ return isHold(n)?r+'s':r; }
 function exDetailLine(e){
   var parts=[];
-  if(!e.isWarmup)parts.push(e.s+(e.s===1?' set':' sets')+' × '+e.r+(typeof e.r==='number'&&e.r===1?' rep':' reps'));
+  if(!e.isWarmup)parts.push(e.s+(e.s===1?' set':' sets')+' × '+e.r+(isHold(e.n)?' sec'+(e.n==='Side Plank'?' each side':''):(typeof e.r==='number'&&e.r===1?' rep':' reps')));
   if(e.rest)parts.push('rest '+fmtRest(e.pct?180:e.rest));
   return parts.join(' · ');
 }
@@ -1960,7 +1975,7 @@ function renderTodayPreview(){
       wStr=(lvl===1&&mult<1)?round25(base*mult)+' lb (recovery)':round25(base)+' lb';
     }
     return '<details class="acc"><summary><span style="font-weight:600;">'+String.fromCharCode(65+i)+'. '+e.n+'</span>'+
-      '<span class="acc-v">'+(wStr||e.s+'×'+e.r)+'</span></summary>'+
+      '<span class="acc-v">'+(wStr||e.s+'×'+fmtReps(e.n,e.r))+'</span></summary>'+
       '<div class="acc-b">'+(e.pct?'<span class="tag">Main lift</span>':'')+exDetailLine(e)+(e.note?'<br>'+e.note:'')+'</div></details>';
   }).join('');
   prev.innerHTML=html;
@@ -1994,7 +2009,7 @@ function renderProgram(){
     var exRows=(wuN?'<div class="pl"><span>Warm-up</span><span style="color:var(--mu2);">'+wuN+' moves</span></div>':'')+
       real.map(function(e){
         var w2=effectiveORM(e.n);
-        var wStr=e.pct&&w2?e.s+'×'+e.r+' @ '+round25(w2*topSetPct(e)/100)+' lb':e.s+'×'+e.r;
+        var wStr=e.pct&&w2?e.s+'×'+e.r+' @ '+round25(w2*topSetPct(e)/100)+' lb':e.s+'×'+fmtReps(e.n,e.r);
         return '<div class="pl"><span>'+e.n+'</span><span style="color:var(--mu2);">'+wStr+'</span></div>';
       }).join('');
     var badge=isTd?'<span class="bdg bdg-r">TODAY</span>':day.rest?'<span class="bdg bdg-o">REST</span>':'<span style="font-size:var(--xs);color:var(--mu2);">'+real.length+' exercises</span>';
@@ -2363,11 +2378,16 @@ function renderWO(){
       var lbl=isTop?'Top set':s.type==='bo'?'Back-off '+(++boNo):'Set '+(++setNo);
       var row='<div class="set-row'+(s.done?' is-done':'')+'">'+
         '<div class="set-l'+(isTop?' top':'')+'">'+lbl+'</div>'+
+        (isHold(ex.n)?
+        '<div class="set-v">'+
+          '<input class="si-in r" type="number" inputmode="numeric" min="0" value="'+(s.r||'')+'" placeholder="sec" onchange="updS('+ei+','+si+',\'r\',this.value)">'+
+          '<span class="x">sec'+(ex.n==='Side Plank'?' each side':'')+'</span>'+
+        '</div>':
         '<div class="set-v">'+
           '<input class="si-in" type="number" inputmode="decimal" min="0" step="2.5" value="'+(s.w||'')+'" placeholder="lb" onchange="updS('+ei+','+si+',\'w\',this.value);renderWO();">'+
           '<span class="x">lb &times;</span>'+
           '<input class="si-in r" type="number" inputmode="numeric" min="0" value="'+(s.r||'')+'" placeholder="reps" onchange="updS('+ei+','+si+',\'r\',this.value)">'+
-        '</div>'+
+        '</div>')+
         '<div class="sc'+(s.done?' done':'')+'" onclick="togS('+ei+','+si+')">'+(s.done?'✓':'')+'</div>'+
       '</div>';
       if(isBarbellEx(ex.n)&&s.w)row+='<div class="plates">'+plateBreakdownStr(s.w)+'</div>';
@@ -2589,7 +2609,8 @@ function openAddExLib(){
 }
 function addLibEx(n){
   if(!AWO)return;
-  AWO.ex.push({n:n,sets:[{w:S.orms[n]||'',r:8,done:false,type:'work',lbl:'1'},{w:S.orms[n]||'',r:8,done:false,type:'work',lbl:'2'},{w:S.orms[n]||'',r:8,done:false,type:'work',lbl:'3'}],rest:90,note:'',isPrimary:false});
+  var r0=isHold(n)?HOLD_SECS[n]:8;
+  AWO.ex.push({n:n,sets:[{w:S.orms[n]||'',r:r0,done:false,type:'work',lbl:'1'},{w:S.orms[n]||'',r:r0,done:false,type:'work',lbl:'2'},{w:S.orms[n]||'',r:r0,done:false,type:'work',lbl:'3'}],rest:isHold(n)?60:90,note:'',isPrimary:false});
   closeOv('ov-addex');renderWO();
 }
 function addCxEx(){
