@@ -9,7 +9,7 @@ Grappler (BJJ) strength training web app. Single self-contained `index.html` (~2
 - **No mat-schedule planning** (owner decision). Only a daily "Jiu-jitsu today" switch.
 - **FEATURE FREEZE (MVP testing).** No new features until testers (incl. Robert) say the core app is solid. Only fix bugs and confusing UX reported by testers.
 - **Workout-depth plan:** see `docs/program-framework.md` (own-words principles; never copy a paid program's workouts or use a coach's name).
-- **Parked for after testing:** goal picker (Strength / Muscle / Conditioning, any combination) replacing the Focus tracks, with Minimal Equipment as an on/off switch. Conditioning stays out until then.
+- **Parked for after testing:** goal picker (Strength / Muscle / Conditioning, any combination) replacing the Focus tracks, with Bodyweight as an on/off switch. Conditioning stays out until then.
 
 ## Owner preferences
 - Has ADHD: answer first, short bullets, bold key terms, micro-steps, one question at a time.
@@ -50,7 +50,7 @@ onboarded, name, daysPerWeek (2–5), track, belt, stripes, xp, dayIdx, orms{}, 
 | offseason | 1.0 | 0 | no |
 | inseason | 0.7 | -3 | no |
 | comp | 0.6 | +3 | no |
-| minimal | 0.9 | 0 | yes |
+| minimal (shown as **Bodyweight**) | 0.9 | 0 | yes |
 
 ## Workout logger
 - `buildSets(e)` — primary: pyramid warmups (60s rest) → TOP set with RIR input (180s) → backoffs (120s). Accessories use `dpState` double progression. Deload week overrides dpState (lower reps, ~85% weight).
@@ -76,7 +76,8 @@ Primary top 180s · backoff 120s · primary warmup 60s · compound accessories 9
 - Rest days: `markRestDay()` advances dayIdx.
 - "Jiu-jitsu today" switch (`.bjj-row` on Home + Today, `setBJJToday()` / `bjjToday()` / `syncBJJSwitches()`): today's date in `S.bjjLog` = on. When on, `buildSets` trims volume exactly like readiness "Beat up" (back-offs halved, accessories −1 set, min 2) but **does not reduce loads**. Onboarding no longer asks for BJJ days (`bjjDays` is legacy/unused).
 - No Gym Today: `startNoGym()` / `noGymSession()` — zero-equipment session on lift days (Broad Jump, BSS, SL Glute Bridge, Push-Ups, Doorframe Row, Lying Leg Raise, Bear Crawl, Face Pull last). `AWO.noGym` → does NOT advance dayIdx and skips `applyProgressiveOverload`, so gym progression is untouched.
-- Week 9 test week applies `applyTrackSwap()`, so Minimal Equipment tests DB RDL / Goblet Squat.
+- **Bodyweight track** (key `minimal`, name "Bodyweight"): zero equipment. `MINIMAL_SWAPS` maps every equipment exercise to a bodyweight version (e.g. Trap Bar → Single-Leg RDL, Zercher → Cossack Squat, DB Bench/Dips → Push-Ups, OHP → Pike Push-Up, pull-ups → Towel Door Row, rows → Doorframe Row, Pallof → Shoulder Taps, carries → Bear Crawl, Face Pull → Prone Y-T-W Raises, still last). Main moves are rep-based (no %1RM, `P()` returns sets×reps with slow tempo); week 9 is a 1-set max-reps test (`bwT`, `r:'max'`, skipped by the volume wave). Onboarding skips the 1RM step, Home hides the 1RM card, and No Gym Today is hidden (redundant).
+- Hard-rule exceptions on Bodyweight only: Prone Y-T-W Raises fill the Face Pull slot (last), and Shoulder Taps fill the anti-rotation slot (no band available).
 
 ## Known quirks
 - Kettlebell Swing is categorized "Warmup" in EX_LIB but functions as a hinge.
