@@ -258,11 +258,11 @@ details.wdc[open]>summary{margin-bottom:var(--g2);}
         <div class="trk-d">Higher intensity, lower volume, more explosive work. Peak for a tournament.</div>
       </div>
       <div class="trk" data-t="minimal" onclick="obSelTrack(this)">
-        <div class="trk-n">Minimal Equipment</div>
-        <div class="trk-d">Dumbbells, bands, bodyweight only. Home gym or travel friendly.</div>
+        <div class="trk-n">Bodyweight</div>
+        <div class="trk-d">No weights needed. Train at home or on the road with just your bodyweight.</div>
       </div>
     </div>
-    <div style="margin-top:auto;"><button class="btn btn-p" onclick="obGo(5)">Continue →</button></div>
+    <div style="margin-top:auto;"><button class="btn btn-p" onclick="obTrack==='minimal'?obDone():obGo(5)">Continue →</button></div>
   </div>
 
   <div class="obs" id="obs5">
@@ -344,12 +344,14 @@ details.wdc[open]>summary{margin-bottom:var(--g2);}
   </div>
 
   <!-- ORMs -->
+  <div id="h-orm-wrap">
   <div class="clbl" style="margin-top:var(--g4);">ONE-REP MAXES</div>
   <div class="card">
     <div style="text-align:right;margin-bottom:var(--g2);">
       <span style="color:var(--red);font-size:var(--xs);font-weight:700;cursor:pointer;" onclick="openOv('ov-orm')">edit</span>
     </div>
     <div id="h-orm-list"></div>
+  </div>
   </div>
 
   <!-- Recent -->
@@ -376,7 +378,7 @@ details.wdc[open]>summary{margin-bottom:var(--g2);}
   <!-- READINESS CHECK (shows on lift days before workout) -->
   <div class="card" id="td-readiness" style="display:none;">
     <div class="clbl">READINESS CHECK</div>
-    <div style="font-size:var(--sm);color:var(--mu);margin-bottom:var(--g3);">How's your body today? This adjusts your loads.</div>
+    <div style="font-size:var(--sm);color:var(--mu);margin-bottom:var(--g3);">How's your body today? This adjusts today's workout.</div>
     <div style="display:flex;gap:var(--g2);margin-bottom:var(--g3);">
       <button class="chip" data-rd="1" onclick="setReadiness(1,this)" style="flex:1;justify-content:center;">Beat up</button>
       <button class="chip" data-rd="2" onclick="setReadiness(2,this)" style="flex:1;justify-content:center;">Normal</button>
@@ -685,6 +687,9 @@ const EX_LIB=[
   {n:'Cable Row',             c:'Horizontal Pull',note:'Horizontal pull endurance. Sustained top pressure and clinch work.'},
   {n:'Resistance Band Row',   c:'Horizontal Pull',note:'Home/travel row option. Squeeze and control the return.'},
   {n:'Face Pull',             c:'Horizontal Pull',note:'Rear delt + rotator cuff. Every session. ALWAYS LAST. Non-negotiable prehab.'},
+  {n:'Doorframe Row',         c:'Horizontal Pull',note:'Bodyweight row. Grip both sides of a sturdy door frame, lean back, pull your chest to the frame. Walk feet in to make it harder.'},
+  {n:'Towel Door Row',        c:'Horizontal Pull',note:'Loop a towel around a sturdy door handle (door closed), hold both ends, lean back and row. Trains grip like gripping a gi.'},
+  {n:'Prone Y-T-W Raises',    c:'Horizontal Pull',note:'Bodyweight prehab. Lie face down, lift arms into Y, T, then W shapes, 5 each. Rear delts + rotator cuff. Last exercise when training bodyweight.'},
 
   // PUSH — frames, escapes, pummeling, creating distance
   {n:'Overhead Press',        c:'Push',           note:'Strict press. Pummeling and underhook battles. Squeeze glutes, press slightly back.'},
@@ -694,6 +699,7 @@ const EX_LIB=[
   {n:'Dumbbell Bench Press',  c:'Push',           note:'Upper body pressing base with natural arm path. Shoulder-friendly ROM.'},
   {n:'Barbell Bench Press',   c:'Push',           note:'Heaviest loadable horizontal press. Frames and guard-passing pressure.'},
   {n:'Push-Ups',              c:'Push',           note:'Bodyweight press with core engagement. Loadable with a vest. No equipment barrier.'},
+  {n:'Pike Push-Up',          c:'Push',           note:'Bodyweight overhead press. Hips high, lower your head toward the floor between your hands. Elevate feet to make it harder.'},
   {n:'Floor Press',           c:'Push',           note:'Ground-based push — mimics pressing an opponent off from bottom mount.'},
   {n:'Landmine Press',        c:'Push',           note:'Rotational pressing that mimics pummeling. Half-kneeling for core demand.'},
   {n:'Single-Arm Landmine Press',c:'Push',        note:'Anti-rotation pressing. Mirrors framing against a single-side attack.'},
@@ -704,10 +710,13 @@ const EX_LIB=[
   {n:'Cable Anti-Rotation Hold',c:'Core',         note:'Progression beyond Pallof. Hold + lateral shuffle for scramble stability.'},
   {n:'Hanging Leg Raise',     c:'Core',           note:'Hip flexor + lower abs. Guard retention and triangle setup strength.'},
   {n:'Hanging Knee Raise',    c:'Core',           note:'Regression of hanging leg raise. Build hip-flexor strength and grip endurance.'},
+  {n:'Lying Leg Raise',       c:'Core',           note:'Floor version of the hanging leg raise. Low back flat, slow lower. Guard retention strength.'},
+  {n:'Shoulder Taps',         c:'Core',           note:'Anti-rotation without a band. Push-up position, feet wide, tap each shoulder slowly without letting your hips twist.'},
   {n:'Ab Wheel Rollout',      c:'Core',           note:'Anti-extension core in a different plane. Brace hard, nose toward floor.'},
 
   // CARRY & GRIP — functional strength under sustained tension
   {n:'Farmer Carry',          c:'Carry & Grip',   note:'Crush grip + core bracing under load. Walk ~40m. After everything else.'},
+  {n:'Bear Crawl',            c:'Carry & Grip',   note:'Bodyweight carry. Knees 1 inch off the floor, ~20m per set. Shoulder and trunk endurance for scrambles.'},
   {n:'Plate Farmer Carry',    c:'Carry & Grip',   note:'Plates instead of handles = harder pinch grip. Direct grip-fighting carry.'},
   {n:'Zercher Carry',         c:'Carry & Grip',   note:'Clinch position carry. Builds bear hug and body lock strength under load.'},
   {n:'Suitcase Carry',        c:'Carry & Grip',   note:'One-sided carry. Core fights lateral collapse entire walk. Both sides.'},
@@ -812,7 +821,14 @@ var SUBSTITUTES={
   'Chest-Supported Row':['Cable Row','One-Arm DB Row'],
   'Cable Row':['Chest-Supported Row','Resistance Band Row','Barbell Row'],
   'Resistance Band Row':['Cable Row','Chest-Supported Row'],
-  'Face Pull':['Band Pull-Aparts','Rear Delt Fly'],
+  'Face Pull':['Band Pull-Aparts','Rear Delt Fly','Prone Y-T-W Raises'],
+  'Doorframe Row':['Towel Door Row','Resistance Band Row'],
+  'Towel Door Row':['Doorframe Row','Towel Pull-Ups'],
+  'Prone Y-T-W Raises':['Face Pull','Doorframe Row'],
+  'Pike Push-Up':['Push-Ups','Overhead Press'],
+  'Lying Leg Raise':['Hanging Leg Raise','Hanging Knee Raise'],
+  'Shoulder Taps':['Pallof Press','Lying Leg Raise'],
+  'Bear Crawl':['Farmer Carry','Suitcase Carry'],
   // PUSH
   'Overhead Press':['Push Press','Z Press','Landmine Press'],
   'Push Press':['Overhead Press','Z Press'],
@@ -1091,7 +1107,7 @@ function wuHinge(){ // Before Trap Bar Deadlift — hips, hamstrings, glutes, co
   return [
     {n:'Leg Swings (Front-Back & Side-Side)',wu:0,s:1,r:'12-15 each leg',rir:0,rest:0,isWarmup:true,
      note:'DYNAMIC WARMUP — opens hips and hamstrings before pulling. Controlled, not ballistic.'},
-    {n:'Hip Hinge Patterning (empty bar)',wu:0,s:2,r:'8',rir:0,rest:0,isWarmup:true,
+    {n:'Hip Hinge Patterning (broomstick or empty bar)',wu:0,s:2,r:'8',rir:0,rest:0,isWarmup:true,
      note:'DYNAMIC WARMUP — grooves neutral spine and hip movement before loading up.'},
     {n:'Glute Bridges',wu:0,s:1,r:'12-15',rir:0,rest:0,isWarmup:true,
      note:'DYNAMIC WARMUP — switches on glutes before you pull heavy.'},
@@ -1101,13 +1117,13 @@ function wuHinge(){ // Before Trap Bar Deadlift — hips, hamstrings, glutes, co
 }
 function wuSquat(){ // Before Zercher Squat / Zercher Lunge — hips, ankles, upper back
   return [
-    {n:'Deep Goblet Squat Hold',wu:0,s:1,r:'8-10 w/ knee pry',rir:0,rest:0,isWarmup:true,
+    {n:'Deep Squat Hold',wu:0,s:1,r:'8-10 w/ knee pry',rir:0,rest:0,isWarmup:true,
      note:'DYNAMIC WARMUP — opens hips and ankles, grooves squat depth and position.'},
     {n:'Walking Lunges',wu:0,s:1,r:'8-10 each leg',rir:0,rest:0,isWarmup:true,
      note:'DYNAMIC WARMUP — warms quads/glutes and rehearses the descent pattern.'},
     {n:'Hip Airplanes / Hip Circles',wu:0,s:1,r:'8-12 each side',rir:0,rest:0,isWarmup:true,
      note:'DYNAMIC WARMUP — hip mobility and balance under load before squatting.'},
-    {n:'Band Pull-Aparts',wu:0,s:1,r:'12-15',rir:0,rest:0,isWarmup:true,
+    {n:'Band Pull-Aparts (no band: Prone T-Raises)',wu:0,s:1,r:'12-15',rir:0,rest:0,isWarmup:true,
      note:'DYNAMIC WARMUP — preps upper back to hold the Zercher load tight to your torso.'},
   ];
 }
@@ -1115,7 +1131,7 @@ function wuPush(){ // Before DB Bench Press / Overhead Press — shoulders, scap
   return [
     {n:'Arm Circles',wu:0,s:1,r:'10 each direction',rir:0,rest:0,isWarmup:true,
      note:'DYNAMIC WARMUP — warms the rotator cuff and shoulder joint.'},
-    {n:'Band Pull-Aparts',wu:0,s:1,r:'12-15',rir:0,rest:0,isWarmup:true,
+    {n:'Band Pull-Aparts (no band: Prone T-Raises)',wu:0,s:1,r:'12-15',rir:0,rest:0,isWarmup:true,
      note:'DYNAMIC WARMUP — activates upper back and rear delts before pressing.'},
     {n:'Scapular Push-Ups',wu:0,s:1,r:'10-12',rir:0,rest:0,isWarmup:true,
      note:'DYNAMIC WARMUP — teaches shoulder blades to move and stabilize properly.'},
@@ -1148,31 +1164,33 @@ function getProgDaysRaw(){
   var rir=isDeload?3:1;
 
   // ── WEEK 9: TEST WEEK ─────────────────────────────────────────
-  // Minimal Equipment tests its swapped primaries (DB RDL / Goblet Squat)
-  var tbTest=applyTrackSwap('Trap Bar Deadlift'),zsTest=applyTrackSwap('Zercher Squat');
+  // Bodyweight tests its swapped main moves with a max-reps set (no 1RM)
+  var tbTest=applyTrackSwap('Trap Bar Deadlift'),zsTest=applyTrackSwap('Zercher Squat'),dbTest=applyTrackSwap('Dumbbell Bench Press');
+  function bwT(n,test){ // swap a %1RM test for a max-reps test on Bodyweight
+    return curTrack().minimal?{n:n,wu:0,s:1,r:'max',rir:0,rest:180,
+      note:'MAX REPS TEST — warm up, then 1 set of as many clean reps as you can'+(/Single-Leg|Cossack/.test(n)?' (per leg)':'')+'. Log it and beat it next block.'}:test;
+  }
   if(w===9) return[
     {name:'Test 1 · Trap Bar Max',rest:false,lbl:'TEST',ex:[
       ...wuHinge(),
-      {n:tbTest,wu:5,s:1,r:1,pct:97,rest:360,
-       note:tbTest==='Trap Bar Deadlift'?'STRENGTH TEST — pyramid: 50%×3, 65%×2, 75%×1, 85%×1, 92%×1, then max attempt. Log your best single — this becomes your new 1RM.':
-         'STRENGTH TEST — work up to the heaviest dumbbells you can control for 1 clean rep. Log your best — this becomes your new 1RM.'},
+      bwT(tbTest,{n:tbTest,wu:5,s:1,r:1,pct:97,rest:360,
+       note:'STRENGTH TEST — pyramid: 50%×3, 65%×2, 75%×1, 85%×1, 92%×1, then max attempt. Log your best single — this becomes your new 1RM.'}),
       {n:'Pull-Ups',wu:1,s:2,r:5,rir:2,rest:90,note:'ACCESSORY — light volume only. Save energy for the test.'},
       fc(2),fp(),
     ]},
     {name:'Rest / Roll',rest:true,lbl:'REST',ex:[]},
     {name:'Test 2 · Zercher Max',rest:false,lbl:'TEST',ex:[
       ...wuSquat(),
-      {n:zsTest,wu:4,s:1,r:1,pct:97,rest:360,
-       note:zsTest==='Zercher Squat'?'STRENGTH TEST — pyramid up to max. Bar in elbow crooks. Log your best single — new 1RM for next block.':
-         'STRENGTH TEST — work up to the heaviest goblet squat you can do for 1 clean rep. Log your best — new 1RM for next block.'},
+      bwT(zsTest,{n:zsTest,wu:4,s:1,r:1,pct:97,rest:360,
+       note:'STRENGTH TEST — pyramid up to max. Bar in elbow crooks. Log your best single — new 1RM for next block.'}),
       {n:'Overhead Press',wu:2,s:2,r:6,rir:2,rest:90,note:'ACCESSORY — maintenance volume only.'},
       fc(2),fp(),
     ]},
     {name:'Rest / Roll',rest:true,lbl:'REST',ex:[]},
     {name:'Test 3 · DB Bench Max',rest:false,lbl:'TEST',ex:[
       ...wuPush(),
-      {n:'Dumbbell Bench Press',wu:3,s:1,r:1,pct:95,rest:300,
-       note:'STRENGTH TEST — work up to true max per hand. Controlled descent, full press. Log your best.'},
+      bwT(dbTest,{n:'Dumbbell Bench Press',wu:3,s:1,r:1,pct:95,rest:300,
+       note:'STRENGTH TEST — work up to true max per hand. Controlled descent, full press. Log your best.'}),
       {n:'Chin-Ups',wu:1,s:2,r:5,rir:2,rest:90,note:'ACCESSORY — light pull volume.'},
       fc(2),fp(),
     ]},
@@ -1189,6 +1207,10 @@ function getProgDaysRaw(){
   function P(src,name,wuOverride){
     var t=src['w'+Math.min(8,w)];
     var trk=curTrack();
+    if(trk.minimal){ // Bodyweight: no 1RM loading — reps with a slow tempo, progressed by double progression
+      return {n:applyTrackSwap(name),wu:0,s:isDeload?2:(w<=2?3:4),r:isDeload?8:(w>=3&&w<=5?12:10),rir:rir,rest:90,
+        note:(isDeload?'DELOAD — ':'')+'MAIN MOVE — bodyweight. Lower for 3 seconds, pause at the bottom, drive up. When every set hits the rep target, make it harder: slower lowering or a harder variation.'};
+    }
     // Goal track intensity adjustment (Comp Prep +3%, In-Season -3%)
     var pct=Math.max(50,Math.min(95,t.pct+(isDeload?0:trk.pctAdj)));
     var exName=applyTrackSwap(name);
@@ -1376,7 +1398,8 @@ var AV_KEY={
   'Dips':'dip','Push-Ups':'dip','Floor Press':'dip',
   'Pallof Press':'pp','Half-Kneeling Band Chop':'pp','Cable Anti-Rotation Hold':'pp',
   'Hanging Leg Raise':'hlr','Hanging Knee Raise':'hlr','Ab Wheel Rollout':'aw',
-  'Face Pull':'fp',
+  'Face Pull':'fp','Prone Y-T-W Raises':'fp',
+  'Doorframe Row':'cr','Towel Door Row':'pu','Pike Push-Up':'ohp','Lying Leg Raise':'hlr','Shoulder Taps':'pp','Bear Crawl':'fc',
   'Farmer Carry':'fc','Plate Farmer Carry':'fc','Suitcase Carry':'fc',
   'Zercher Carry':'fc','Overhead Carry':'fc',
   'Romanian Deadlift':'bss','Dumbbell RDL':'bss','Single-Leg RDL':'bss',
@@ -1395,7 +1418,7 @@ function getProgDays(){
   return days.map(function(day){
     if(day.rest||!day.ex)return day;
     return Object.assign({},day,{ex:day.ex.map(function(e){
-      if(e.isWarmup||e.pct)return e; // skip dynamic warmups and primary lifts
+      if(e.isWarmup||e.pct||e.r==='max')return e; // skip dynamic warmups, primary lifts, and max-reps tests
       var out=e;
 
       // 1. WEEKLY VOLUME WAVE — sets climb wk1→5, drop wk6 deload, rebuild wk7-8
@@ -1408,14 +1431,14 @@ function getProgDays(){
         out=Object.assign({},out,patch);
       }
 
-      // 2. EQUIPMENT SWAP (Minimal Equipment track)
+      // 2. EQUIPMENT SWAP (Bodyweight track)
       if(trk.minimal){
         var swapped=applyTrackSwap(out.n);
         if(swapped!==out.n)out=Object.assign({},out,{n:swapped});
       }
 
       // 3. GOAL TRACK VOLUME — never below 2 sets, Face Pull always full
-      if(trk.volMult!==1&&out.n!=='Face Pull'&&typeof out.s==='number'&&out.s>1){
+      if(trk.volMult!==1&&out.n!=='Face Pull'&&out.n!=='Prone Y-T-W Raises'&&typeof out.s==='number'&&out.s>1){
         var newSets=Math.max(2,Math.round(out.s*trk.volMult));
         if(newSets!==out.s)out=Object.assign({},out,{s:newSets});
       }
@@ -1555,38 +1578,39 @@ var TRACKS={
     blurb:'Reduced volume to protect mat performance.'},
   comp:     {name:'Comp Prep',          volMult:0.6, pctAdj:+3, minimal:false,
     blurb:'Higher intensity, lower volume. Peaking.'},
-  minimal:  {name:'Minimal Equipment',  volMult:0.9, pctAdj:0,  minimal:true,
-    blurb:'Dumbbells, bands, bodyweight only.'},
+  minimal:  {name:'Bodyweight',         volMult:0.9, pctAdj:0,  minimal:true,
+    blurb:'No weights needed. Train at home with just your bodyweight.'},
 };
 function curTrack(){ return TRACKS[S.track]||TRACKS.inseason; }
 
-// Equipment-limited swaps for Minimal Equipment track.
-// [replacement, scaleFactor] — scale converts the original lift's 1RM into a
-// sensible starting 1RM for the replacement (e.g. a DB RDL is far lighter than
-// a trap bar deadlift). Athlete can override anytime in the ORM editor.
+// Bodyweight track (key stays 'minimal' for saved data): every exercise that needs
+// equipment maps to a zero-equipment version. [replacement, scale] — scale is unused now
+// (bodyweight main moves are rep-based, not %1RM) but kept so the shape doesn't change.
 var MINIMAL_SWAPS={
-  'Trap Bar Deadlift':['Dumbbell RDL',0.50],
-  'Sumo Deadlift':['Dumbbell RDL',0.50],
-  'Conventional Deadlift':['Dumbbell RDL',0.50],
-  'Romanian Deadlift':['Dumbbell RDL',0.85],
-  'Barbell Hip Thrust':['Single-Leg Glute Bridge',0.25],
-  'Zercher Squat':['Goblet Squat',0.45],
-  'Front Squat':['Goblet Squat',0.45],
-  'Back Squat':['Goblet Squat',0.40],
-  'Zercher Lunge':['Weighted Lunge',0.50],
-  'Barbell Row':['One-Arm DB Row',0.35],
-  'Pendlay Row':['One-Arm DB Row',0.35],
-  'T-Bar Row':['One-Arm DB Row',0.35],
-  'Cable Row':['Resistance Band Row',1.0],
-  'Lat Pulldown':['Resistance Band Row',1.0],
-  'Straight Arm Pulldown':['Resistance Band Row',1.0],
-  'Barbell Bench Press':['Dumbbell Bench Press',0.40],
-  'Push Press':['Overhead Press',0.85],
-  'Cable Anti-Rotation Hold':['Half-Kneeling Band Chop',1.0],
-  'Sled Push':['Hill Sprints',1.0],
-  'Prowler Drag':['Hill Sprints',1.0],
-  'Plate Farmer Carry':['Farmer Carry',1.0],
-  'Zercher Carry':['Farmer Carry',1.0],
+  // Hinge
+  'Trap Bar Deadlift':['Single-Leg RDL',0],'Sumo Deadlift':['Single-Leg RDL',0],'Conventional Deadlift':['Single-Leg RDL',0],
+  'Dumbbell RDL':['Single-Leg RDL',0],'Romanian Deadlift':['Single-Leg Glute Bridge',0],'Barbell Hip Thrust':['Single-Leg Glute Bridge',0],
+  'Kettlebell Swing':['Broad Jump',0],'Single-Arm KB Swing':['Broad Jump',0],
+  // Squat / lunge
+  'Zercher Squat':['Cossack Squat',0],'Front Squat':['Cossack Squat',0],'Back Squat':['Cossack Squat',0],'Goblet Squat':['Cossack Squat',0],
+  'Zercher Lunge':['Reverse Lunge',0],'Weighted Lunge':['Reverse Lunge',0],
+  // Push
+  'Dumbbell Bench Press':['Push-Ups',0],'Barbell Bench Press':['Push-Ups',0],'Floor Press':['Push-Ups',0],'Dips':['Push-Ups',0],
+  'Overhead Press':['Pike Push-Up',0],'Push Press':['Pike Push-Up',0],'Z Press':['Pike Push-Up',0],
+  'Landmine Press':['Pike Push-Up',0],'Single-Arm Landmine Press':['Pike Push-Up',0],
+  // Pull (vertical pulls → towel row for grip; horizontal rows → doorframe row)
+  'Pull-Ups':['Towel Door Row',0],'Chin-Ups':['Towel Door Row',0],'Towel Pull-Ups':['Towel Door Row',0],'Assisted Pull-Ups':['Towel Door Row',0],
+  'Lat Pulldown':['Towel Door Row',0],'Straight Arm Pulldown':['Towel Door Row',0],'Rope Climb':['Towel Door Row',0],
+  'Barbell Row':['Doorframe Row',0],'Pendlay Row':['Doorframe Row',0],'T-Bar Row':['Doorframe Row',0],'One-Arm DB Row':['Doorframe Row',0],
+  'Chest-Supported Row':['Doorframe Row',0],'Cable Row':['Doorframe Row',0],'Resistance Band Row':['Doorframe Row',0],
+  // Core
+  'Hanging Leg Raise':['Lying Leg Raise',0],'Hanging Knee Raise':['Lying Leg Raise',0],'Ab Wheel Rollout':['Lying Leg Raise',0],
+  'Pallof Press':['Shoulder Taps',0],'Half-Kneeling Band Chop':['Shoulder Taps',0],'Cable Anti-Rotation Hold':['Shoulder Taps',0],
+  // Carries / conditioning
+  'Farmer Carry':['Bear Crawl',0],'Plate Farmer Carry':['Bear Crawl',0],'Suitcase Carry':['Bear Crawl',0],
+  'Zercher Carry':['Bear Crawl',0],'Overhead Carry':['Bear Crawl',0],'Sled Push':['Hill Sprints',0],'Prowler Drag':['Hill Sprints',0],
+  // Prehab finisher (stays last)
+  'Face Pull':['Prone Y-T-W Raises',0],
 };
 function applyTrackSwap(name){
   if(!curTrack().minimal)return name;
@@ -1790,6 +1814,7 @@ function renderHome(){
   // Goal track badge
   var tEl=document.getElementById('h-track-lbl');
   if(tEl)tEl.textContent=curTrack().name;
+  document.getElementById('h-orm-wrap').style.display=curTrack().minimal?'none':'';
   renderAcctCard();
   renderBelt();
   syncBJJSwitches();
@@ -1832,8 +1857,9 @@ function renderToday(){
   var startBtn=document.getElementById('td-start-btn');
   startBtn.style.display=day.rest?'none':'';
   syncBJJSwitches();
-  document.getElementById('td-purpose').textContent=day.rest?'No lifting today. Roll, drill, or rest, then mark the day done.':'Tell us how you feel, then tap Start. Your weights are already loaded.';
-  document.getElementById('td-nogym-btn').style.display=day.rest?'none':'';
+  document.getElementById('td-purpose').textContent=day.rest?'No lifting today. Roll, drill, or rest, then mark the day done.':
+    curTrack().minimal?'Tell us how you feel, then tap Start. No equipment needed.':'Tell us how you feel, then tap Start. Your weights are already loaded.';
+  document.getElementById('td-nogym-btn').style.display=(day.rest||curTrack().minimal)?'none':'';
 
   // Readiness card — only on lift days
   var rdCard=document.getElementById('td-readiness');
@@ -1885,7 +1911,7 @@ function renderToday(){
   }).join('');
 }
 
-// Resolve an exercise's effective 1RM, including Minimal Equipment scaled fallback
+// Resolve an exercise's effective 1RM (legacy scaled fallback via MINIMAL_SWAPS)
 function effectiveORM(name){
   var o=S.orms[name]||0;
   if(!o){
@@ -2408,7 +2434,7 @@ function applyProgressiveOverload(savedWorkout){
   var feedback=[];
 
   savedWorkout.ex.forEach(function(ex){
-    // isPrimary flag covers Minimal Equipment swaps (e.g. Goblet Squat as the day's primary)
+    // isPrimary flag covers any primary slot even if its exercise was swapped
     var isPrimary=!!ex.isPrimary||PRIMARY_LIFTS.indexOf(ex.n)!==-1;
 
     // ── Auto-update ORM estimate from best set this session ──────
