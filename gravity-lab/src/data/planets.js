@@ -1,2 +1,43 @@
-// TODO: real planet data pending.
-export const planets = []
+// Real values. mu = G * M (m^3/s^2), radius in meters.
+export const planets = [
+  {
+    id: 'moon',
+    name: 'Moon',
+    mu: 4.9048695e12,
+    radius: 1.7374e6,
+    color: '#8d8d96',
+    colorLight: '#d9d9e0',
+    atmosphere: null,
+    fact: 'Weak gravity: a fast car on a ramp could almost reach orbit here.',
+  },
+  {
+    id: 'mars',
+    name: 'Mars',
+    mu: 4.282837e13,
+    radius: 3.3895e6,
+    color: '#8f3410',
+    colorLight: '#e07a45',
+    atmosphere: 'rgba(255,160,120,0.25)',
+    fact: 'About half as wide as Earth, with a bit over a third of its surface gravity.',
+  },
+  {
+    id: 'earth',
+    name: 'Earth',
+    mu: 3.986004418e14,
+    radius: 6.371e6,
+    color: '#1d4fa8',
+    colorLight: '#5fb0ff',
+    atmosphere: 'rgba(120,190,255,0.35)',
+    fact: 'Orbit speed near Earth is about 7.7 km/s: New York to London in 12 minutes.',
+  },
+  {
+    id: 'jupiter',
+    name: 'Jupiter',
+    mu: 1.26686534e17,
+    radius: 6.9911e7,
+    color: '#9a6a3d',
+    colorLight: '#f0c995',
+    atmosphere: 'rgba(255,220,170,0.25)',
+    fact: 'Escape speed is about 60 km/s. Leaving Jupiter is brutally hard.',
+  },
+]

@@ -1,4 +1,9 @@
-// TODO: real implementation pending (see GravityLab.jsx handoff)
-export default function ControlDrawer() {
-  return <div className="stub" data-component="ControlDrawer">ControlDrawer</div>
+/** Collapsible panel section. */
+export default function ControlDrawer({ title, children, defaultOpen = true }) {
+  return (
+    <details className="drawer" open={defaultOpen}>
+      <summary>{title}</summary>
+      <div className="drawer-body">{children}</div>
+    </details>
+  )
 }
