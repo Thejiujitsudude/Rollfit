@@ -4,6 +4,17 @@ Educational orbital mechanics simulator built with React + Vite.
 
 > **Status: scaffold only.** Component logic pending — see `GravityLab.jsx` handoff; physics/data/components need real implementations.
 
+## Vision
+
+A free, fun learning tool for anyone who loves gravity. Learn by playing with objects, not formulas:
+
+- **Orbits:** launch objects and watch them fall, orbit, or escape.
+- **Bent spacetime:** heavy objects curve the space around them, and paths bend with it.
+- **Bending light:** light curves around massive objects (gravitational lensing).
+- **Time dilation:** clocks near heavy objects (or moving fast) tick slower.
+
+No accounts and no backend. Everything runs in the browser.
+
 ## Quick start
 
 ```bash
