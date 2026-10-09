@@ -119,6 +119,7 @@ h1{font-weight:900;letter-spacing:-.02em;}
 .tips summary{cursor:pointer;color:var(--mu2);font-weight:700;list-style:none;padding:2px 0;}
 .tips summary::-webkit-details-marker{display:none;}
 .tips div{margin-top:4px;line-height:1.5;}
+.demo{display:inline-block;margin-top:6px;color:var(--red);font-weight:700;text-decoration:none;font-size:var(--xs);}
 .set-row{display:flex;align-items:center;gap:var(--g3);padding:10px 0;border-top:1px solid var(--ln);}
 .set-row.wu{cursor:pointer;}
 .set-l{width:70px;flex-shrink:0;font-size:var(--sm);font-weight:700;color:var(--mu);}
@@ -1946,6 +1947,10 @@ function topSetPct(e){
 var HOLD_SECS={'Plank':30,'Side Plank':30};
 function isHold(n){ return !!HOLD_SECS[n]; }
 function fmtReps(n,r){ return isHold(n)?r+'s':r; }
+// "Watch a demo": opens a YouTube search for the exercise (no hosting, no copying videos)
+function demoLink(n){
+  return '<a class="demo" href="https://www.youtube.com/results?search_query='+encodeURIComponent('how to do '+n+' exercise form')+'" target="_blank" rel="noopener">Watch a demo &rsaquo;</a>';
+}
 function exDetailLine(e){
   var parts=[];
   if(!e.isWarmup)parts.push(e.s+(e.s===1?' set':' sets')+' × '+e.r+(isHold(e.n)?' sec'+(e.n==='Side Plank'?' each side':''):(typeof e.r==='number'&&e.r===1?' rep':' reps')));
@@ -1976,7 +1981,7 @@ function renderTodayPreview(){
     }
     return '<details class="acc"><summary><span style="font-weight:600;">'+String.fromCharCode(65+i)+'. '+e.n+'</span>'+
       '<span class="acc-v">'+(wStr||e.s+'×'+fmtReps(e.n,e.r))+'</span></summary>'+
-      '<div class="acc-b">'+(e.pct?'<span class="tag">Main lift</span>':'')+exDetailLine(e)+(e.note?'<br>'+e.note:'')+'</div></details>';
+      '<div class="acc-b">'+(e.pct?'<span class="tag">Main lift</span>':'')+exDetailLine(e)+(e.note?'<br>'+e.note:'')+'<br>'+demoLink(e.n)+'</div></details>';
   }).join('');
   prev.innerHTML=html;
 }
@@ -2357,7 +2362,7 @@ function renderWO(){
       '<button class="lnk" onclick="openSwap('+ei+')">Swap</button>'+
       '<button class="lnk" onclick="rmEx('+ei+')">Remove</button>'+
     '</div>';
-    var tips=ex.note?'<details class="tips"><summary>How to do it</summary><div>'+ex.note+'</div></details>':'';
+    var tips='<details class="tips"><summary>How to do it</summary><div>'+(ex.note?ex.note+'<br>':'')+demoLink(ex.n)+'</div></details>';
 
     // Warm-up sets collapse into one tappable row
     var wuHTML='';
