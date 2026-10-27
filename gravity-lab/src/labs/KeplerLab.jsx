@@ -167,7 +167,7 @@ export default function KeplerLab() {
           </label>
         </section>
         <ControlDrawer title="The science" defaultOpen={false}>
-          <p>Johannes Kepler found three rules in 1609-1619 by studying years of Mars measurements:</p>
+          <p>Johannes Kepler found three rules (1609 and 1619) by working through Tycho Brahe's careful measurements of Mars:</p>
           <p>
             <b>1.</b> Orbits are ellipses with the Sun at one focus, not the center.
           </p>

@@ -13,8 +13,8 @@ const OBJECTS = [
 const WORLDS = [
   { id: 'earth', name: 'Earth', g: 9.81, air: 1 },
   { id: 'moon', name: 'Moon', g: 1.62, air: 0 },
-  { id: 'mars', name: 'Mars', g: 3.71, air: 0.1 },
-  { id: 'jupiter', name: 'Jupiter', g: 24.79, air: 1 },
+  { id: 'mars', name: 'Mars', g: 3.71, air: 0.016 },
+  { id: 'jupiter', name: 'Jupiter', g: 24.79, air: 0.13 },
 ]
 
 export default function FallingLab() {
@@ -28,8 +28,8 @@ export default function FallingLab() {
   const world = WORLDS.find((w) => w.id === worldId)
   const airOn = air && world.air > 0
   const objs = [OBJECTS.find((o) => o.id === left), OBJECTS.find((o) => o.id === right)]
-  // thinner air = higher terminal speed (drag scales with air density)
-  const vtOf = (o) => (airOn ? o.vt / Math.sqrt(world.air) : Infinity)
+  // air = density vs Earth's. Terminal speed scales with sqrt(g / density).
+  const vtOf = (o) => (airOn ? o.vt * Math.sqrt(world.g / 9.81 / world.air) : Infinity)
 
   const drop = () => {
     sim.current = { t: 0, bodies: objs.map(() => ({ y: 0, v: 0, done: null })) }
@@ -119,7 +119,9 @@ export default function FallingLab() {
           {done && (
             <p className="verdict">
               {Math.abs(times[0] - times[1]) < 0.02
-                ? 'Tie. Without air pushing back, everything falls at the same rate.'
+                ? airOn
+                  ? 'Tie (to the eye). Gravity speeds everything up at the same rate, and air barely slows heavy, compact things.'
+                  : 'Tie. Without air pushing back, everything falls at exactly the same rate.'
                 : `${times[0] < times[1] ? objs[0].name : objs[1].name} wins by ${Math.abs(times[0] - times[1]).toFixed(2)} s. Air pushes back harder on light, wide things.`}
             </p>
           )}

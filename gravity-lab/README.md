@@ -43,7 +43,7 @@ npm run build   # production build to dist/
 | Planet Jump | Jump height, hang time and weight from Ceres to a neutron star |
 | Slingshot, Life of a Star | coming soon |
 
-Physics is unit-tested against real numbers (32 tests): Earth escape speed, Einstein light bending (2x Newton), GPS clock drift, Kepler's 3rd law, 99%-light-speed time dilation, E = mc².
+Physics is unit-tested against real numbers (42 tests, including a fact-check of every number stated in the app text): Earth escape speed, Einstein light bending (2x Newton), GPS clock drift, Kepler's 3rd law, 99%-light-speed time dilation, E = mc².
 
 ## Structure
 

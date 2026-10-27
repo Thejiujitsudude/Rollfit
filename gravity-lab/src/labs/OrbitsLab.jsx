@@ -305,7 +305,7 @@ export default function OrbitsLab() {
 
         <ControlDrawer title="The science" defaultOpen={false}>
           <p>
-            Isaac Newton imagined this exact cannon in 1687. The planet's surface curves away as you fly. At about{' '}
+            Isaac Newton drew this exact cannon in the 1680s, while writing the Principia. The planet's surface curves away as you fly. At about{' '}
             {fmtSpeed(vCirc)} here, the ground curves away exactly as fast as you fall. You never land.
           </p>
           <p>

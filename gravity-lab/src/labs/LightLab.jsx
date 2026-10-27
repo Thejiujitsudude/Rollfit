@@ -220,8 +220,9 @@ export default function LightLab() {
 
         <ControlDrawer title="The science" defaultOpen={false}>
           <p>
-            In 1919, astronomers photographed stars next to the Sun during an eclipse. The starlight was bent by 1.75
-            arcseconds: exactly Einstein's number, twice Newton's. It made Einstein famous overnight.
+            Einstein predicted starlight grazing the Sun bends 1.75 arcseconds, twice Newton's 0.87. Eddington's 1919
+            eclipse photos agreed with Einstein (rough, with big error bars) and made him famous overnight. Modern radio
+            telescopes confirm Einstein's number to better than 0.1%.
           </p>
           <p>
             Today we see whole galaxies stretched into arcs and rings by the gravity of galaxies in front of them. This is

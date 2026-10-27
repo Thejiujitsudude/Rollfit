@@ -16,7 +16,7 @@ const WORLDS = [
   { id: 'earth', name: 'Earth', g: 9.81, ground: '#2d5a2d', note: 'Home. Your normal jump.' },
   { id: 'jupiter', name: 'Jupiter', g: 24.79, ground: '#8a6038', note: 'No solid ground, so imagine a platform at the cloud tops.' },
   { id: 'sun', name: 'The Sun', g: 274, ground: '#ff9c2a', note: 'Imaginary heat-proof suit required.' },
-  { id: 'neutron', name: 'Neutron star', g: 1.0e12, ground: '#6aa8ff', note: 'Gravity so strong mountains are under a millimeter tall.' },
+  { id: 'neutron', name: 'Neutron star', g: 1.0e12, ground: '#6aa8ff', note: 'Gravity about 100 billion times Earth\'s. The tallest mountains are thought to be about a millimeter tall. Your jump would be smaller than an atom.' },
 ]
 
 const fmtLen = (m) => {
@@ -88,7 +88,7 @@ export default function JumpLab() {
       <aside className="panel">
         <header className="lab-head">
           <h2>Planet Jump</h2>
-          <p>Same legs, same jump, different worlds. Weaker gravity pulls you back slower, so you fly higher and hang longer.</p>
+          <p>Same legs, same takeoff speed, different worlds. Weaker gravity pulls you back slower, so you fly higher and hang longer.</p>
         </header>
         <section className="card">
           <div className="chips">
@@ -119,7 +119,7 @@ export default function JumpLab() {
             <b className="num">
               {(() => {
                 const v = (lb * world.g) / EARTH_G
-                return v >= 1e6 ? `${(v / 1e9).toPrecision(3)} billion lb` : `${v.toFixed(0)} lb`
+                return v >= 1e12 ? `${(v / 1e12).toPrecision(3)} trillion lb` : v >= 1e6 ? `${(v / 1e6).toPrecision(3)} million lb` : `${v.toFixed(0)} lb`
               })()}
             </b>
             <span>what you'd weigh on {world.name}</span>

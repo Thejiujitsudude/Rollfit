@@ -206,7 +206,9 @@ export default function TimeLab() {
             compared with someone far away. At a black hole's horizon, it looks frozen from outside.
           </p>
           <p>
-            Speed slows time too (special relativity). At 99% of light speed, your clock runs at about 1/7 speed.
+            Speed slows time too (special relativity). At 99% of light speed, your clock runs at about 1/7 speed. Here the
+            two effects multiply, which is exact for a traveler moving at that speed as measured by someone hovering at
+            the same spot.
           </p>
           <p>
             Both are measured for real: atomic clocks flown on airliners (1971), GPS satellites every day, and cosmic-ray

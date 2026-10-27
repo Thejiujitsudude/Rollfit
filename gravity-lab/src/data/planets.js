@@ -8,7 +8,7 @@ export const planets = [
     color: '#8d8d96',
     colorLight: '#d9d9e0',
     atmosphere: null,
-    fact: 'Weak gravity: a fast car on a ramp could almost reach orbit here.',
+    fact: 'Weak gravity: orbit speed is only about 1.7 km/s, less than a quarter of Earth\'s.',
   },
   {
     id: 'mars',
@@ -38,6 +38,6 @@ export const planets = [
     color: '#9a6a3d',
     colorLight: '#f0c995',
     atmosphere: 'rgba(255,220,170,0.25)',
-    fact: 'Escape speed is about 60 km/s. Leaving Jupiter is brutally hard.',
+    fact: 'No solid surface: this is the cloud tops. Escape speed is about 60 km/s, brutally hard to leave.',
   },
 ]

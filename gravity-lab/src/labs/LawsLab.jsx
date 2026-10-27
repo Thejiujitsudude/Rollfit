@@ -139,7 +139,7 @@ function FirstLaw({ modes }) {
           <p className="muted small">
             {surface === 'space' && 'No friction, no walls. One flick and it glides forever (it wraps around the screen).'}
             {surface === 'ice' && 'A tiny bit of friction. It glides a long way before stopping.'}
-            {surface === 'carpet' && 'Lots of friction. It stops almost right away. That is why Newton\'s 1st law felt wrong for 2,000 years.'}
+            {surface === 'carpet' && 'Lots of friction. It stops almost right away. That is why, from Aristotle on, people believed moving things naturally stop. Galileo and Newton showed friction is the hidden culprit.'}
           </p>
           <button type="button" className="btn" onClick={() => Object.assign(puck.current, { x: 0.5, y: 0.5, vx: 0, vy: 0, trail: [] })}>
             Stop puck

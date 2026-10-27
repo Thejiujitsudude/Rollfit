@@ -301,10 +301,11 @@ export default function SpacetimeLab() {
             follow the straightest path they can through that curve.
           </p>
           <p>
-            The trampoline is only a picture. It uses Earth's gravity to explain gravity, and real curvature also bends
-            time. That's what the Time tab shows: the deeper the dent, the slower clocks tick.
+            The trampoline is only a picture, and physicists warn about it: it uses Earth's gravity to explain gravity.
+            Real spacetime curves time as well as space. For slow things like apples and planets, the curving of time does
+            almost all the work: things fall toward where clocks tick slower (see Gravity Slows Time).
           </p>
-          <p>The math of the dent here is real Newtonian gravity, so the marble paths are honest orbits.</p>
+          <p>The marbles follow real Newtonian gravity (smoothed near each mass so nothing blows up), so their paths are honest orbits.</p>
         </ControlDrawer>
       </aside>
     </div>

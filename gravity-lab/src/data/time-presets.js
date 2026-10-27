@@ -27,7 +27,7 @@ export const timePresets = [
     name: 'Neutron star surface',
     gap: 1.4,
     beta: 0,
-    fact: 'A city-sized ball heavier than the Sun. Time runs at about two thirds speed on its surface.',
+    fact: 'A city-sized ball heavier than the Sun. Time on its surface runs at about three quarters speed.',
   },
   {
     id: 'edge',
@@ -41,7 +41,7 @@ export const timePresets = [
     name: "Miller's planet",
     gap: 2.66e-10,
     beta: 0,
-    fact: 'From Interstellar: 1 hour there = 7 years back home. The movie used a spinning black hole; this is the non-spinning version.',
+    fact: 'From Interstellar: 1 hour there = 7 years back home. In the movie the black hole spins almost as fast as physics allows, which lets a planet orbit that close. Around a non-spinning black hole nothing can orbit there; you would have to hover with impossibly strong rockets.',
   },
   {
     id: 'fast',

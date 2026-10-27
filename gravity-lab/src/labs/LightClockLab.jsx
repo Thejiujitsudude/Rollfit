@@ -63,7 +63,7 @@ export default function LightClockLab() {
     ctx.fillStyle = 'rgba(220,226,255,0.7)'
     ctx.font = '12px system-ui, sans-serif'
     ctx.textAlign = 'left'
-    ctx.fillText('Ship length as you see it', 16, by - 10)
+    ctx.fillText('Ship length as you measure it', 16, by - 10)
     ctx.fillStyle = 'rgba(255,255,255,0.15)'
     ctx.fillRect(16, by, Math.min(w - 32, 240), 10)
     ctx.fillStyle = '#ffd27a'
@@ -100,7 +100,7 @@ export default function LightClockLab() {
             </div>
             <div>
               <b className="num">{((1 / g) * 100).toFixed(0)}%</b>
-              <span>ship length you see</span>
+              <span>ship length you measure</span>
             </div>
           </div>
           <p className="muted small">
@@ -115,14 +115,18 @@ export default function LightClockLab() {
           <h3>Try this</h3>
           <ul className="tips">
             <li>Set 0%. Both clocks tick together.</li>
-            <li>Set 87%. The ship clock runs at half speed and the ship looks half as long.</li>
+            <li>Set 87%. The ship clock runs at half speed and the ship measures half as long.</li>
             <li>Set 99%. Seven of your ticks for every one of theirs.</li>
           </ul>
         </section>
         <ControlDrawer title="The science" defaultOpen={false}>
           <p>
-            In 1905, Einstein started from one strange fact: everyone measures the same speed of light, no matter how fast
-            they move. Everything else (slow clocks, short ships) follows from that.
+            In 1905, Einstein started from two rules: the laws of physics are the same for everyone moving steadily, and
+            everyone measures the same speed of light. Slow clocks and short ships follow from just those two.
+          </p>
+          <p>
+            Fine print: "measure" is the key word. A photo of a fast ship would look twisted rather than squashed, because
+            light from its far end left earlier.
           </p>
           <p>
             It's real. Muons made by cosmic rays high in the sky should decay before reaching the ground. They make it

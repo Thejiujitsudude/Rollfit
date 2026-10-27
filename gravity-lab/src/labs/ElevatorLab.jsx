@@ -157,6 +157,15 @@ export default function ElevatorLab() {
             The laser is the big payoff. In the rocket, light curves down because the floor rushes up to meet it. If gravity
             is the same as acceleration, gravity must bend light too. That was proven in 1919 (see the Light lab).
           </p>
+          <p>
+            The elevator trick only explains half of the real bend around the Sun. The other half comes from space itself
+            being curved, which Einstein worked out in 1915. That's why the full answer is twice Newton's.
+          </p>
+          <p>
+            Fine print: the boxes only match if they are small. In a huge box on Earth, two balls dropped far apart fall
+            toward Earth's center and drift slightly together. A rocket can't fake that. Those leftover differences are
+            tides, and they are what real curved spacetime looks like.
+          </p>
           <p>The light here is slowed down billions of times. In real life the bend is far too small to see in a room.</p>
         </ControlDrawer>
       </aside>
