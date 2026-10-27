@@ -9,6 +9,7 @@ import LightLab from './labs/LightLab.jsx'
 import TimeLab from './labs/TimeLab.jsx'
 import KeplerLab from './labs/KeplerLab.jsx'
 import JumpLab from './labs/JumpLab.jsx'
+import SlingshotLab from './labs/SlingshotLab.jsx'
 
 // Labs without a component are shown as "coming soon".
 export const SECTIONS = [
@@ -47,7 +48,7 @@ export const SECTIONS = [
     labs: [
       { id: 'kepler', title: "Kepler's Laws", blurb: 'Why planets speed up near the Sun.', Lab: KeplerLab },
       { id: 'jump', title: 'Planet Jump', blurb: 'How high could you jump on the Moon? On a neutron star?', Lab: JumpLab },
-      { id: 'slingshot', title: 'Slingshot', blurb: 'Steal speed from a planet to fling a probe across the solar system.' },
+      { id: 'slingshot', title: 'Slingshot', blurb: 'Game: steal speed from a planet to fling a probe. 3 levels.', Lab: SlingshotLab },
       { id: 'stars', title: 'Life of a Star', blurb: 'Gravity vs fusion, from birth to black hole.' },
     ],
   },

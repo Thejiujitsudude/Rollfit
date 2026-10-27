@@ -2,7 +2,7 @@
 
 Play with the laws of the universe. A free, fun, interactive way to understand Newton's physics, Einstein's physics, and the astrophysics they explain. Every concept is a hands-on toy.
 
-> **Status: playable v0.2.** 11 labs live, 5 more planned. The Newton's Cannon logic is a fresh build; merge in or replace it with the `GravityLab.jsx` handoff when it's ready.
+> **Status: playable v0.2.** 12 labs live, 3 more planned. The Newton's Cannon logic is a fresh build; merge in or replace it with the `GravityLab.jsx` handoff when it's ready.
 
 No accounts and no backend. Everything runs in the browser.
 
@@ -41,9 +41,10 @@ npm run build   # production build to dist/
 |---|---|
 | Kepler's Laws | Ellipse with equal-time slices; Earth, Mars, Mercury, Halley's Comet |
 | Planet Jump | Jump height, hang time and weight from Ceres to a neutron star |
-| Slingshot, Life of a Star | coming soon |
+| Slingshot | Game: gravity assists. Boost, brake and U-turn levels; planet's-eye view shows speed in = speed out |
+| Life of a Star | coming soon |
 
-Physics is unit-tested against real numbers (42 tests, including a fact-check of every number stated in the app text): Earth escape speed, Einstein light bending (2x Newton), GPS clock drift, Kepler's 3rd law, 99%-light-speed time dilation, E = mc².
+Physics is unit-tested against real numbers (45 tests, including a fact-check of every number stated in the app text): Earth escape speed, Einstein light bending (2x Newton), GPS clock drift, Kepler's 3rd law, 99%-light-speed time dilation, E = mc².
 
 ## Structure
 
@@ -66,4 +67,4 @@ src/
 
 - [ ] Merge the `GravityLab.jsx` handoff into the Orbits lab
 - [ ] Play-test and keep / cut features
-- [ ] Build the coming-soon labs: Tides, Gravitational Waves, Slingshot, Life of a Star
+- [ ] Build the coming-soon labs: Tides, Gravitational Waves, Life of a Star
