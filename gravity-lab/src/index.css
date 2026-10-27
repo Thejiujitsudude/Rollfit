@@ -30,9 +30,6 @@ h2, h3, p { margin: 0; }
   border-bottom: 1px solid var(--line); background: var(--panel);
 }
 .logo { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; letter-spacing: 0.02em; color: var(--warm); }
-.tabs { display: flex; gap: 4px; margin-left: auto; background: var(--bg); padding: 3px; border-radius: 10px; border: 1px solid var(--line); }
-.tabs button { border: 0; background: none; padding: 6px 12px; border-radius: 7px; cursor: pointer; color: var(--muted); font-size: 14px; }
-.tabs button.on { background: var(--card); color: var(--text); }
 .main { flex: 1; min-height: 0; }
 
 .lab { height: 100%; display: flex; flex-direction: column; }
@@ -44,11 +41,6 @@ h2, h3, p { margin: 0; }
   .lab { display: grid; grid-template-columns: 1fr 380px; }
   .stage { height: 100%; }
   .panel { border-top: 0; border-left: 1px solid var(--line); }
-}
-@media (max-width: 420px) {
-  .topbar { padding: 8px 12px; }
-  .tabs { margin-left: 0; width: 100%; }
-  .tabs button { flex: 1; padding: 6px 4px; }
 }
 
 .overlay { position: absolute; left: 12px; right: 12px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; pointer-events: none; }
@@ -124,9 +116,34 @@ h2, h3, p { margin: 0; }
 .stats > div { background: var(--bg); border-radius: 8px; padding: 8px 10px; display: flex; flex-direction: column; }
 .stats b { font-size: 18px; }
 .stats span { font-size: 12px; color: var(--muted); }
+.big-stat { display: flex; flex-direction: column; gap: 2px; }
 .big-stat b { font-size: 30px; line-height: 1.1; color: var(--warm); }
 .big-stat > span { color: var(--muted); font-size: 14px; }
 
 .drawer { background: var(--card); border: 1px solid var(--line); border-radius: 12px; }
 .drawer summary { padding: 12px; cursor: pointer; font-weight: 600; font-size: 14px; }
 .drawer-body { padding: 0 12px 12px; display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
+
+.back { border: 1px solid var(--line); background: var(--bg); border-radius: 8px; padding: 5px 10px; cursor: pointer; font-size: 14px; }
+.crumb { font-size: 14px; color: var(--muted); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.crumb b { color: var(--text); }
+
+.home { height: 100%; overflow-y: auto; padding: 20px 16px 48px; display: flex; flex-direction: column; gap: 28px; max-width: 1100px; margin: 0 auto; }
+.hero h1 { font-size: clamp(26px, 6vw, 40px); line-height: 1.1; margin: 0 0 8px; text-wrap: balance; }
+.hero p { color: var(--muted); max-width: 60ch; margin: 0; }
+.shelf { display: flex; flex-direction: column; gap: 8px; --shelf: var(--accent); }
+.shelf-newton { --shelf: var(--warm); }
+.shelf-einstein { --shelf: var(--escape); }
+.shelf-astro { --shelf: var(--orbit); }
+.shelf-head { display: flex; align-items: baseline; gap: 10px; }
+.shelf-head h2 { font-size: 22px; color: var(--shelf); }
+.era { font-size: 12px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin-top: 4px; }
+.labcard { text-align: left; display: flex; flex-direction: column; gap: 4px; padding: 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); cursor: pointer; }
+.labcard:hover, .labcard:focus-visible { border-color: var(--shelf); }
+.labcard b { font-size: 16px; }
+.labcard span { font-size: 13px; color: var(--muted); }
+.labcard.soon { cursor: default; opacity: 0.55; }
+.labcard em { font-style: normal; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--shelf); }
+.equiv { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+.equiv b { color: var(--warm); }
