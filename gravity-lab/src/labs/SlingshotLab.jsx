@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import Canvas from '../components/Canvas.jsx'
 import ControlDrawer from '../components/ControlDrawer.jsx'
+import LabIntro from '../components/LabIntro.jsx'
 import { stepProbe, accelAt, planetAt } from '../physics/slingshot.js'
 import { makeStars, drawSpace } from '../utils/stars.js'
 import { loadJSON, saveJSON } from '../utils/storage.js'
@@ -236,6 +237,7 @@ export default function SlingshotLab() {
             front and it slows you down. Time your launch to catch the planet as it goes by.
           </p>
         </header>
+        <LabIntro id="slingshot" />
         <section className="card">
           <div className="card-head">
             <h3>Levels</h3>

@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import Canvas from '../components/Canvas.jsx'
 import ControlDrawer from '../components/ControlDrawer.jsx'
+import LabIntro from '../components/LabIntro.jsx'
 import { traceRay, PHOTON_SPHERE } from '../physics/lensing.js'
 import { makeStars, drawSpace } from '../utils/stars.js'
 
@@ -170,12 +171,13 @@ export default function LightLab() {
 
       <aside className="panel">
         <header className="lab-head">
-          <h2>Light</h2>
+          <h2>Bending Light</h2>
           <p>
             Light has no mass, but it still bends around heavy things, because it follows curved spacetime. Close
             enough to a black hole, light falls in and never comes out.
           </p>
         </header>
+        <LabIntro id="light" />
 
         <section className="card">
           <div className="chips">

@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import Canvas from '../components/Canvas.jsx'
 import ControlDrawer from '../components/ControlDrawer.jsx'
+import LabIntro from '../components/LabIntro.jsx'
 import { verletStep } from '../physics/verlet.js'
 import { wellDepth, sheetAccel } from '../physics/spacetime.js'
 
@@ -244,12 +245,13 @@ export default function SpacetimeLab() {
 
       <aside className="panel">
         <header className="lab-head">
-          <h2>Spacetime</h2>
+          <h2>Curved Spacetime</h2>
           <p>
             Heavy things dent spacetime, like a bowling ball on a trampoline. Marbles just roll straight, but the sheet
             is curved, so their paths bend. That bending is what we call gravity.
           </p>
         </header>
+        <LabIntro id="spacetime" />
 
         <section className="card">
           <label className="slider">

@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import Canvas from '../components/Canvas.jsx'
 import ControlDrawer from '../components/ControlDrawer.jsx'
+import LabIntro from '../components/LabIntro.jsx'
 import { orbitPosition, periodYears } from '../physics/kepler.js'
 import { makeStars, drawSpace } from '../utils/stars.js'
 
@@ -111,6 +112,7 @@ export default function KeplerLab() {
             colored slice is swept in the same amount of time, and every slice has the same area.
           </p>
         </header>
+        <LabIntro id="kepler" />
         <section className="card">
           <div className="chips">
             {PRESETS.map((p) => (

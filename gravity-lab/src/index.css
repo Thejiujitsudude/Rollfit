@@ -5,7 +5,7 @@
   --card: #111733;
   --line: #222a4d;
   --text: #e8ebf7;
-  --muted: #98a2c8;
+  --muted: #b4bddf;
   --accent: #7aa2ff;
   --warm: #ffd27a;
   --crash: #ff5d6c;
@@ -19,7 +19,8 @@
 }
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; }
-body { margin: 0; background: var(--bg); }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 16px; line-height: 1.45; }
+h1, h2, h3, b, strong { color: inherit; }
 button { font: inherit; color: inherit; }
 h2, h3, p { margin: 0; }
 
@@ -46,12 +47,12 @@ h2, h3, p { margin: 0; }
 .overlay { position: absolute; left: 12px; right: 12px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; pointer-events: none; }
 .overlay.top { top: 12px; }
 .overlay.bottom { bottom: 10px; justify-content: center; }
-.hint { font-size: 12px; color: var(--muted); }
+.hint { font-size: 13px; color: var(--muted); }
 .readout { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; background: rgba(5,7,15,0.7); padding: 3px 8px; border-radius: 999px; }
 .toast { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); background: var(--orbit); color: #04220f; font-weight: 600; font-size: 13px; padding: 8px 14px; border-radius: 999px; white-space: nowrap; max-width: calc(100% - 24px); overflow: hidden; text-overflow: ellipsis; }
 
 .lab-head h2 { font-size: 20px; }
-.lab-head p { color: var(--muted); font-size: 14px; margin-top: 4px; }
+.lab-head p { color: var(--muted); font-size: 15px; margin-top: 4px; }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
 .card h3 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
 .card-head { display: flex; justify-content: space-between; align-items: baseline; }
@@ -147,3 +148,10 @@ h2, h3, p { margin: 0; }
 .labcard em { font-style: normal; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--shelf); }
 .equiv { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
 .equiv b { color: var(--warm); }
+
+.intro { background: linear-gradient(180deg, color-mix(in srgb, var(--warm) 10%, var(--card)), var(--card)); border-color: color-mix(in srgb, var(--warm) 40%, var(--line)); }
+.intro-row { display: flex; flex-direction: column; gap: 2px; }
+.intro-row > span { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--warm); font-weight: 700; }
+.intro-row > p { font-size: 15px; }
+.intro-idea > p { font-size: 17px; font-weight: 600; line-height: 1.35; }
+.labcard i { font-style: normal; font-size: 13px; color: var(--text); opacity: 0.9; }

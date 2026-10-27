@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import Canvas from '../components/Canvas.jsx'
 import ControlDrawer from '../components/ControlDrawer.jsx'
+import LabIntro from '../components/LabIntro.jsx'
 import { jump } from '../physics/motion.js'
 import { makeStars, drawSpace } from '../utils/stars.js'
 
@@ -90,6 +91,7 @@ export default function JumpLab() {
           <h2>Planet Jump</h2>
           <p>Same legs, same takeoff speed, different worlds. Weaker gravity pulls you back slower, so you fly higher and hang longer.</p>
         </header>
+        <LabIntro id="jump" />
         <section className="card">
           <div className="chips">
             {WORLDS.map((wd) => (

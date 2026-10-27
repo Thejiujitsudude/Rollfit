@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import Canvas from '../components/Canvas.jsx'
 import ControlDrawer from '../components/ControlDrawer.jsx'
+import LabIntro from '../components/LabIntro.jsx'
 import { makeStars, drawSpace } from '../utils/stars.js'
 
 const STARS = makeStars(120, 51)
@@ -122,6 +123,7 @@ export default function ElevatorLab() {
             and shine a laser in both boxes. Spot any difference?
           </p>
         </header>
+        <LabIntro id="elevator" />
         <section className="card">
           <div className="chips">
             {Object.entries(PAIRS).map(([id, p]) => (

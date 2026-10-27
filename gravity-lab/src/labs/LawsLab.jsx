@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import Canvas from '../components/Canvas.jsx'
 import ControlDrawer from '../components/ControlDrawer.jsx'
+import LabIntro from '../components/LabIntro.jsx'
 
 const MODES = [
   { id: 'first', label: '1st: Inertia' },
@@ -127,6 +128,7 @@ function FirstLaw({ modes }) {
           <h2>Laws of Motion</h2>
           <p>Things keep moving unless something stops them. On Earth, friction is the hidden force that stops everything.</p>
         </header>
+        <LabIntro id="laws" />
         <section className="card">
           {modes}
           <div className="chips">
@@ -230,6 +232,7 @@ function SecondLaw({ modes }) {
           <h2>Laws of Motion</h2>
           <p>Push two carts with the same force for 1 second. The heavier one speeds up less. Acceleration = force ÷ mass.</p>
         </header>
+        <LabIntro id="laws" />
         <section className="card">
           {modes}
           {slider('Push force', force, setForce, 5, 60, 'N')}
@@ -310,6 +313,7 @@ function ThirdLaw({ modes }) {
           <h2>Laws of Motion</h2>
           <p>Two skaters push off each other. Both feel the exact same push, in opposite directions. The lighter one flies away faster.</p>
         </header>
+        <LabIntro id="laws" />
         <section className="card">
           {modes}
           <label className="slider">

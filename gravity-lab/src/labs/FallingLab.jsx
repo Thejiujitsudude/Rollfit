@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import Canvas from '../components/Canvas.jsx'
 import ControlDrawer from '../components/ControlDrawer.jsx'
+import LabIntro from '../components/LabIntro.jsx'
 import { fallStep } from '../physics/motion.js'
 
 const HEIGHT = 10 // meters
@@ -97,6 +98,7 @@ export default function FallingLab() {
           <h2>Falling</h2>
           <p>Does heavy stuff fall faster? Drop two things from 10 m. Then turn the air off and try again.</p>
         </header>
+        <LabIntro id="falling" />
         <section className="card">
           <div className="chips">
             {WORLDS.map((wd) => (

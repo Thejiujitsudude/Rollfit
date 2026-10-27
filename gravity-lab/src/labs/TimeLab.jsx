@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import Canvas from '../components/Canvas.jsx'
 import ControlDrawer from '../components/ControlDrawer.jsx'
+import LabIntro from '../components/LabIntro.jsx'
 import { clockRate, gravityFactorGap, velocityFactor } from '../physics/time-dilation.js'
 import { timePresets } from '../data/time-presets.js'
 import { makeStars, drawSpace } from '../utils/stars.js'
@@ -108,12 +109,13 @@ export default function TimeLab() {
 
       <aside className="panel">
         <header className="lab-head">
-          <h2>Time</h2>
+          <h2>Gravity Slows Time</h2>
           <p>
             Time is not the same everywhere. Clocks tick slower deep in gravity and when moving fast. Move the traveler
             and watch the two clocks drift apart.
           </p>
         </header>
+        <LabIntro id="time" />
 
         <section className="card big-stat">
           {tiny ? (

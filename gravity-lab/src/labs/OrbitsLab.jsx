@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Canvas from '../components/Canvas.jsx'
 import ControlDrawer from '../components/ControlDrawer.jsx'
+import LabIntro from '../components/LabIntro.jsx'
 import EnergyPanel from '../components/EnergyPanel.jsx'
 import ZoneBar from '../components/ZoneBar.jsx'
 import PredictPanel from '../components/PredictPanel.jsx'
@@ -195,12 +196,13 @@ export default function OrbitsLab() {
 
       <aside className="panel">
         <header className="lab-head">
-          <h2>Orbits</h2>
+          <h2>Newton's Cannon</h2>
           <p>
             Newton's cannon. Fire from a tall tower. Too slow and you crash. Fast enough and you keep falling but keep
             missing the ground: that's an orbit. Faster still and you escape.
           </p>
         </header>
+        <LabIntro id="orbits" />
 
         <section className="card">
           <div className="chips">

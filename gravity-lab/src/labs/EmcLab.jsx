@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import Canvas from '../components/Canvas.jsx'
 import ControlDrawer from '../components/ControlDrawer.jsx'
+import LabIntro from '../components/LabIntro.jsx'
 import { restEnergy, YARDSTICKS } from '../physics/relativity.js'
 import { makeStars, drawSpace } from '../utils/stars.js'
 import { fmtEnergy } from '../utils/format.js'
@@ -78,6 +79,7 @@ export default function EmcLab() {
             is locked inside.
           </p>
         </header>
+        <LabIntro id="emc2" />
         <section className="card">
           <div className="chips">
             {THINGS.map((t) => (

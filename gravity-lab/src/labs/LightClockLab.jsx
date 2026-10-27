@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import Canvas from '../components/Canvas.jsx'
 import ControlDrawer from '../components/ControlDrawer.jsx'
+import LabIntro from '../components/LabIntro.jsx'
 import { gamma } from '../physics/relativity.js'
 import { makeStars, drawSpace } from '../utils/stars.js'
 
@@ -86,6 +87,7 @@ export default function LightClockLab() {
             to zigzag, a longer path. Light can't go faster, so the moving clock ticks slower.
           </p>
         </header>
+        <LabIntro id="lightclock" />
         <section className="card">
           <label className="slider">
             <span>
