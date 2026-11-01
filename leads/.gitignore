@@ -1,0 +1,12 @@
+# Lead data is private (owner names, phones). Never commit it.
+inputs/*
+!inputs/.gitkeep
+!inputs/dnc/
+inputs/dnc/*
+!inputs/dnc/.gitkeep
+reference/*
+!reference/.gitkeep
+outputs/*
+!outputs/.gitkeep
+__pycache__/
+.pytest_cache/
